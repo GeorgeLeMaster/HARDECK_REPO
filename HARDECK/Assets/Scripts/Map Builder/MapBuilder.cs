@@ -44,9 +44,22 @@ public class MapBuilder : MonoBehaviour
         GameObject newTile = Instantiate(tilePrefab, newPos, Quaternion.identity) as GameObject;
         newTile.transform.parent = GameObject.Find("Tiles").transform;
 
-        while (reader.ReadLine() != "fileEnd") { }
+        while (reader.ReadLine() != null) 
+        {
+            string currentLine = reader.ReadLine();
 
+            if (currentLine != null)
+            {
+                float xPos;
+                float yPos;
+                float zPos;
 
+                char[] buffer = new char[currentLine.Length];
+
+            }
+        }
+
+        Debug.Log("Map File Loaded");
 
     }
     
