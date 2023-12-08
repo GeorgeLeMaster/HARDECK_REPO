@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -27,12 +28,16 @@ public class MapBuilder : MonoBehaviour
         {
             Destroy(this);
         }
+
+        Debug.ClearDeveloperConsole();
     }
 
 
 
     public void LoadMapFromFile()
     {
+        ClearMap();
+
         Debug.Log("Loading Map from " + mapFilePath);
 
         Vector3 newPos = Vector3.zero;
@@ -40,24 +45,35 @@ public class MapBuilder : MonoBehaviour
         StreamReader reader = new StreamReader(mapFilePath);
 
         reader.ReadLine();
+        reader.ReadLine();
 
-        GameObject newTile = Instantiate(tilePrefab, newPos, Quaternion.identity) as GameObject;
-        newTile.transform.parent = GameObject.Find("Tiles").transform;
+        string currentLine;
 
-        while (reader.ReadLine() != null) 
+        while ((currentLine = reader.ReadLine()) != "fileEnd") 
         {
-            string currentLine = reader.ReadLine();
 
             if (currentLine != null)
             {
-                float xPos;
-                float yPos;
-                float zPos;
+                Debug.Log(currentLine);
 
-                char[] buffer = new char[currentLine.Length];
+                currentLine = currentLine.Substring(1, currentLine.Length - 2);
+
+                string[] col = currentLine.Split(',');
+
+                float.TryParse(col[0], out float xPos);
+                float yPos = float.Parse(col[1]);
+                float zPos = float.Parse(col[2]);
+
+                newPos = new Vector3(xPos, yPos, zPos);
+
+                GameObject newTile = Instantiate(tilePrefab, newPos, Quaternion.identity) as GameObject;
+                newTile.transform.parent = GameObject.Find("Tiles").transform;
+
+                //Debug.Log($"{xPos}, {yPos}, {zPos} ");
 
             }
         }
+
 
         Debug.Log("Map File Loaded");
 
@@ -73,17 +89,32 @@ public class MapBuilder : MonoBehaviour
 
         writer.WriteLine("Tiles\n*");
 
+        int numOfObjs = 0;
+
         foreach(Transform transform in tiles.GetComponentsInChildren<Transform>())
         {
             if (transform.gameObject.GetComponent<TileInfo>() != null)
             {
                 writer.WriteLine(transform.position);
+                numOfObjs++;
             }
         }
 
+        Debug.Log(numOfObjs);
         writer.WriteLine("fileEnd");
 
         writer.Close();
+    }
+
+    public void ClearMap()
+    {
+        GameObject tiles = GameObject.Find("Tiles");
+
+        DestroyImmediate(tiles);
+
+        GameObject newTilesObj = new GameObject();
+        newTilesObj.name = "Tiles";
+        newTilesObj.transform.parent = GameObject.Find("Environment").transform;
     }
 
 }

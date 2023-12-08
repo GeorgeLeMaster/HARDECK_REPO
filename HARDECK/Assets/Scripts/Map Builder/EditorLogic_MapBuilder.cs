@@ -12,14 +12,19 @@ public class EditorLogic_MapBuilder : Editor
 
         mapBuilder.tilePrefab = EditorGUILayout.ObjectField(mapBuilder.tilePrefab, typeof(Object), true);
 
-        if (GUILayout.Button("Build Map"))
+        if (GUILayout.Button("Load Map from File"))
         {
             mapBuilder.LoadMapFromFile();
         }
 
-        if (GUILayout.Button("Save Map"))
+        if (GUILayout.Button("Save Map to File"))
         {
             mapBuilder.SaveMapToFile();
+        }
+
+        if (GUILayout.Button("Clear Map"))
+        {
+            mapBuilder.ClearMap();
         }
     }
 }
