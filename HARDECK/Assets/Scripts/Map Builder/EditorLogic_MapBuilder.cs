@@ -14,12 +14,12 @@ public class EditorLogic_MapBuilder : Editor
 
         if (GUILayout.Button("Build Map"))
         {
-            mapBuilder.BuildMap();
+            mapBuilder.LoadMapFromFile();
         }
 
         if (GUILayout.Button("Save Map"))
         {
-            mapBuilder.BuildMap();
+            mapBuilder.SaveMapToFile();
         }
     }
 }

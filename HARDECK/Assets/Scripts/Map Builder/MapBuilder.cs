@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 
@@ -11,6 +12,8 @@ public class MapBuilder : MonoBehaviour
 
 
     public Object tilePrefab;
+
+    private string mapFilePath = "testMap.txt";
 
 
     public void Awake()
@@ -28,13 +31,46 @@ public class MapBuilder : MonoBehaviour
 
 
 
-    public void BuildMap()
+    public void LoadMapFromFile()
     {
-        Debug.Log("Building Map...");
+        Debug.Log("Loading Map from " + mapFilePath);
 
         Vector3 newPos = Vector3.zero;
 
+        StreamReader reader = new StreamReader(mapFilePath);
+
+        reader.ReadLine();
+
         GameObject newTile = Instantiate(tilePrefab, newPos, Quaternion.identity) as GameObject;
+        newTile.transform.parent = GameObject.Find("Tiles").transform;
+
+        while (reader.ReadLine() != "fileEnd") { }
+
+
+
+    }
+    
+    public void SaveMapToFile()
+    {
+        Debug.Log("Saving map to " + mapFilePath);
+
+        GameObject tiles = GameObject.Find("Tiles");
+
+        StreamWriter writer = new StreamWriter(mapFilePath);
+
+        writer.WriteLine("Tiles\n*");
+
+        foreach(Transform transform in tiles.GetComponentsInChildren<Transform>())
+        {
+            if (transform.gameObject.GetComponent<TileInfo>() != null)
+            {
+                writer.WriteLine(transform.position);
+            }
+        }
+
+        writer.WriteLine("fileEnd");
+
+        writer.Close();
     }
 
 }
