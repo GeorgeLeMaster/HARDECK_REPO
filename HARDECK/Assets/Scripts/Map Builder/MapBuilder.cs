@@ -17,7 +17,7 @@ public class MapBuilder : MonoBehaviour
     private string mapFilePath = "testMap.txt";
 
 
-    public void Awake()
+    public void Start()
     {
         // Singleton Logic
         if (instance == null)
@@ -54,29 +54,65 @@ public class MapBuilder : MonoBehaviour
 
             if (currentLine != null)
             {
-                Debug.Log(currentLine);
+                // PARSE LINE DATA INTO SEPERATE MEMBERS
+                string[] dataMembers = currentLine.Split("*");
 
-                currentLine = currentLine.Substring(1, currentLine.Length - 2);
+                // TRUNCATE POSITION VALUE TO READABLE DATA AND DELIMINATE
+                dataMembers[0] = dataMembers[0].Substring(1, dataMembers[0].Length - 2);
+                string[] posValues = dataMembers[0].Split(',');
 
-                string[] col = currentLine.Split(',');
+                // ASSIGN POSITIONS FROM PARSED DATA
+                float.TryParse(posValues[0], out float xPos);
+                float.TryParse(posValues[1], out float yPos);
+                float.TryParse(posValues[2], out float zPos);
 
-                float.TryParse(col[0], out float xPos);
-                float yPos = float.Parse(col[1]);
-                float zPos = float.Parse(col[2]);
-
+                // INSTANTIATE TILE AT DESIRED POSITION AND SET PROPER PARENT
                 newPos = new Vector3(xPos, yPos, zPos);
-
                 GameObject newTile = Instantiate(tilePrefab, newPos, Quaternion.identity) as GameObject;
                 newTile.transform.parent = GameObject.Find("Tiles").transform;
 
-                //Debug.Log($"{xPos}, {yPos}, {zPos} ");
+                // GRAB NEWTILE'S TileInfo SCRIPT
+                TileInfo newTileInfo = newTile.GetComponent<TileInfo>();
 
+                // PARSE AND ASSIGN RAMP STATS
+                string[] rampData = dataMembers[1].Split(',');
+                if (rampData[0] == "True")
+                {
+
+                    // IS A RAMP LOGIC
+                    newTileInfo.isRamp = true;
+
+                    if (rampData[1] == "North")
+                    {
+                        newTileInfo.rampOrientation = TileInfo.Directions.North;
+                    }
+                    else if (rampData[1] == "East")
+                    {
+                        newTileInfo.rampOrientation = TileInfo.Directions.East;
+                    }
+                    else if (rampData[1] == "South")
+                    {
+                        newTileInfo.rampOrientation = TileInfo.Directions.South;
+                    }
+                    else
+                    {
+                        newTileInfo.rampOrientation = TileInfo.Directions.West;
+                    }
+
+
+                }
+                else
+                {
+                    // IS *NOT* A RAMP LOGIC
+                    newTileInfo.isRamp = false;
+                }
             }
         }
 
 
         Debug.Log("Map File Loaded");
 
+        reader.Close();
     }
     
     public void SaveMapToFile()
@@ -95,7 +131,13 @@ public class MapBuilder : MonoBehaviour
         {
             if (transform.gameObject.GetComponent<TileInfo>() != null)
             {
-                writer.WriteLine(transform.position);
+                TileInfo currentTileInfo = transform.gameObject.GetComponent<TileInfo>();
+
+                string positionString = transform.position.ToString();
+                string rampBool = currentTileInfo.isRamp.ToString();
+                string rampOrientation = currentTileInfo.rampOrientation.ToString();
+
+                writer.WriteLine($"{positionString}*{rampBool},{rampOrientation}");
                 numOfObjs++;
             }
         }
