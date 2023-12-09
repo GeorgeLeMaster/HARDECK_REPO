@@ -8,10 +8,10 @@ public class TileInfo : MonoBehaviour
 
     public enum Directions
     {
-        North = 0,
-        South = 90,
-        East = 180,
-        West = 270
+        Forwards = 0,
+        Right = 90,
+        Backwards = 180,
+        Left = 270
     }
 
     public Vector3Int tilemapPosition;
@@ -46,7 +46,7 @@ public class TileInfo : MonoBehaviour
     {
         if (invalidGFX != null)
         {
-            if (transform.position.x < 0 || transform.position.z < 0)
+            if (transform.position.x < 0 || transform.position.y < 0 || transform.position.z < 0)
             {
                 invalidGFX.SetActive(true);
             }

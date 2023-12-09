@@ -14,7 +14,7 @@ public class MapBuilder : MonoBehaviour
 
     public Object tilePrefab;
 
-    private string mapFilePath = "testMap.txt";
+    private string mapFilePath = "testMap2.txt";
 
 
     public void Start()
@@ -41,7 +41,7 @@ public class MapBuilder : MonoBehaviour
         Debug.Log("Loading Map from " + mapFilePath);
 
         Vector3 newPos_gfx = Vector3.zero;
-        Vector3 newPos_tile = Vector3.zero;
+        Vector3Int newPos_tile = Vector3Int.zero;
 
         StreamReader reader = new StreamReader(mapFilePath);
 
@@ -83,21 +83,21 @@ public class MapBuilder : MonoBehaviour
                     newTileInfo.isRamp = true;
 
                     // DETERMINES RAMP ORIENTATION
-                    if (rampData[1] == "North")
+                    if (rampData[1] == "Forwards")
                     {
-                        newTileInfo.rampOrientation = TileInfo.Directions.North;
+                        newTileInfo.rampOrientation = TileInfo.Directions.Forwards;
                     }
-                    else if (rampData[1] == "East")
+                    else if (rampData[1] == "Right")
                     {
-                        newTileInfo.rampOrientation = TileInfo.Directions.East;
+                        newTileInfo.rampOrientation = TileInfo.Directions.Right;
                     }
-                    else if (rampData[1] == "South")
+                    else if (rampData[1] == "Backwards")
                     {
-                        newTileInfo.rampOrientation = TileInfo.Directions.South;
+                        newTileInfo.rampOrientation = TileInfo.Directions.Backwards;
                     }
                     else
                     {
-                        newTileInfo.rampOrientation = TileInfo.Directions.West;
+                        newTileInfo.rampOrientation = TileInfo.Directions.Left;
                     }
 
 
@@ -117,8 +117,15 @@ public class MapBuilder : MonoBehaviour
 
                 // INSTANTIATE TILE AT DESIRED POSITION AND SET PROPER PARENT
                 newPos_tile = new Vector3Int((int)xPos_tile, (int)yPos_tile, (int)zPos_tile);
+                Debug.Log(newPos_tile);
 
-                newTileInfo.tilemapPosition = new Vector3Int();
+                newTileInfo.tilemapPosition = newPos_tile;
+
+                // ASSIGN NAME
+                string rampString = "Tile";
+                if (rampData[0] == "True") { rampString = "Ramp"; }
+                newTile.name = $"{rampString}-{xPos_tile},{yPos_tile},{zPos_tile}";
+
             }
         }
 
