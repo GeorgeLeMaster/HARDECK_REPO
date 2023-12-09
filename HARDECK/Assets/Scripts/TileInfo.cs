@@ -61,5 +61,17 @@ public class TileInfo : MonoBehaviour
         desiredRot.y = (float)rampOrientation;
 
         existingGFX.transform.rotation = Quaternion.Euler(desiredRot);
+
+        if (transform.hasChanged)
+        {
+            UpdateTilemapPos();
+        }
     }
+
+    private void UpdateTilemapPos ()
+    {
+        tilemapPosition = new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z);
+    }
+
+
 }
