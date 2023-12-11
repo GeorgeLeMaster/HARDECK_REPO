@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 
 [ExecuteInEditMode]
@@ -11,12 +12,15 @@ public class MapBuilder : MonoBehaviour
 {
     public static MapBuilder instance;
 
+    private GameObject mapBuildLimitObj;
 
     public Object tilePrefab;
 
     private string mapFilePath = "testMap2.txt";
 
-
+    public int mapX;
+    public int mapZ;
+    public int mapY;
     public void Start()
     {
         // Singleton Logic
@@ -28,6 +32,7 @@ public class MapBuilder : MonoBehaviour
         {
             Destroy(this);
         }
+
 
         Debug.ClearDeveloperConsole();
     }
@@ -46,6 +51,19 @@ public class MapBuilder : MonoBehaviour
         StreamReader reader = new StreamReader(mapFilePath);
 
         reader.ReadLine();
+        reader.ReadLine();
+
+        // SET POSITION OF MapBuildLimitObj
+        string[] limitObjPos = reader.ReadLine().Split(",");
+        float.TryParse(limitObjPos[0], out float limX);
+        float.TryParse(limitObjPos[1], out float limY);
+        float.TryParse(limitObjPos[2], out float limZ);
+        Vector3 limPos = new Vector3(limX, limY, limZ);
+        mapBuildLimitObj.transform.position = limPos;
+
+        // INITALIZE TileInfoArray
+
+
         reader.ReadLine();
 
         string currentLine;
@@ -108,7 +126,7 @@ public class MapBuilder : MonoBehaviour
                     newTileInfo.isRamp = false;
                 }
 
-                // PARSE AND ASSIGN TILEMAPPOS
+                // PARSE AND ASSIGN TILEMAP POS
                 string[] tilemapValues = dataMembers[2].Split(",");
 
                 float.TryParse(posValues[0], out float xPos_tile);
@@ -120,6 +138,8 @@ public class MapBuilder : MonoBehaviour
                 Debug.Log(newPos_tile);
 
                 newTileInfo.tilemapPosition = newPos_tile;
+
+
 
                 // ASSIGN NAME
                 string rampString = "Tile";
@@ -136,16 +156,21 @@ public class MapBuilder : MonoBehaviour
     
     public void SaveMapToFile()
     {
+
+        // DEBUG INIT
         Debug.Log("Saving map to " + mapFilePath);
 
+        // FIND PARENT OBJ
         GameObject tiles = GameObject.Find("Tiles");
 
+        // OPEN WRITER AND TITLE FILE
         StreamWriter writer = new StreamWriter(mapFilePath);
+        string sizeLine = mapBuildLimitObj.transform.position.ToString();
+        sizeLine = sizeLine.Substring(1, sizeLine.Length - 2);
 
-        writer.WriteLine("Tiles\n*");
+        writer.WriteLine($"Tiles\n*\n{sizeLine}\n*");
 
-        int numOfObjs = 0;
-
+        // RECORDS TILE OBJ POSITIONS AND RAMP INFO AS RECORDED IN TILEINFO
         foreach(Transform transform in tiles.GetComponentsInChildren<Transform>())
         {
             if (transform.gameObject.GetComponent<TileInfo>() != null)
@@ -164,11 +189,9 @@ public class MapBuilder : MonoBehaviour
 
 
                 writer.WriteLine($"{positionString}*{rampBool},{rampOrientation}*{tilemapPos}");
-                numOfObjs++;
             }
         }
 
-        Debug.Log(numOfObjs);
         writer.WriteLine("fileEnd");
 
         writer.Close();
@@ -183,6 +206,25 @@ public class MapBuilder : MonoBehaviour
         GameObject newTilesObj = new GameObject();
         newTilesObj.name = "Tiles";
         newTilesObj.transform.parent = GameObject.Find("Environment").transform;
+    }
+
+
+    void OnDrawGizmos()
+    {
+        mapBuildLimitObj = GameObject.Find("MapBuildLimit");
+
+        mapX = (int)mapBuildLimitObj.transform.position.x;
+        mapY = (int)mapBuildLimitObj.transform.position.y;
+        mapZ = (int)mapBuildLimitObj.transform.position.z;
+
+        Vector3 orginPoint = new Vector3(-0.5f, 0, -0.5f);
+
+        Gizmos.color = Color.green;
+
+        Gizmos.DrawLine(orginPoint, new Vector3(mapX + 0.5f, 0, -0.5f));
+        Gizmos.DrawLine(orginPoint, new Vector3(-0.5f, mapY + 1f, -0.5f));
+        Gizmos.DrawLine(orginPoint, new Vector3(-0.5f, 0, mapZ + 0.5f));
+
     }
 
 }

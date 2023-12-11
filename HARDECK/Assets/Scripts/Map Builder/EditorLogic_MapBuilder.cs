@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -12,6 +13,10 @@ public class EditorLogic_MapBuilder : Editor
 
         mapBuilder.tilePrefab = EditorGUILayout.ObjectField("Tile Prefab", mapBuilder.tilePrefab, typeof(Object), true);
 
+        mapBuilder.mapX = EditorGUILayout.IntField("Map X", mapBuilder.mapX);
+        mapBuilder.mapZ = EditorGUILayout.IntField("Map Z", mapBuilder.mapZ);
+        mapBuilder.mapY = EditorGUILayout.IntField("Map Y", mapBuilder.mapY);
+
         if (GUILayout.Button("Load Map from File"))
         {
             mapBuilder.LoadMapFromFile();
@@ -20,6 +25,7 @@ public class EditorLogic_MapBuilder : Editor
         if (GUILayout.Button("Save Map to File"))
         {
             mapBuilder.SaveMapToFile();
+
         }
 
         if (GUILayout.Button("Clear Map"))
@@ -27,4 +33,5 @@ public class EditorLogic_MapBuilder : Editor
             mapBuilder.ClearMap();
         }
     }
+
 }

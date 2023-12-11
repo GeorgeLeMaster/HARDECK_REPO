@@ -14,12 +14,16 @@ public class TileInfo : MonoBehaviour
         Left = 270
     }
 
+    [Header("Memebers")]
     public Vector3Int tilemapPosition;
 
     public bool isRamp;
     public Directions rampOrientation;
 
-    public GameObject invalidGFX;
+    public List<TileInfo> Flowfield;
+
+    public TileInfo nextTile;
+
 
     [Header("GFX Members")]
     public GameObject GFXAnchor;
@@ -27,6 +31,8 @@ public class TileInfo : MonoBehaviour
 
     public GameObject tileGFX_prefab;
     public GameObject rampGFX_prefab;
+
+    public GameObject invalidGFX;
 
     // Start is called before the first frame update
     void Start()
