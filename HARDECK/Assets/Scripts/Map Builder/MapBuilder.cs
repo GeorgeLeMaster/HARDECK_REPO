@@ -16,7 +16,7 @@ public class MapBuilder : MonoBehaviour
 
     public Object tilePrefab;
 
-    private string mapFilePath = "testMap2.txt";
+    public string mapFilePath = "testMap2.txt";
 
     public int mapX;
     public int mapZ;
@@ -221,9 +221,30 @@ public class MapBuilder : MonoBehaviour
 
         Gizmos.color = Color.green;
 
-        Gizmos.DrawLine(orginPoint, new Vector3(mapX + 0.5f, 0, -0.5f));
-        Gizmos.DrawLine(orginPoint, new Vector3(-0.5f, mapY + 1f, -0.5f));
-        Gizmos.DrawLine(orginPoint, new Vector3(-0.5f, 0, mapZ + 0.5f));
+        Vector3 pos_1 = new Vector3(-0.5f       , 0, -0.5f);
+        Vector3 pos_2 = new Vector3(-0.5f       , 0, mapZ + 0.5f);
+        Vector3 pos_3 = new Vector3(mapX + 0.5f , 0, mapZ + 0.5f);
+        Vector3 pos_4 = new Vector3(mapX + 0.5f , 0, -0.5f);
+
+        Vector3 pos_5 = new Vector3(-0.5f       , mapY, -0.5f);
+        Vector3 pos_6 = new Vector3(-0.5f       , mapY, mapZ + 0.5f);
+        Vector3 pos_7 = new Vector3(mapX + 0.5f , mapY, mapZ + 0.5f);
+        Vector3 pos_8 = new Vector3(mapX + 0.5f , mapY, -0.5f);
+
+        Gizmos.DrawLine(pos_1, pos_2);
+        Gizmos.DrawLine(pos_2, pos_3);
+        Gizmos.DrawLine(pos_3, pos_4);
+        Gizmos.DrawLine(pos_4, pos_1);
+
+        Gizmos.DrawLine(pos_5, pos_6);
+        Gizmos.DrawLine(pos_6, pos_7);
+        Gizmos.DrawLine(pos_7, pos_8);
+        Gizmos.DrawLine(pos_8, pos_5);
+
+        Gizmos.DrawLine(pos_1, pos_5);
+        Gizmos.DrawLine(pos_2, pos_6);
+        Gizmos.DrawLine(pos_3, pos_7);
+        Gizmos.DrawLine(pos_4, pos_8);
 
     }
 

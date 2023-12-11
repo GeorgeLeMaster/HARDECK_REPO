@@ -71,6 +71,25 @@ public class TileInfo : MonoBehaviour
         if (transform.hasChanged)
         {
             UpdateTilemapPos();
+
+
+            if (existingGFX != null)
+                DestroyImmediate(existingGFX);
+
+            if (isRamp)
+            {
+
+                existingGFX = Instantiate(rampGFX_prefab, GFXAnchor.transform);
+
+                desiredRot.y = (float)rampOrientation;
+
+                existingGFX.transform.rotation = Quaternion.Euler(desiredRot);
+            }
+            else
+            {
+
+                existingGFX = Instantiate(tileGFX_prefab, GFXAnchor.transform);
+            }
         }
     }
 
@@ -79,5 +98,5 @@ public class TileInfo : MonoBehaviour
         tilemapPosition = new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z);
     }
 
-
+    
 }

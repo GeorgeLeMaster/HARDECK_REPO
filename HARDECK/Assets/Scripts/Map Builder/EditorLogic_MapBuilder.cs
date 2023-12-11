@@ -13,9 +13,8 @@ public class EditorLogic_MapBuilder : Editor
 
         mapBuilder.tilePrefab = EditorGUILayout.ObjectField("Tile Prefab", mapBuilder.tilePrefab, typeof(Object), true);
 
-        mapBuilder.mapX = EditorGUILayout.IntField("Map X", mapBuilder.mapX);
-        mapBuilder.mapZ = EditorGUILayout.IntField("Map Z", mapBuilder.mapZ);
-        mapBuilder.mapY = EditorGUILayout.IntField("Map Y", mapBuilder.mapY);
+        mapBuilder.mapFilePath = EditorGUILayout.TextField("Map File Path", mapBuilder.mapFilePath);
+
 
         if (GUILayout.Button("Load Map from File"))
         {
