@@ -23,7 +23,7 @@ public class TileInfo : MonoBehaviour
     public List<TileInfo> Flowfield;
 
     public TileInfo nextTile;
-
+    public float pathCost;
 
     [Header("GFX Members")]
     public GameObject GFXAnchor;
@@ -72,6 +72,9 @@ public class TileInfo : MonoBehaviour
         {
             UpdateTilemapPos();
 
+            string rampString = "Tile";
+            if (isRamp == true) { rampString = "Ramp"; }
+            this.gameObject.name = $"{rampString}-{tilemapPosition.x},{tilemapPosition.y},{tilemapPosition.z}";
 
             if (existingGFX != null)
                 DestroyImmediate(existingGFX);
@@ -97,6 +100,7 @@ public class TileInfo : MonoBehaviour
     {
         tilemapPosition = new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z);
     }
+
 
     
 }

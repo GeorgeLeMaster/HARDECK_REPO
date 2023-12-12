@@ -1,4 +1,4 @@
-using JetBrains.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -14,13 +14,16 @@ public class MapBuilder : MonoBehaviour
 
     private GameObject mapBuildLimitObj;
 
-    public Object tilePrefab;
+    public UnityEngine.Object tilePrefab;
 
     public string mapFilePath = "testMap2.txt";
 
     public int mapX;
     public int mapZ;
     public int mapY;
+
+    public TileInfo[,,] pathableMapTiles; 
+
     public void Start()
     {
         // Singleton Logic
@@ -36,8 +39,6 @@ public class MapBuilder : MonoBehaviour
 
         Debug.ClearDeveloperConsole();
     }
-
-
 
     public void LoadMapFromFile()
     {
@@ -61,8 +62,8 @@ public class MapBuilder : MonoBehaviour
         Vector3 limPos = new Vector3(limX, limY, limZ);
         mapBuildLimitObj.transform.position = limPos;
 
-        // INITALIZE TileInfoArray
-
+        // INITALIZE TileInfo List
+        List<TileInfo> tileList = new List<TileInfo>();
 
         reader.ReadLine();
 
@@ -146,8 +147,13 @@ public class MapBuilder : MonoBehaviour
                 if (rampData[0] == "True") { rampString = "Ramp"; }
                 newTile.name = $"{rampString}-{xPos_tile},{yPos_tile},{zPos_tile}";
 
+                // ADD NEW TILE TO tileList
+                tileList.Add(newTileInfo);
+
             }
         }
+
+        BuildFlowfield(tileList);
 
         Debug.Log("Map File Loaded");
 
@@ -208,6 +214,43 @@ public class MapBuilder : MonoBehaviour
         newTilesObj.transform.parent = GameObject.Find("Environment").transform;
     }
 
+    public void BuildFlowfield(List<TileInfo> input)
+    {
+        mapX = (int)mapBuildLimitObj.transform.position.x;
+        mapY = (int)mapBuildLimitObj.transform.position.y;
+        mapZ = (int)mapBuildLimitObj.transform.position.z;
+
+        pathableMapTiles = new TileInfo[mapX + 1, mapY + 1, mapZ + 1];
+
+        TileInfo[] toCheckList = new TileInfo[pathableMapTiles.Length];
+        TileInfo[] alreadyCheckedList = new TileInfo[pathableMapTiles.Length];
+
+        foreach (TileInfo tile in input)
+        {
+            pathableMapTiles[tile.tilemapPosition.x, tile.tilemapPosition.y, tile.tilemapPosition.z] = tile;
+        }
+
+        foreach(TileInfo tile in pathableMapTiles)
+        {
+            if (tile != null)
+            {
+                // WE HAVE A REAL TILE
+                // MAKE SURE VARIABLES ARE CLEAN FOR NEW TILE
+                Array.Clear(toCheckList, 0, toCheckList.Length);
+                Array.Clear(alreadyCheckedList, 0, alreadyCheckedList.Length);
+
+                List<TileInfo> newFlowfield = new List<TileInfo>();
+
+                // START AT CURRENT TILE POS
+                // FOR EACH OF THE 8 SURROUNDING TILES
+                    // IF TILE DOES NOT HAVE A nextTile, SET IT EQUAL TO THIS TILE
+                    // OTHERWISE, CHECK DIRECTION OF tile'S nextTile, IF EQUAL TO DIRECTION TO THIS TILE FROM CHECKING TILE, OVERRIDE CHECKING TILE'S nextTile
+
+
+                tile.Flowfield = newFlowfield;
+            }
+        }
+    }
 
     void OnDrawGizmos()
     {
@@ -217,14 +260,13 @@ public class MapBuilder : MonoBehaviour
         mapY = (int)mapBuildLimitObj.transform.position.y;
         mapZ = (int)mapBuildLimitObj.transform.position.z;
 
-        Vector3 orginPoint = new Vector3(-0.5f, 0, -0.5f);
 
         Gizmos.color = Color.green;
 
-        Vector3 pos_1 = new Vector3(-0.5f       , 0, -0.5f);
-        Vector3 pos_2 = new Vector3(-0.5f       , 0, mapZ + 0.5f);
-        Vector3 pos_3 = new Vector3(mapX + 0.5f , 0, mapZ + 0.5f);
-        Vector3 pos_4 = new Vector3(mapX + 0.5f , 0, -0.5f);
+        Vector3 pos_1 = new Vector3(-0.5f       , -1, -0.5f);
+        Vector3 pos_2 = new Vector3(-0.5f       , -1, mapZ + 0.5f);
+        Vector3 pos_3 = new Vector3(mapX + 0.5f , -1, mapZ + 0.5f);
+        Vector3 pos_4 = new Vector3(mapX + 0.5f , -1, -0.5f);
 
         Vector3 pos_5 = new Vector3(-0.5f       , mapY, -0.5f);
         Vector3 pos_6 = new Vector3(-0.5f       , mapY, mapZ + 0.5f);
