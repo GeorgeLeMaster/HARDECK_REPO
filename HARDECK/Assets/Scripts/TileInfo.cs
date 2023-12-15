@@ -101,6 +101,17 @@ public class TileInfo : MonoBehaviour
         tilemapPosition = new Vector3Int((int)transform.position.x, (int)transform.position.y, (int)transform.position.z);
     }
 
+    public void CopyStats(TileInfo input)
+    {
+        tilemapPosition = input.tilemapPosition;
 
+        isRamp = input.isRamp;
+        rampOrientation = input.rampOrientation;
+
+        Flowfield = input.Flowfield;
+
+        nextTile = input.nextTile;
+        pathCost = input.pathCost;
+    }
     
 }

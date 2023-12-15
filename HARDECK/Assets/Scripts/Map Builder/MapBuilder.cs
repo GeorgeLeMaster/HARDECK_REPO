@@ -222,7 +222,7 @@ public class MapBuilder : MonoBehaviour
 
         pathableMapTiles = new TileInfo[mapX + 1, mapY + 1, mapZ + 1];
 
-        TileInfo[] toCheckList = new TileInfo[pathableMapTiles.Length];
+        int aInt = 0;
         TileInfo[] alreadyCheckedList = new TileInfo[pathableMapTiles.Length];
 
         foreach (TileInfo tile in input)
@@ -230,26 +230,51 @@ public class MapBuilder : MonoBehaviour
             pathableMapTiles[tile.tilemapPosition.x, tile.tilemapPosition.y, tile.tilemapPosition.z] = tile;
         }
 
-        foreach(TileInfo tile in pathableMapTiles)
+        for (int y = 0; y < mapY; y++)
         {
-            if (tile != null)
+            for (int z = 0; z < mapZ; z++)
             {
-                // WE HAVE A REAL TILE
-                // MAKE SURE VARIABLES ARE CLEAN FOR NEW TILE
-                Array.Clear(toCheckList, 0, toCheckList.Length);
-                Array.Clear(alreadyCheckedList, 0, alreadyCheckedList.Length);
+                for (int x = 0; x < mapX; x++)
+                {
+                    TileInfo tile = pathableMapTiles[x, y, z];
 
-                List<TileInfo> newFlowfield = new List<TileInfo>();
+                    if (tile != null)
+                    {
+                        // WE HAVE A REAL TILE
+                        // MAKE SURE VARIABLES ARE CLEAN FOR NEW TILE
+                        Array.Clear(alreadyCheckedList, 0, alreadyCheckedList.Length);
 
-                // START AT CURRENT TILE POS
-                // FOR EACH OF THE 8 SURROUNDING TILES
-                    // IF TILE DOES NOT HAVE A nextTile, SET IT EQUAL TO THIS TILE
-                    // OTHERWISE, CHECK DIRECTION OF tile'S nextTile, IF EQUAL TO DIRECTION TO THIS TILE FROM CHECKING TILE, OVERRIDE CHECKING TILE'S nextTile
+                        List<TileInfo> newFlowfield = new List<TileInfo>();
+
+                        // START AT CURRENT TILE POS
+                        for (int xOff = -1; xOff < 2; xOff++)
+                        {
+                            for (int zOff = -1; zOff < 2; zOff++)
+                            {
+                                if (!(xOff == 0 && zOff == 0))
+                                {
+                                    //if (newFlowfield)
+                                    {
+
+                                    }
+
+                                    alreadyCheckedList[aInt] = tile;
+                                    aInt++;
+                                }
+                            }
+                        }
+                        // FOR EACH OF THE 8 SURROUNDING TILES
+                        // IF TILE DOES NOT HAVE A nextTile, SET IT EQUAL TO THIS TILE
+                        // OTHERWISE, CHECK DIRECTION OF tile'S nextTile, IF EQUAL TO DIRECTION TO THIS TILE FROM CHECKING TILE, OVERRIDE CHECKING TILE'S nextTile
 
 
-                tile.Flowfield = newFlowfield;
+                        tile.Flowfield = newFlowfield;
+
+                    }
+                }
             }
         }
+
     }
 
     void OnDrawGizmos()
