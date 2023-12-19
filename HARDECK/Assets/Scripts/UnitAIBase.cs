@@ -2,8 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GroundUnitAI : MonoBehaviour
+public class UnitAIBase : MonoBehaviour
 {
+
+    public Vector3Int mapCoords;
+    public GameObject gfx;
+
+    public UnitSO unitSO;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -16,8 +22,5 @@ public class GroundUnitAI : MonoBehaviour
         
     }
 
-    public void SnapToPosition()
-    {
-
-    }
+    virtual public void Spawn(Vector3Int input) { }
 }
