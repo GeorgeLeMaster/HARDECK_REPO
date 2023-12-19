@@ -42,6 +42,8 @@ public class MapBuilder : MonoBehaviour
 
     public void LoadMapFromFile()
     {
+        mapBuildLimitObj = GameObject.Find("MapBuildLimit");
+
         ClearMap();
 
         Debug.Log("Loading Map from " + mapFilePath);
