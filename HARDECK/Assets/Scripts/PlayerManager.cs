@@ -11,7 +11,7 @@ public class PlayerManager : MonoBehaviour
     public List<UnitAIBase> deck;
     public List<UnitAIBase> units;
 
-    private int selectionInt = -1;
+    public int selectionInt = -100;
     
     public enum TurnState
     {
@@ -77,6 +77,12 @@ public class PlayerManager : MonoBehaviour
 
     public void PlayCard()
     {
+
+        if (selectionInt < -3)
+        {
+            return;
+        }
+
         Vector3Int spawnPos = Vector3Int.zero;
 
         // Find Position to play
@@ -96,6 +102,7 @@ public class PlayerManager : MonoBehaviour
         {
             return;
         }
+
 
         GameManager.instance.SpawnUnit(selectionInt, spawnPos);
 

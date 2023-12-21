@@ -260,8 +260,11 @@ public class MapBuilder : MonoBehaviour
 
                                     }
 
-                                    alreadyCheckedList[aInt] = tile;
-                                    aInt++;
+                                    if (aInt <= alreadyCheckedList.Length - 1)
+                                    {
+                                        alreadyCheckedList[aInt] = tile;
+                                        aInt++;
+                                    }
                                 }
                             }
                         }
