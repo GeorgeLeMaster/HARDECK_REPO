@@ -91,7 +91,18 @@ public class PlayerManager : MonoBehaviour
         {
             if (hit.transform.GetComponent<TileInfo>())
             {
-                spawnPos = hit.transform.GetComponent<TileInfo>().tilemapPosition;
+                Vector3Int clickedPos = hit.transform.GetComponent<TileInfo>().tilemapPosition;
+
+                if (MapBuilder.instance.Tiles[clickedPos.x, clickedPos.y, clickedPos.z] != null)
+                {
+                    spawnPos = clickedPos;
+                }
+                else
+                {
+
+                    spawnPos = new Vector3Int(-1, -1, -1);
+                }
+                
             }
             else
             {
@@ -103,8 +114,10 @@ public class PlayerManager : MonoBehaviour
             return;
         }
 
-
-        GameManager.instance.SpawnUnit(selectionInt, spawnPos);
+        if (spawnPos != new Vector3Int(-1, -1, -1))
+        {
+            GameManager.instance.SpawnUnit(selectionInt, spawnPos);
+        }
 
         switch (selectionInt)
         {
