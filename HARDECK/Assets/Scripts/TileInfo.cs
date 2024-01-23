@@ -22,7 +22,7 @@ public class TileInfo : MonoBehaviour
 
     public List<TileInfo> Flowfield;
 
-    public TileInfo nextTile;
+    public TileInfo nextTile = null;
     public float pathCost;
 
     [Header("GFX Members")]
