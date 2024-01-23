@@ -40,6 +40,20 @@ public class PlayerManager : MonoBehaviour
         {
             PlayCard();
         }
+
+        if (Input.GetMouseButtonDown (0))
+        {
+            switch(currentTurnState)
+            {
+                case TurnState.Deployment:
+
+                    break;
+
+                case TurnState.Movement:
+
+                    break;
+            }
+        }
     }
 
     public void StartTurn()
@@ -93,16 +107,11 @@ public class PlayerManager : MonoBehaviour
             {
                 Vector3Int clickedPos = hit.transform.GetComponent<TileInfo>().tilemapPosition;
 
-                if (MapBuilder.instance.Tiles[clickedPos.x, clickedPos.y, clickedPos.z] != null)
-                {
-                    spawnPos = clickedPos;
-                }
-                else
-                {
 
-                    spawnPos = new Vector3Int(-1, -1, -1);
-                }
-                
+                spawnPos = clickedPos;
+
+
+
             }
             else
             {
@@ -114,15 +123,13 @@ public class PlayerManager : MonoBehaviour
             return;
         }
 
-        if (spawnPos != new Vector3Int(-1, -1, -1))
-        {
-            GameManager.instance.SpawnUnit(selectionInt, spawnPos);
-        }
+        GameManager.instance.SpawnUnit(selectionInt, spawnPos);
+
 
         switch (selectionInt)
         {
             case -1:
-                
+
                 break;
         }
     }

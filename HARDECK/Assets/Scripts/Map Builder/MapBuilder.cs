@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
@@ -10,10 +11,9 @@ using static UnityEngine.GraphicsBuffer;
 
 public class Flowfield
 {
-    public Flowfield() { }
-    public Flowfield(int x, int y, int z)
+    public Flowfield()
     {
-
+        tiles = MapBuilder.instance.Tiles;
     }
 
     public TileInfo orginPoint;
@@ -40,8 +40,10 @@ public class MapBuilder : MonoBehaviour
     public Flowfield[,,] Flowfields;
 
 
-    [SerializeField] public TileInfo[,,] Tiles;
+    public TileInfo[,,] Tiles;
 
+    public Vector3Int to = new Vector3Int( 1, 0, 1 );
+    public Vector3Int from = new Vector3Int( 3, 0, 3 );
 
     public void Start()
     {
@@ -116,6 +118,8 @@ public class MapBuilder : MonoBehaviour
                 float.TryParse(posValues[1], out float yPos_gfx);
                 float.TryParse(posValues[2], out float zPos_gfx);
 
+                
+
                 // INSTANTIATE TILE AT DESIRED POSITION AND SET PROPER PARENT
                 newPos_gfx = new Vector3(xPos_gfx, yPos_gfx, zPos_gfx);
                 GameObject newTile = Instantiate(tilePrefab, newPos_gfx, Quaternion.identity) as GameObject;
@@ -185,12 +189,26 @@ public class MapBuilder : MonoBehaviour
             }
         }
 
-        BuildFlowfields();
 
         Debug.Log("Map File Loaded");
 
         reader.Close();
 
+        if (Application.isPlaying)
+        {
+            BuildFlowfields();
+
+            //foreach (Flowfield ff in Flowfields)
+            //{
+            //    if (ff != null)
+            //    {
+            //        Debug.Log(ff.orginPoint.tilemapPosition);
+            //    }
+            //}
+
+             DrawPath(GetPath(to, from));
+
+        }
         // Decide what is and isnt pathable
 
         //Debug.Log(MapBuilder.instance.pathableMapTiles.Length);
@@ -219,20 +237,26 @@ public class MapBuilder : MonoBehaviour
         {
             if (transform.gameObject.GetComponent<TileInfo>() != null)
             {
+                
+
                 TileInfo currentTileInfo = transform.gameObject.GetComponent<TileInfo>();
 
-                string positionString = transform.position.ToString();
-                positionString = positionString.Substring(1, positionString.Length - 2);
+                if (currentTileInfo.tilemapPosition.y <= mapY)
+                {
 
-                string rampBool = currentTileInfo.isRamp.ToString();
+                    string positionString = transform.position.ToString();
+                    positionString = positionString.Substring(1, positionString.Length - 2);
 
-                string rampOrientation = currentTileInfo.rampOrientation.ToString();
+                    string rampBool = currentTileInfo.isRamp.ToString();
 
-                string tilemapPos = currentTileInfo.tilemapPosition.ToString();
-                tilemapPos = tilemapPos.Substring(1, tilemapPos.Length - 2);
+                    string rampOrientation = currentTileInfo.rampOrientation.ToString();
+
+                    string tilemapPos = currentTileInfo.tilemapPosition.ToString();
+                    tilemapPos = tilemapPos.Substring(1, tilemapPos.Length - 2);
 
 
-                writer.WriteLine($"{positionString}*{rampBool},{rampOrientation}*{tilemapPos}");
+                    writer.WriteLine($"{positionString}*{rampBool},{rampOrientation}*{tilemapPos}");
+                }
             }
         }
 
@@ -256,149 +280,160 @@ public class MapBuilder : MonoBehaviour
 
     public void BuildFlowfields()
     {
+
+        // Initalize checklist
+
+        Debug.Log($"{mapX}, {mapY}, {mapZ}");
+        // Initalize flowfields array
+
         Flowfields = new Flowfield[mapX+1, mapY+1, mapZ+1];
+        //Debug.Log(Flowfields.Length);
 
-
-    }
-/*
-    public Flowfield GenerateFlowfield(Vector2Int orginPoint)
-    {
-
-        Flowfield result = new Flowfield();
-
-        mapX = (int)mapBuildLimitObj.transform.position.x;
-        mapY = (int)mapBuildLimitObj.transform.position.y;
-        mapZ = (int)mapBuildLimitObj.transform.position.z;
-
-        result.orginPoint = pathableMapTiles[mapX, mapY, mapZ];
-        //Debug.Log(result.orginPoint.voxCoord);
-        // Copies blank map data
-        for (int x = 0; x < mapX; x++)
+        foreach(TileInfo currentTile in Tiles)
         {
-            for (int y = 0; y < mapY; y++)
-            {
-                result.voxels[x, y] = new Voxel();
+            Vector3Int pos = currentTile.tilemapPosition;
+            //Debug.Log(pos);
+            Flowfield ff = BuildFlowfield(pos);
 
-                result.voxels[x, y].voxCoord = currentMapData.voxels[x, y].voxCoord;
-
-                result.voxels[x, y].tileCost = currentMapData.voxels[x, y].tileCost;
-                result.voxels[x, y].pathCost = currentMapData.voxels[x, y].pathCost;
-
-                result.voxels[x, y].isDest = currentMapData.voxels[x, y].isDest;
-                result.voxels[x, y].isRamp = currentMapData.voxels[x, y].isRamp;
-
-                result.voxels[x, y].terrainObj = currentMapData.voxels[x, y].terrainObj;
-
-            }
+            Flowfields[pos.x, pos.y, pos.z] = ff;
         }
 
-        // Builds Paths
-        //  -   Work outwards, left->right, top->down
-        //  -   If checkedVox has no nextVox, assign to currentVox and increment path cost
-        //  -   If checkedVox HAS a nextVox, skip
-        //  -   EXCEPTION: If assigning currentVox as nextVox would align currentVox and nextVox, do so
+    }
 
-        // Stores the voxels yet to check
-        List<Voxel> toCheck = new List<Voxel>();
+    public Flowfield BuildFlowfield(Vector3Int pos)
+    {
+        Flowfield result = new Flowfield();
 
-        toCheck.Add(result.orginPoint);
+        List<TileInfo> toCheck = new List<TileInfo>();
 
-        int killswitch = 0;
-
-        while (toCheck.Count() > 0)
+        // Check if tile is real
+        if (Tiles[pos.x, pos.y, pos.z] != null)
         {
-            for (int yOff = -1; yOff <= 1; yOff++)
+
+            // Grab current tile to build ff for
+            TileInfo currentTile = result.tiles[pos.x, pos.y, pos.z];
+            currentTile.pathCost = 0;
+            result.orginPoint = currentTile;
+            result.orginPoint.nextTile = null;
+
+            // Add it to the toCheckList
+            toCheck.Add(result.orginPoint);
+
+            int killswitch = 0;
+
+            // while the list to check isnt empty and we havent tripped the killswitch
+            while (toCheck.Count() > 0 && killswitch < (10000))
             {
-                for (int xOff = -1; xOff <= 1; xOff++)
+                TileInfo checkTile = toCheck.First();
+
+                TileInfo newTile;
+
+                for (int yOff = -1; yOff <= 1; yOff++)
                 {
-                    // Make sure its not the center vox
-                    if (!(yOff == 0 && xOff == 0))
+                    for (int zOff = -1; zOff <= 1; zOff++)
                     {
-                        int newX = toCheck.First().voxCoord.x + xOff;
-                        int newY = toCheck.First().voxCoord.y + yOff;
-
-                        // Ensure new coord is valid
-                        if (IsValidCoord(newX, newY) == true && CheckLevel(result.voxels[newX, newY], toCheck.First()) == true && result.orginPoint != result.voxels[newX, newY])
+                        for (int xOff = -1; xOff < 1; xOff++)
                         {
+                            // Inspecting each tile surrounding currentTile
 
-                            float modTileCost = result.voxels[newX, newY].tileCost;
-
-                            if (yOff != 0 && xOff != 0)
+                            // Make sure its not the center tile
+                            if (!(zOff == 0 && xOff == 0))
                             {
-                                modTileCost *= 1.5f;
-                            }
+                                // Coords of would-be checkTile
+                                int newX = checkTile.tilemapPosition.x + xOff;
+                                int newY = checkTile.tilemapPosition.y + yOff;
+                                int newZ = checkTile.tilemapPosition.z + zOff;
 
-                            // nextVox rule check and assignment
-                            if (result.voxels[newX, newY].nextVoxel == null && toCheck.First() != null)
-                            {
-                                result.voxels[newX, newY].nextVoxel = toCheck.First();
-
-                                // Calculate _voxel pathCost
-                                result.voxels[newX, newY].pathCost = toCheck.First().pathCost + modTileCost;
-                            }
-                            else
-                            {
-                                Vector2 a = toCheck.First().voxCoord - result.voxels[newX, newY].voxCoord;
-                                Vector2 b = toCheck.First().nextVoxel.voxCoord - toCheck.First().voxCoord;
-
-
-
-                                a.Normalize();
-                                b.Normalize();
-
-                                if (a == b)
+                                // Make sure its not a null reference
+                                if (IsValidTile(newX, newY, newZ))
                                 {
-                                    result.voxels[newX, newY].nextVoxel = toCheck.First();
 
-                                    // Calculate _voxel pathCost
-                                    result.voxels[newX, newY].pathCost = toCheck.First().pathCost + modTileCost;
-                                }
-                                else
-                                {
-                                    // This should mean that _voxel already has a nextVox and assigning it to toCheck.first()
-                                    // would not align it with the currentVox's bearing
-                                    // If this is correct, do not touch _voxel's nextVox or pathCost
+                                    newTile = result.tiles[newX, newY, newZ];
+                                    //newTile.tilemapPosition = new Vector3Int(newX, newY, newZ);
+                                    // Mod Cost
+                                    float modTileCost = 1;
+
+                                    // Check if at angle
+                                    if (zOff != 0 && xOff != 0)
+                                    {
+                                        modTileCost *= 1.5f;
+                                    }
+
+                                    // Check if up or down
+                                    if (yOff == 1)
+                                    {
+                                        modTileCost *= 1.2f;
+                                    }
+                                    else if (yOff == -1)
+                                    {
+                                        modTileCost *= 0.8f;
+                                    }
+
+                                    // if up - checkTile must be ramp, flat is ok, if down - new tile must be ramp
+                                    if ((yOff == 1 && checkTile.isRamp) || yOff == 0 || (yOff == -1 && newTile.isRamp))
+                                    {
+                                        if (newTile != result.orginPoint)
+                                        {
+                                            if (newTile.nextTile == null && newTile != result.orginPoint)
+                                            {
+                                                newTile.nextTile = checkTile;
+                                                newTile.pathCost = modTileCost + checkTile.pathCost;
+                                                if (newTile != result.orginPoint)
+                                                toCheck.Add(newTile);
+                                            }
+                                            else
+                                            {
+                                                //if (checkTile.nextTile != null)
+                                                //{
+                                                //    Vector2 a = new Vector2(newTile.tilemapPosition.x, newTile.tilemapPosition.z) - new Vector2(checkTile.tilemapPosition.x, checkTile.tilemapPosition.z);
+                                                //    Vector2 b = new Vector2(checkTile.tilemapPosition.x, checkTile.tilemapPosition.z) - new Vector2(checkTile.nextTile.tilemapPosition.x, checkTile.nextTile.tilemapPosition.z);
+
+                                                //    a.Normalize();
+                                                //    b.Normalize();
+
+                                                //    if (a == b)
+                                                //    {
+                                                //        newTile.nextTile = checkTile;
+                                                //    }
+                                                //}
+
+                                            }
+                                        }
+                                    }
 
                                 }
                             }
+                        } // Offset loops
+                    } // " "
+                } // " "
 
-                            // Try to make range circular rather than square 
-                            // BROKEN
-                            //if (xOff != 0 && yOff != 0)
-                            //{
-                            //    result.voxels[newX, newY].pathCost += 1;
-                            //}
+                toCheck.Remove(toCheck.First());
 
-                            // Add to toCheck list, provided it hs not already been checked and isnot already in the list
-                            if (!result.voxels[newX, newY].isChecked && !toCheck.Contains(result.voxels[newX, newY]))
-                            {
-                                toCheck.Add(result.voxels[newX, newY]);
-                            }
-                        }
-
-                    }
-                }
-            }
-            //Debug.Log("!");
-
-            toCheck.First().isChecked = true;
-            toCheck.Remove(toCheck.First());
-
-            // Prevent endless looping in case my code is shoddy
-            if (killswitch >= 10000)
-            {
-                Debug.Log("Killswitch");
-                break;
-            }
-            else
-            {
                 killswitch++;
-            }
+
+            } // toCheck loop
+
         }
 
         return result;
     }
-*/
+    private bool IsValidTile(int x, int y, int z)
+    {
+        bool result = true;
+
+        if (mapX < x || mapY < y || mapZ < z || x < 0 || y < 0 || z < 0)
+        {
+            return false;
+        }
+
+        if (Tiles[x, y, z] == null) 
+        {
+            return false; 
+        }
+
+        return result;
+    }
+
     void OnDrawGizmos()
     {
         mapBuildLimitObj = GameObject.Find("MapBuildLimit");
@@ -410,10 +445,10 @@ public class MapBuilder : MonoBehaviour
 
         Gizmos.color = Color.green;
 
-        Vector3 pos_1 = new Vector3(-0.5f       , -1, -0.5f);
-        Vector3 pos_2 = new Vector3(-0.5f       , -1, mapZ + 0.5f);
-        Vector3 pos_3 = new Vector3(mapX + 0.5f , -1, mapZ + 0.5f);
-        Vector3 pos_4 = new Vector3(mapX + 0.5f , -1, -0.5f);
+        Vector3 pos_1 = new Vector3(-0.5f       , 0, -0.5f);
+        Vector3 pos_2 = new Vector3(-0.5f       , 0, mapZ + 0.5f);
+        Vector3 pos_3 = new Vector3(mapX + 0.5f , 0, mapZ + 0.5f);
+        Vector3 pos_4 = new Vector3(mapX + 0.5f , 0, -0.5f);
 
         Vector3 pos_5 = new Vector3(-0.5f       , mapY, -0.5f);
         Vector3 pos_6 = new Vector3(-0.5f       , mapY, mapZ + 0.5f);
@@ -435,6 +470,51 @@ public class MapBuilder : MonoBehaviour
         Gizmos.DrawLine(pos_3, pos_7);
         Gizmos.DrawLine(pos_4, pos_8);
 
+    }
+
+    void DrawPath(List<Vector3> input )
+    {
+        foreach(Vector3 pos in input)
+        {
+            Debug.Log(pos);
+        }
+
+        LineRenderer lr = gameObject.AddComponent<LineRenderer>();
+        lr.alignment = LineAlignment.View;
+        lr.SetWidth(0.2f, 0.2f);
+
+        lr.positionCount = input.Count;
+
+        for (int i = 0; i < input.Count; i++)
+        {
+            lr.SetPosition(i, input[i] + new Vector3(0, 0.25f, 0));
+        }
+    }
+
+    List<Vector3> GetPath(Vector3Int fforigin, Vector3Int current)
+    {
+        fforigin = new Vector3Int(4, 0, 4);
+        current = new Vector3Int(0, 0, 0);
+
+        List<Vector3> result = new List<Vector3>();
+
+        Flowfield flowfield = Flowfields[fforigin.x, fforigin.y, fforigin.z];
+
+        TileInfo currentTile = flowfield.tiles[current.x, current.y, current.z];
+
+        int killswitch = 0;
+
+
+        while (currentTile.nextTile != null && killswitch < 10000)
+        {
+            result.Add(currentTile.tilemapPosition);
+
+            currentTile = currentTile.nextTile;
+
+            killswitch++;
+        }
+
+        return result;
     }
 
 }
