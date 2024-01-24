@@ -6,21 +6,61 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Windows;
 using static UnityEngine.GraphicsBuffer;
 
+public class TileInfo_Class
+{
+    public Vector3Int tilemapPosition;
+
+    public bool isRamp;
+    //public Directions rampOrientation;
+
+    public TileInfo_Class nextTile = null;
+    public float pathCost;
+    public bool isChecked = false;
+
+    public TileInfo_Class() { }
+
+    public TileInfo_Class(TileInfo input)
+    {
+        tilemapPosition = input.tilemapPosition;
+        isRamp = input.isRamp;
+        pathCost = input.pathCost;
+        isChecked = input.isChecked;
+
+    }
+}
 
 public class Flowfield
 {
-    public Flowfield()
+
+    public Flowfield(TileInfo op)
     {
-        tiles = MapBuilder.instance.Tiles;
+        tiles = new TileInfo_Class[MapBuilder.instance.mapX+1, MapBuilder.instance.mapY + 1, MapBuilder.instance.mapZ + 1];
+
+        foreach(TileInfo tile in MapBuilder.instance.Tiles)
+        {
+            if (tile != null)
+            {
+                Vector3Int pos = tile.tilemapPosition;
+
+                if (tiles[pos.x, pos.y, pos.z] == null)
+                {
+                    tiles[pos.x, pos.y, pos.z] = new TileInfo_Class(tile);
+                }
+            }
+        }
+
+        originPoint = new TileInfo_Class(op);
     }
 
-    public TileInfo orginPoint;
+    public TileInfo_Class originPoint = null;
 
-    public TileInfo[,,] tiles;
+    public TileInfo_Class[,,] tiles;
 
 }
+
 
 [ExecuteAlways]
 public class MapBuilder : MonoBehaviour
@@ -31,7 +71,7 @@ public class MapBuilder : MonoBehaviour
 
     public UnityEngine.Object tilePrefab;
 
-    public string mapFilePath = "testMap2.txt";
+    public string mapFilePath;
 
     public int mapX;
     public int mapZ;
@@ -42,13 +82,12 @@ public class MapBuilder : MonoBehaviour
 
     public TileInfo[,,] Tiles;
 
-    public Vector3Int to = new Vector3Int( 1, 0, 1 );
-    public Vector3Int from = new Vector3Int( 3, 0, 3 );
+
 
     public void Start()
     {
         // Singleton Logic
-        if (instance == null)
+        if (instance == null || instance == this)
         {
             instance = this;
         }
@@ -63,6 +102,7 @@ public class MapBuilder : MonoBehaviour
 
     public void LoadMapFromFile()
     {
+
         // Find mapBuildLimitObj
         mapBuildLimitObj = GameObject.Find("MapBuildLimit");
 
@@ -171,7 +211,7 @@ public class MapBuilder : MonoBehaviour
 
                 // INSTANTIATE TILE AT DESIRED POSITION AND SET PROPER PARENT
                 newPos_tile = new Vector3Int((int)xPos_tile, (int)yPos_tile, (int)zPos_tile);
-                //Debug.Log(newPos_tile);
+               // Debug.Log(newPos_tile);
 
                 newTileInfo.tilemapPosition = newPos_tile;
 
@@ -198,15 +238,30 @@ public class MapBuilder : MonoBehaviour
         {
             BuildFlowfields();
 
+            //foreach(TileInfo tile in Tiles)
+            //{
+            //    Debug.Log(tile.tilemapPosition);
+            //}
+
             //foreach (Flowfield ff in Flowfields)
             //{
+            //    int i = 0;
+            //    foreach (TileInfo tile in ff.tiles)
+            //    {
+            //        if (tile.nextTile != null)
+            //        {
+            //            Debug.Log($"{tile.tilemapPosition}, {tile.nextTile.tilemapPosition}");
+
+            //        }
+            //    }
+
             //    if (ff != null)
             //    {
-            //        Debug.Log(ff.orginPoint.tilemapPosition);
+            //        Debug.Log($"{ff.originPoint.tilemapPosition}, {i}");
             //    }
             //}
 
-             DrawPath(GetPath(to, from));
+            //DrawFlowfield(Flowfields[3, 0, 3]);
 
         }
         // Decide what is and isnt pathable
@@ -281,6 +336,7 @@ public class MapBuilder : MonoBehaviour
     public void BuildFlowfields()
     {
 
+
         // Initalize checklist
 
         Debug.Log($"{mapX}, {mapY}, {mapZ}");
@@ -289,132 +345,142 @@ public class MapBuilder : MonoBehaviour
         Flowfields = new Flowfield[mapX+1, mapY+1, mapZ+1];
         //Debug.Log(Flowfields.Length);
 
-        foreach(TileInfo currentTile in Tiles)
+        for (int y = 0; y <= mapY; y++)
         {
-            Vector3Int pos = currentTile.tilemapPosition;
-            //Debug.Log(pos);
-            Flowfield ff = BuildFlowfield(pos);
+            for (int z = 0; z <= mapZ; z++)
+            {
+                for (int x = 0; x <= mapX; x++)
+                {
 
-            Flowfields[pos.x, pos.y, pos.z] = ff;
+                    TileInfo currentTile = Tiles[x, y, z];
+                    if (currentTile != null)
+                    {
+
+                        Flowfield ff = BuildFlowfield(currentTile);
+
+                        Flowfields[currentTile.tilemapPosition.x, currentTile.tilemapPosition.y, currentTile.tilemapPosition.z] = ff;
+                    }
+                }
+            }
         }
 
     }
 
-    public Flowfield BuildFlowfield(Vector3Int pos)
+    public Flowfield BuildFlowfield(TileInfo origin)
     {
-        Flowfield result = new Flowfield();
+        Flowfield result = new Flowfield(origin);
 
-        List<TileInfo> toCheck = new List<TileInfo>();
+        foreach(TileInfo_Class tile in result.tiles)
+        {
+            if (tile != null)
+            {
+                tile.nextTile = null;
+                tile.isChecked = false;
+            }
+        }
 
         // Check if tile is real
-        if (Tiles[pos.x, pos.y, pos.z] != null)
+        if (Tiles[origin.tilemapPosition.x, origin.tilemapPosition.y, origin.tilemapPosition.z] != null)
         {
 
+            List<TileInfo_Class> toCheck = new List<TileInfo_Class>();
+
+            TileInfo_Class checkTile;
+
             // Grab current tile to build ff for
-            TileInfo currentTile = result.tiles[pos.x, pos.y, pos.z];
+           // Debug.Log(origin.tilemapPosition);
+            TileInfo_Class currentTile = result.tiles[origin.tilemapPosition.x, origin.tilemapPosition.y, origin.tilemapPosition.z];
             currentTile.pathCost = 0;
-            result.orginPoint = currentTile;
-            result.orginPoint.nextTile = null;
+           // result.originPoint = currentTile;
+            result.originPoint.nextTile = null;
 
             // Add it to the toCheckList
-            toCheck.Add(result.orginPoint);
-
+            toCheck.Add(result.originPoint);
+            //Debug.Log(toCheck.First().tilemapPosition);
             int killswitch = 0;
 
             // while the list to check isnt empty and we havent tripped the killswitch
-            while (toCheck.Count() > 0 && killswitch < (10000))
+            while (toCheck.Count() > 0)
             {
-                TileInfo checkTile = toCheck.First();
+                //Debug.Log(toCheck.Count());
+                checkTile = toCheck.First();
 
-                TileInfo newTile;
 
                 for (int yOff = -1; yOff <= 1; yOff++)
                 {
                     for (int zOff = -1; zOff <= 1; zOff++)
                     {
-                        for (int xOff = -1; xOff < 1; xOff++)
+                        for (int xOff = -1; xOff <= 1; xOff++)
                         {
-                            // Inspecting each tile surrounding currentTile
+                            int newX = checkTile.tilemapPosition.x + xOff;
+                            int newY = checkTile.tilemapPosition.y + yOff;
+                            int newZ = checkTile.tilemapPosition.z + zOff;
 
-                            // Make sure its not the center tile
-                            if (!(zOff == 0 && xOff == 0))
+                            if (IsValidTile(newX, newY, newZ))
                             {
-                                // Coords of would-be checkTile
-                                int newX = checkTile.tilemapPosition.x + xOff;
-                                int newY = checkTile.tilemapPosition.y + yOff;
-                                int newZ = checkTile.tilemapPosition.z + zOff;
+                                TileInfo_Class newTile = result.tiles[newX, newY, newZ];
 
-                                // Make sure its not a null reference
-                                if (IsValidTile(newX, newY, newZ))
+                                if ((yOff == -1 && checkTile.isRamp || yOff == 0 || (yOff == 1 && newTile.isRamp)) && (!(zOff == 0 && xOff == 0)) && checkTile != null)
                                 {
+                                    
 
-                                    newTile = result.tiles[newX, newY, newZ];
-                                    //newTile.tilemapPosition = new Vector3Int(newX, newY, newZ);
-                                    // Mod Cost
-                                    float modTileCost = 1;
 
-                                    // Check if at angle
-                                    if (zOff != 0 && xOff != 0)
+                                    if (newTile.nextTile == null)
                                     {
-                                        modTileCost *= 1.5f;
+                                        newTile.nextTile = checkTile;
+                                        //newTile.nextTile = result.originPoint;
+
                                     }
+                                    else
+                                    {
+                                        //newTile.nextTile = result.originPoint;
 
-                                    // Check if up or down
-                                    if (yOff == 1)
-                                    {
-                                        modTileCost *= 1.2f;
-                                    }
-                                    else if (yOff == -1)
-                                    {
-                                        modTileCost *= 0.8f;
-                                    }
-
-                                    // if up - checkTile must be ramp, flat is ok, if down - new tile must be ramp
-                                    if ((yOff == 1 && checkTile.isRamp) || yOff == 0 || (yOff == -1 && newTile.isRamp))
-                                    {
-                                        if (newTile != result.orginPoint)
+                                        if (checkTile.nextTile != null)
                                         {
-                                            if (newTile.nextTile == null && newTile != result.orginPoint)
+                                            Vector3 a = checkTile.tilemapPosition - newTile.tilemapPosition;
+                                            Vector3 b = checkTile.nextTile.tilemapPosition - checkTile.tilemapPosition;
+
+                                            a.Normalize();
+                                            b.Normalize();
+
+                                            if (a == b)
                                             {
+
                                                 newTile.nextTile = checkTile;
-                                                newTile.pathCost = modTileCost + checkTile.pathCost;
-                                                if (newTile != result.orginPoint)
-                                                toCheck.Add(newTile);
-                                            }
-                                            else
-                                            {
-                                                //if (checkTile.nextTile != null)
-                                                //{
-                                                //    Vector2 a = new Vector2(newTile.tilemapPosition.x, newTile.tilemapPosition.z) - new Vector2(checkTile.tilemapPosition.x, checkTile.tilemapPosition.z);
-                                                //    Vector2 b = new Vector2(checkTile.tilemapPosition.x, checkTile.tilemapPosition.z) - new Vector2(checkTile.nextTile.tilemapPosition.x, checkTile.nextTile.tilemapPosition.z);
-
-                                                //    a.Normalize();
-                                                //    b.Normalize();
-
-                                                //    if (a == b)
-                                                //    {
-                                                //        newTile.nextTile = checkTile;
-                                                //    }
-                                                //}
-
                                             }
                                         }
+
+
                                     }
 
+                                    if (newTile.isChecked == false && !toCheck.Contains(newTile))
+                                    {
+                                        toCheck.Add(newTile);
+                                    }
                                 }
                             }
+
+
                         } // Offset loops
                     } // " "
                 } // " "
 
+                checkTile.isChecked = true;
                 toCheck.Remove(toCheck.First());
-
+                
                 killswitch++;
+
+                if (killswitch > (10000))
+                {
+                    Debug.Log("Killswitch");
+                    break;
+                }
 
             } // toCheck loop
 
         }
 
+        result.originPoint.nextTile = null;
         return result;
     }
     private bool IsValidTile(int x, int y, int z)
@@ -426,9 +492,9 @@ public class MapBuilder : MonoBehaviour
             return false;
         }
 
-        if (Tiles[x, y, z] == null) 
+        if (Tiles[x, y, z] == null)
         {
-            return false; 
+            return false;
         }
 
         return result;
@@ -472,48 +538,91 @@ public class MapBuilder : MonoBehaviour
 
     }
 
+    public void DrawFlowfield(Flowfield ff)
+    {
+        GameObject ap = GameObject.Find("ArrowParent");
+
+        DestroyImmediate(ap);
+
+        GameObject newAp = new GameObject();
+        newAp.name = "ArrowParent";
+        newAp.transform.parent = GameObject.Find("Environment").transform;
+        
+
+        Debug.Log(ff.originPoint.tilemapPosition);
+        foreach(TileInfo_Class tile in ff.tiles)
+        {
+            if (tile != null)
+            {
+                if (tile.tilemapPosition != ff.originPoint.tilemapPosition)
+                {
+                    GameObject arrow = Instantiate(GameManager.instance.arrowPrefab);
+                    arrow.transform.position = tile.tilemapPosition;
+                    arrow.transform.LookAt(tile.nextTile.tilemapPosition);
+                    arrow.transform.parent = newAp.transform;
+                }
+            }
+        }
+    }
+
     void DrawPath(List<Vector3> input )
     {
-        foreach(Vector3 pos in input)
+        //Debug.Log(input.Count());
+        //foreach(Vector3 pos in input)
+        //{
+        //    Debug.Log(pos);
+        //}
+
+        LineRenderer lr;
+
+        if (gameObject.GetComponent<LineRenderer>())
         {
-            Debug.Log(pos);
+            lr = gameObject.GetComponent<LineRenderer>();
+        }
+        else
+        {
+            lr = gameObject.AddComponent<LineRenderer>();
         }
 
-        LineRenderer lr = gameObject.AddComponent<LineRenderer>();
         lr.alignment = LineAlignment.View;
-        lr.SetWidth(0.2f, 0.2f);
+        lr.startWidth = 0.05f;
+        lr.numCapVertices = 3;
+        lr.numCornerVertices = 3;
 
         lr.positionCount = input.Count;
 
         for (int i = 0; i < input.Count; i++)
         {
-            lr.SetPosition(i, input[i] + new Vector3(0, 0.25f, 0));
+            lr.SetPosition(i, input[i] + new Vector3(0, 0.1f, 0));
         }
     }
 
-    List<Vector3> GetPath(Vector3Int fforigin, Vector3Int current)
+    List<Vector3> GetPath(Vector3Int to, Vector3Int from)
     {
-        fforigin = new Vector3Int(4, 0, 4);
-        current = new Vector3Int(0, 0, 0);
+
 
         List<Vector3> result = new List<Vector3>();
 
-        Flowfield flowfield = Flowfields[fforigin.x, fforigin.y, fforigin.z];
+        Flowfield ff = Flowfields[to.x, to.y, to.z];
 
-        TileInfo currentTile = flowfield.tiles[current.x, current.y, current.z];
+
+        TileInfo_Class currentTile = ff.tiles[to.x, to.y, to.z];
+
 
         int killswitch = 0;
 
 
-        while (currentTile.nextTile != null && killswitch < 10000)
+        while (currentTile.nextTile != null && killswitch < 1000)
         {
             result.Add(currentTile.tilemapPosition);
-
+            Debug.Log(currentTile);
+            if (currentTile.nextTile != null)
             currentTile = currentTile.nextTile;
 
             killswitch++;
         }
 
+       // Debug.Log(result.Count);
         return result;
     }
 

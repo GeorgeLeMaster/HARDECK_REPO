@@ -6,6 +6,8 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
+    public GameObject arrowPrefab;
+    public GameObject arrowParent;
 
     [Header("Map Data")]
     public TileInfo[,,] builtMap_TileInfo;

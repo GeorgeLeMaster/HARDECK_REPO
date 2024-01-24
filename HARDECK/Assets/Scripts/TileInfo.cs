@@ -6,6 +6,8 @@ using UnityEngine;
 public class TileInfo : MonoBehaviour
 {
 
+    public TileInfo() { }
+
     public enum Directions
     {
         Forwards = 0,
@@ -20,10 +22,9 @@ public class TileInfo : MonoBehaviour
     public bool isRamp;
     public Directions rampOrientation;
 
-    public List<TileInfo> Flowfield;
-
     public TileInfo nextTile = null;
     public float pathCost;
+    public bool isChecked = false;
 
     [Header("GFX Members")]
     public GameObject GFXAnchor;
@@ -107,8 +108,6 @@ public class TileInfo : MonoBehaviour
 
         isRamp = input.isRamp;
         rampOrientation = input.rampOrientation;
-
-        Flowfield = input.Flowfield;
 
         nextTile = input.nextTile;
         pathCost = input.pathCost;

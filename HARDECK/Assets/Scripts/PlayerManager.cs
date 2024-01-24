@@ -107,8 +107,9 @@ public class PlayerManager : MonoBehaviour
             {
                 Vector3Int clickedPos = hit.transform.GetComponent<TileInfo>().tilemapPosition;
 
-
-                spawnPos = clickedPos;
+                Debug.Log(clickedPos);
+                MapBuilder.instance.DrawFlowfield(MapBuilder.instance.Flowfields[clickedPos.x, clickedPos.y, clickedPos.z]);
+                //spawnPos = clickedPos;
 
 
 
@@ -123,7 +124,7 @@ public class PlayerManager : MonoBehaviour
             return;
         }
 
-        GameManager.instance.SpawnUnit(selectionInt, spawnPos);
+        //GameManager.instance.SpawnUnit(selectionInt, spawnPos);
 
 
         switch (selectionInt)
