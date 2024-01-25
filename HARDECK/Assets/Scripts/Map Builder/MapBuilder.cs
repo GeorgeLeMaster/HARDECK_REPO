@@ -83,12 +83,10 @@ public class MapBuilder : MonoBehaviour
 
     public TileInfo[,,] Tiles;
 
-
-
-    public void Start()
+    private void Awake()
     {
         // Singleton Logic
-        if (instance == null || instance == this)
+        if (instance == null)
         {
             instance = this;
         }
@@ -96,10 +94,15 @@ public class MapBuilder : MonoBehaviour
         {
             Destroy(this);
         }
+    }
+
+    public void Start()
+    {
 
 
-        Debug.ClearDeveloperConsole();
-        LoadMapFromFile();
+
+        //Debug.ClearDeveloperConsole();
+        //LoadMapFromFile();
     }
 
     public void LoadMapFromFile()
@@ -226,6 +229,7 @@ public class MapBuilder : MonoBehaviour
                 newTile.name = $"{rampString}-{xPos_tile},{yPos_tile},{zPos_tile}";
 
                 // SLOT INTO Tiles ARRAY
+
                 Tiles[newPos_tile.x, newPos_tile.y, newPos_tile.z] = newTileInfo;
 
             }
@@ -561,7 +565,7 @@ public class MapBuilder : MonoBehaviour
         {
             if (tile != null)
             {
-                if (tile.tilemapPosition != ff.originPoint.tilemapPosition)
+                if (tile.tilemapPosition != ff.originPoint.tilemapPosition && tile.nextTile != null)
                 {
                     GameObject arrow = Instantiate(GameManager.instance.arrowPrefab);
                     arrow.transform.position = tile.tilemapPosition;

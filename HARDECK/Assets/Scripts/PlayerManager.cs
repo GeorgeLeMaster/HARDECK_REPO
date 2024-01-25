@@ -12,7 +12,8 @@ public class PlayerManager : MonoBehaviour
     public List<UnitAIBase> units;
 
     public int selectionInt = -100;
-    
+
+   // bool debugArrowsBool = false;
     public enum TurnState
     {
         Deployment,

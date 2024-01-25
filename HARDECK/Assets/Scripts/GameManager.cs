@@ -9,9 +9,6 @@ public class GameManager : MonoBehaviour
     public GameObject arrowPrefab;
     public GameObject arrowParent;
 
-    [Header("Map Data")]
-    public TileInfo[,,] builtMap_TileInfo;
-
 
     [Header("Starting Units")]
     public List<GroundUnitAI> Units;
@@ -28,6 +25,8 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        MapBuilder.instance.LoadMapFromFile();
+
         PlayerManager.instance.StartTurn();
     }
 
@@ -36,12 +35,6 @@ public class GameManager : MonoBehaviour
     {
         
     }
-
-    public void SupplyMapInfo(int width, int length, int height)
-    {
-        builtMap_TileInfo = new TileInfo[width,length,height];
-    }
-
 
     public void EndPlayerTurn()
     {

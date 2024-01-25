@@ -78,7 +78,9 @@ public class TileInfo : MonoBehaviour
             this.gameObject.name = $"{rampString}-{tilemapPosition.x},{tilemapPosition.y},{tilemapPosition.z}";
 
             if (existingGFX != null)
+            {
                 DestroyImmediate(existingGFX);
+            }
 
             if (isRamp)
             {
