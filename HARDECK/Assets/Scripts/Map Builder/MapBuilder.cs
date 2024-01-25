@@ -14,7 +14,7 @@ public class TileInfo_Class
     public Vector3Int tilemapPosition;
 
     public bool isRamp;
-    //public Directions rampOrientation;
+    public TileInfo.Directions rampOrientation;
 
     public TileInfo_Class nextTile = null;
     public float pathCost;
@@ -29,6 +29,7 @@ public class TileInfo_Class
         pathCost = input.pathCost;
         isChecked = input.isChecked;
 
+        rampOrientation = input.rampOrientation;
     }
 }
 
@@ -98,6 +99,7 @@ public class MapBuilder : MonoBehaviour
 
 
         Debug.ClearDeveloperConsole();
+        LoadMapFromFile();
     }
 
     public void LoadMapFromFile()
@@ -408,10 +410,10 @@ public class MapBuilder : MonoBehaviour
 
                 for (int yOff = -1; yOff <= 1; yOff++)
                 {
-                    for (int zOff = -1; zOff <= 1; zOff++)
-                    {
                         for (int xOff = -1; xOff <= 1; xOff++)
                         {
+                    for (int zOff = -1; zOff <= 1; zOff++)
+                    {
                             int newX = checkTile.tilemapPosition.x + xOff;
                             int newY = checkTile.tilemapPosition.y + yOff;
                             int newZ = checkTile.tilemapPosition.z + zOff;
@@ -422,40 +424,45 @@ public class MapBuilder : MonoBehaviour
 
                                 if ((yOff == -1 && checkTile.isRamp || yOff == 0 || (yOff == 1 && newTile.isRamp)) && (!(zOff == 0 && xOff == 0)) && checkTile != null)
                                 {
-                                    
-
-
-                                    if (newTile.nextTile == null)
+                                    if (TilesConnected(checkTile, newTile))
                                     {
-                                        newTile.nextTile = checkTile;
-                                        //newTile.nextTile = result.originPoint;
 
-                                    }
-                                    else
-                                    {
-                                        //newTile.nextTile = result.originPoint;
-
-                                        if (checkTile.nextTile != null)
+                                        if (newTile.nextTile == null)
                                         {
-                                            Vector3 a = checkTile.tilemapPosition - newTile.tilemapPosition;
-                                            Vector3 b = checkTile.nextTile.tilemapPosition - checkTile.tilemapPosition;
+                                            newTile.nextTile = checkTile;
+                                            //newTile.nextTile = result.originPoint;
 
-                                            a.Normalize();
-                                            b.Normalize();
+                                        }
+                                        else
+                                        {
+                                            //newTile.nextTile = result.originPoint;
 
-                                            if (a == b)
+                                            if (checkTile.nextTile != null)
                                             {
+                                                Vector3 a = checkTile.tilemapPosition - newTile.tilemapPosition;
+                                                Vector3 b = checkTile.nextTile.tilemapPosition - checkTile.tilemapPosition;
 
-                                                newTile.nextTile = checkTile;
+                                                a = new Vector3(a.x, 0, a.z);
+                                                b = new Vector3(b.x, 0, b.z);
+
+                                                a.Normalize();
+                                                b.Normalize();
+
+                                                if (a == b)
+                                                {
+
+                                                    newTile.nextTile = checkTile;
+                                                }
                                             }
+
+
                                         }
 
+                                        if (newTile.isChecked == false && !toCheck.Contains(newTile))
+                                        {
+                                            toCheck.Add(newTile);
+                                        }
 
-                                    }
-
-                                    if (newTile.isChecked == false && !toCheck.Contains(newTile))
-                                    {
-                                        toCheck.Add(newTile);
                                     }
                                 }
                             }
@@ -549,7 +556,7 @@ public class MapBuilder : MonoBehaviour
         newAp.transform.parent = GameObject.Find("Environment").transform;
         
 
-        Debug.Log(ff.originPoint.tilemapPosition);
+        //Debug.Log(ff.originPoint.tilemapPosition);
         foreach(TileInfo_Class tile in ff.tiles)
         {
             if (tile != null)
@@ -624,6 +631,66 @@ public class MapBuilder : MonoBehaviour
 
        // Debug.Log(result.Count);
         return result;
+    }
+
+    bool TilesConnected(TileInfo_Class a, TileInfo_Class b)
+    {
+        TileInfo_Class rampTile;
+        TileInfo_Class flatTile;
+
+        if (a.isRamp && b.isRamp)
+        {
+            return true;
+        }
+
+        if (a.isRamp)
+        {
+            rampTile = a;
+            flatTile = b;
+        }
+        else if (b.isRamp)
+        {
+            rampTile = b;
+            flatTile = a;
+        }
+        else
+        {
+            return true;
+        }
+
+        Vector3Int upPos = rampTile.tilemapPosition;
+        Vector3Int downPos = rampTile.tilemapPosition;
+
+        if (rampTile.rampOrientation == TileInfo.Directions.Forwards)
+        {
+            upPos += new Vector3Int(0,0,-1);
+            downPos += new Vector3Int(0, -1, 1);
+
+        }
+        else if (rampTile.rampOrientation == TileInfo.Directions.Right)
+        {
+            upPos += new Vector3Int(-1, 0, 0);
+            downPos += new Vector3Int(1, -1, 0);
+
+        }
+        else if (rampTile.rampOrientation == TileInfo.Directions.Backwards)
+        {
+            upPos += new Vector3Int(0, 0, 1);
+            downPos += new Vector3Int(0, -1, -1);
+
+        }
+        else
+        {
+            upPos += new Vector3Int(1, 0, 0);
+            downPos += new Vector3Int(-1, -1, 0);
+        }
+
+        if (flatTile.tilemapPosition == upPos || flatTile.tilemapPosition == downPos)
+        {
+            return true;
+        }
+
+        return false;
     }
 
 }
