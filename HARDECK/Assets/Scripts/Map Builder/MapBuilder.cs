@@ -608,12 +608,12 @@ public class MapBuilder : MonoBehaviour
         }
     }
 
-    List<Vector3> GetPath(Vector3Int to, Vector3Int from)
+    public List<Vector3Int> GetPath(Vector3Int to, Vector3Int from)
     {
 
 
-        List<Vector3> result = new List<Vector3>();
-
+        List<Vector3Int> result = new List<Vector3Int>();
+ 
         Flowfield ff = Flowfields[to.x, to.y, to.z];
 
 

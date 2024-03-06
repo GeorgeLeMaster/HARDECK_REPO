@@ -31,7 +31,7 @@ public class PlayerManager : MonoBehaviour
     // Start is called before sthe first frame update
     void Start()
     {
-        
+        currentTurnState = TurnState.Deployment;
     }
 
     // Update is called once per frame
@@ -98,32 +98,8 @@ public class PlayerManager : MonoBehaviour
             return;
         }
 
-        Vector3Int spawnPos = Vector3Int.zero;
-
         // Find Position to play
-        RaycastHit hit;
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity))
-        {
-            if (hit.transform.GetComponent<TileInfo>())
-            {
-                Vector3Int clickedPos = hit.transform.GetComponent<TileInfo>().tilemapPosition;
 
-                Debug.Log(clickedPos);
-                MapBuilder.instance.DrawFlowfield(MapBuilder.instance.Flowfields[clickedPos.x, clickedPos.y, clickedPos.z]);
-                //spawnPos = clickedPos;
-
-
-
-            }
-            else
-            {
-                return;
-            }
-        }
-        else
-        {
-            return;
-        }
 
         //GameManager.instance.SpawnUnit(selectionInt, spawnPos);
 

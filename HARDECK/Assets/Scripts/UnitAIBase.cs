@@ -5,10 +5,12 @@ using UnityEngine;
 public class UnitAIBase : MonoBehaviour
 {
 
-    public Vector3Int mapCoords;
+    public Vector3Int currentPos;
     public GameObject gfx;
 
-    public UnitSO unitSO;
+    public UnitSO unitSOtemplate;
+
+    public UnitSO instanceSO;
 
     // Start is called before the first frame update
     void Start()

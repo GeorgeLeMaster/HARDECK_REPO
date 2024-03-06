@@ -14,64 +14,61 @@ public class GameManager : MonoBehaviour
     public List<GroundUnitAI> Units;
     private void Awake()
     {
-
         instance = this;
-
     }
 
     [Header("Game Components")]
     public int currentTurn = 1;
+
+    public GroundUnitAI testUnit;
 
     // Start is called before the first frame update
     void Start()
     {
         MapBuilder.instance.LoadMapFromFile();
 
-        PlayerManager.instance.StartTurn();
     }
 
     // Update is called once per frame
     void Update()
     {
-        
-    }
-
-    public void EndPlayerTurn()
-    {
-        UpdateTurnTimers();
-
-        currentTurn += 1;
-    }
-
-    void UpdateTurnTimers()
-    {
-
-    }
-
-    public void SpawnUnit(int unitID, Vector3Int pos)
-    {
-
-        GameObject unitType;
-        UnitSO unitSO;
-
-        switch (unitID)
+        if (Input.GetMouseButtonDown(0))
         {
-            case -1:
-                unitType = Catalouge.instance.groundUnitObj;
-                unitSO = Catalouge.instance.debugGroundUnit_SO;
-                break;
+            //DrawFFArrowField();
 
-            default:
-
-                unitType = Catalouge.instance.groundUnitObj;
-                unitSO = Catalouge.instance.debugGroundUnit_SO;
-                break;
+            RaycastHit hit;
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity))
+            {
+                if (hit.transform.GetComponent<TileInfo>())
+                {
+                    testUnit.Order(0, hit.transform.GetComponent<TileInfo>().tilemapPosition);
+                }
+            }
         }
-
-        GameObject newUnit;
-        newUnit = Instantiate(unitType);
-        newUnit.GetComponent<UnitAIBase>().unitSO = unitSO;
-        newUnit.GetComponent<UnitAIBase>().Spawn(pos);
-
     }
+
+    void DrawFFArrowField()
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity))
+        {
+            if (hit.transform.GetComponent<TileInfo>())
+            {
+                Vector3Int clickedPos = hit.transform.GetComponent<TileInfo>().tilemapPosition;
+
+                Debug.Log(clickedPos);
+                MapBuilder.instance.DrawFlowfield(MapBuilder.instance.Flowfields[clickedPos.x, clickedPos.y, clickedPos.z]);
+            }
+            else
+            {
+                return;
+            }
+        }
+        else
+        {
+            return;
+        }
+    }
+
+
 }

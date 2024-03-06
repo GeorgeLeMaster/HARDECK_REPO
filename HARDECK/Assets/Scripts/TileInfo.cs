@@ -71,11 +71,17 @@ public class TileInfo : MonoBehaviour
 
         if (transform.hasChanged)
         {
+
+
             UpdateTilemapPos();
 
             string rampString = "Tile";
             if (isRamp == true) { rampString = "Ramp"; }
-            this.gameObject.name = $"{rampString}-{tilemapPosition.x},{tilemapPosition.y},{tilemapPosition.z}";
+
+            if (Application.isPlaying)
+            {
+                this.gameObject.name = $"{rampString}-{tilemapPosition.x},{tilemapPosition.y},{tilemapPosition.z}";
+            }
 
             if (existingGFX != null)
             {
