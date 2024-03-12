@@ -608,11 +608,11 @@ public class MapBuilder : MonoBehaviour
         }
     }
 
-    public List<Vector3Int> GetPath(Vector3Int to, Vector3Int from)
+    public List<Vector3> GetPath(Vector3Int to, Vector3Int from)
     {
         
 
-        List<Vector3Int> pathPositions = new List<Vector3Int>();
+        List<Vector3> pathPositions = new List<Vector3>();
 
         Flowfield ff = MapBuilder.instance.Flowfields[to.x, to.y, to.z];
 
@@ -621,10 +621,20 @@ public class MapBuilder : MonoBehaviour
 
         while (checkPos.tilemapPosition != to)
         {
-            pathPositions.Add(checkPos.tilemapPosition);
+            Vector3 offsetA = Vector3.zero;
+            if (checkPos.isRamp)
+            {
+                offsetA = new Vector3(0, -0.5f, 0);
+            }
+            pathPositions.Add(checkPos.tilemapPosition + offsetA);
             checkPos = checkPos.nextTile;
         }
-        pathPositions.Add(checkPos.tilemapPosition);
+        Vector3 offset = Vector3.zero;
+        if (checkPos.isRamp)
+        {
+            offset = new Vector3(0, -0.5f, 0);
+        }
+        pathPositions.Add(checkPos.tilemapPosition + offset);
         checkPos = checkPos.nextTile;
 
         // Debug.Log(result.Count);

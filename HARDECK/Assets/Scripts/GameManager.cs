@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -23,7 +24,13 @@ public class GameManager : MonoBehaviour
     public GameObject selectedUnitName_Obj;
     public TextMeshProUGUI selectedUnitName_Text;
 
+    public GameObject selectedUnit_hpBar;
+    public Image selectedUnit_hpBarFillImage; 
+
     public LineRenderer moveLine;
+    public GameObject selectedUnitIndicator;
+
+    public GameObject unitPortrait;
 
     [Header("Starting Units")]
     public List<UnitAIBase> Units;
@@ -48,7 +55,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         MapBuilder.instance.LoadMapFromFile();
-
+        ResetActionQueue();
     }
 
     // Update is called once per frame
@@ -81,6 +88,13 @@ public class GameManager : MonoBehaviour
                             // if weve clicked the currently selected unit
                             ResetActionQueue();
                             selectedUnit = null;
+                        }
+                        else if (hitUnit.alliance == playerAllianceInt)
+                        {
+                            // if weve clicked a unit we controll but is not currently selected
+                            Debug.Log("Selected New Unit");
+                            ResetActionQueue();
+                            selectedUnit = hitUnit;
                         }
                     }
                     else if (hitUnit.alliance == playerAllianceInt)
@@ -140,14 +154,31 @@ public class GameManager : MonoBehaviour
             noUnitSelectedText.SetActive(false);
             selectedUnitName_Obj.SetActive(true);
 
+            selectedUnitIndicator.SetActive(true);
+            selectedUnitIndicator.transform.SetParent(selectedUnit.gfx.gameObject.transform);
+            selectedUnitIndicator.transform.localPosition = Vector3.zero;
 
             selectedUnitName_Text.text = selectedUnit.unitName;
+
+            selectedUnit_hpBar.SetActive(true);
+            selectedUnit_hpBarFillImage.fillAmount = selectedUnit.currentHealth / selectedUnit.maxHealth;
+
+            unitPortrait.SetActive(true);
 
         }
         else
         {
             noUnitSelectedText.SetActive(true);
             selectedUnitName_Obj.SetActive(false);
+
+            selectedUnitIndicator.SetActive(false);
+            selectedUnitIndicator.transform.SetParent(null);
+            selectedUnitIndicator.transform.position = Vector3.zero;
+
+            selectedUnit_hpBar.SetActive(false);
+
+            unitPortrait.SetActive(false);
+
         }
 
         // UIs
@@ -159,10 +190,10 @@ public class GameManager : MonoBehaviour
             {
                 case 0:
                     moveLine.gameObject.SetActive(true);
-                    List<Vector3Int> path = new List<Vector3Int>();
+                    List<Vector3> path = new List<Vector3>();
                     path = MapBuilder.instance.GetPath(q_actionPos, q_actingUnit.currentPos);
                     moveLine.positionCount = path.Count;
-                    Debug.Log(path.Count);
+                    //Debug.Log(path.Count);
                     for(int i = 0; i < path.Count; i++)
                     {
                         moveLine.SetPosition(i, path[i] + new Vector3(0, 0.1f, 0));

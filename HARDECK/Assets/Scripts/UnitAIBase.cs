@@ -16,10 +16,12 @@ public class UnitAIBase : MonoBehaviour
 
     public string unitName;
 
+    public float currentHealth;
+    public float maxHealth;
+
     // Start is called before the first frame update
     void Start()
     {
-
     }
 
     // Update is called once per frame
@@ -33,5 +35,18 @@ public class UnitAIBase : MonoBehaviour
     virtual public void Order(int orderID, Vector3Int desiredPos) { }
 
     virtual public void Move(Vector3Int desiredPos) { }
+
+    public void SnapGFXtoGround()
+    {
+        LayerMask mask = LayerMask.GetMask("GFXEnvironment");
+
+
+        Vector3 castPos = transform.position + new Vector3(0,2,0);
+        RaycastHit hit;
+        if (Physics.Raycast(castPos, Vector3.down, out hit, 10f, mask))
+        {
+            gfx.transform.position = hit.transform.position;
+        }
+    }
 
 }

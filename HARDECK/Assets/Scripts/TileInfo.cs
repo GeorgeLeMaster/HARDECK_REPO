@@ -26,6 +26,9 @@ public class TileInfo : MonoBehaviour
     public float pathCost;
     public bool isChecked = false;
 
+    public BoxCollider tileColl;
+    public BoxCollider rampColl;
+
     [Header("GFX Members")]
     public GameObject GFXAnchor;
     private GameObject existingGFX;
@@ -41,16 +44,30 @@ public class TileInfo : MonoBehaviour
         if (isRamp)
         {
             existingGFX = Instantiate(rampGFX_prefab, GFXAnchor.transform);
+            rampColl.enabled = true;
+            tileColl.enabled = false;
         }
         else
         {
             existingGFX = Instantiate(tileGFX_prefab, GFXAnchor.transform);
+            rampColl.enabled = false;
+            tileColl.enabled = true;
         }
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (Application.isPlaying && GFXAnchor.activeSelf)
+        {
+            GFXAnchor.SetActive(false);
+        }
+        else if (!Application.isPlaying && !GFXAnchor.activeSelf)
+        {
+            GFXAnchor.SetActive(true);
+
+        }
+
         if (invalidGFX != null)
         {
             if (transform.position.x < 0 || transform.position.y < 0 || transform.position.z < 0)

@@ -9,13 +9,15 @@ public class GroundUnitAI : UnitAIBase
     // Start is called before the first frame update
     void Start()
     {
+        transform.position = currentPos;
+        currentHealth = maxHealth;
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        //SnapGFXtoGround();
     }
 
     override public void Spawn(Vector3Int input)
