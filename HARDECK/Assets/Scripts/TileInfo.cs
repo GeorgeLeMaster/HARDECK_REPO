@@ -67,7 +67,10 @@ public class TileInfo : MonoBehaviour
 
         desiredRot.y = (float)rampOrientation;
 
-        existingGFX.transform.rotation = Quaternion.Euler(desiredRot);
+        if (existingGFX != null)
+        {
+            existingGFX.transform.rotation = Quaternion.Euler(desiredRot);
+        }
 
         if (transform.hasChanged)
         {
@@ -83,25 +86,25 @@ public class TileInfo : MonoBehaviour
                 this.gameObject.name = $"{rampString}-{tilemapPosition.x},{tilemapPosition.y},{tilemapPosition.z}";
             }
 
-            if (existingGFX != null)
-            {
-                DestroyImmediate(existingGFX);
-            }
+            //if (existingGFX != null)
+            //{
+            //    DestroyImmediate(existingGFX);
+            //}
 
-            if (isRamp)
-            {
+            //if (isRamp)
+            //{
 
-                existingGFX = Instantiate(rampGFX_prefab, GFXAnchor.transform);
+            //    existingGFX = Instantiate(rampGFX_prefab, GFXAnchor.transform);
 
-                desiredRot.y = (float)rampOrientation;
+            //    desiredRot.y = (float)rampOrientation;
 
-                existingGFX.transform.rotation = Quaternion.Euler(desiredRot);
-            }
-            else
-            {
+            //    existingGFX.transform.rotation = Quaternion.Euler(desiredRot);
+            //}
+            //else
+            //{
 
-                existingGFX = Instantiate(tileGFX_prefab, GFXAnchor.transform);
-            }
+            //    existingGFX = Instantiate(tileGFX_prefab, GFXAnchor.transform);
+            //}
         }
     }
 

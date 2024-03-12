@@ -6,9 +6,6 @@ using UnityEngine;
 public class GroundUnitAI : UnitAIBase 
 {
 
-    List<Vector3Int> path;
-    bool acting;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -30,7 +27,7 @@ public class GroundUnitAI : UnitAIBase
 
     }
 
-    public void Order(int orderID, Vector3Int desiredPos)
+    override public void Order(int orderID, Vector3Int desiredPos)
     {
         switch (orderID)
         {
@@ -40,7 +37,7 @@ public class GroundUnitAI : UnitAIBase
         }
     }
 
-    private void Move(Vector3Int desiredPos) 
+    override public void Move(Vector3Int desiredPos) 
     {
 
 
@@ -59,7 +56,6 @@ public class GroundUnitAI : UnitAIBase
         pathPositions.Add(checkPos.tilemapPosition);
         checkPos = checkPos.nextTile;
         StartCoroutine( Move_Coroutine(pathPositions) );
-        acting = true;
 
     }
 
@@ -91,8 +87,6 @@ public class GroundUnitAI : UnitAIBase
             yield return new WaitForEndOfFrame();
 
         }
-
-
 
     }
 }

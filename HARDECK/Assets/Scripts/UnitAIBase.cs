@@ -12,17 +12,26 @@ public class UnitAIBase : MonoBehaviour
 
     public UnitSO instanceSO;
 
+    public int alliance;
+
+    public string unitName;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     virtual public void Spawn(Vector3Int input) { }
+
+    virtual public void Order(int orderID, Vector3Int desiredPos) { }
+
+    virtual public void Move(Vector3Int desiredPos) { }
+
 }

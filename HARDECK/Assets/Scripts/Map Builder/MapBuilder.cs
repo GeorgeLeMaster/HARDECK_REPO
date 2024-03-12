@@ -610,31 +610,25 @@ public class MapBuilder : MonoBehaviour
 
     public List<Vector3Int> GetPath(Vector3Int to, Vector3Int from)
     {
+        
+
+        List<Vector3Int> pathPositions = new List<Vector3Int>();
+
+        Flowfield ff = MapBuilder.instance.Flowfields[to.x, to.y, to.z];
+
+        TileInfo_Class checkPos = ff.tiles[from.x, from.y, from.z];
 
 
-        List<Vector3Int> result = new List<Vector3Int>();
- 
-        Flowfield ff = Flowfields[to.x, to.y, to.z];
-
-
-        TileInfo_Class currentTile = ff.tiles[to.x, to.y, to.z];
-
-
-        int killswitch = 0;
-
-
-        while (currentTile.nextTile != null && killswitch < 1000)
+        while (checkPos.tilemapPosition != to)
         {
-            result.Add(currentTile.tilemapPosition);
-            Debug.Log(currentTile);
-            if (currentTile.nextTile != null)
-            currentTile = currentTile.nextTile;
-
-            killswitch++;
+            pathPositions.Add(checkPos.tilemapPosition);
+            checkPos = checkPos.nextTile;
         }
+        pathPositions.Add(checkPos.tilemapPosition);
+        checkPos = checkPos.nextTile;
 
-       // Debug.Log(result.Count);
-        return result;
+        // Debug.Log(result.Count);
+        return pathPositions;
     }
 
     bool TilesConnected(TileInfo_Class a, TileInfo_Class b)
