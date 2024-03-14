@@ -6,6 +6,7 @@ ScriptsOnlyBuild:
     - GameManager
     - GroundUnitAI
     - MapBuilder
+    - MapBuilderUI
     - TestGFXAnchor
     - TileInfo
     - UIManager
@@ -138,15 +139,17 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 4926}
     - Class: 114
-      Script: {instanceID: 5012}
+      Script: {instanceID: 5014}
     - Class: 114
-      Script: {instanceID: 5550}
+      Script: {instanceID: 5552}
     - Class: 114
-      Script: {instanceID: 5698}
+      Script: {instanceID: 5578}
     - Class: 114
-      Script: {instanceID: 5848}
+      Script: {instanceID: 5702}
     - Class: 114
-      Script: {instanceID: 6012}
+      Script: {instanceID: 6014}
+    - Class: 114
+      Script: {instanceID: 7782}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 120
@@ -736,6 +739,12 @@ ScriptsOnlyBuild:
     className: UnityOnTriggerExitMessageListener
   - hash:
       serializedVersion: 2
+      Hash: c72167357857f16dd402b4a70dadf06f
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: MapFileDatabase
+  - hash:
+      serializedVersion: 2
       Hash: 17f82e3e7d8f8b07a270a4aad9bfe79d
     assemblyName: Unity.TextMeshPro
     namespaceName: TMPro
@@ -784,6 +793,12 @@ ScriptsOnlyBuild:
     className: CanvasScaler
   - hash:
       serializedVersion: 2
+      Hash: 4b5616d2ba7ed9cab593fc6018dda150
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: MapBuilderUI
+  - hash:
+      serializedVersion: 2
       Hash: ef38c1407dba8c1f5d69f5db61a694fe
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
@@ -800,12 +815,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.TextMeshPro
     namespaceName: TMPro
     className: TextMeshProUGUI
-  - hash:
-      serializedVersion: 2
-      Hash: f3aa7e222ca9ebb0e3db4dc20573c08d
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: MapBuilder
   - hash:
       serializedVersion: 2
       Hash: da5a949a0bbd2ff91bc51c5805c2c41f
@@ -1064,6 +1073,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: UnityOnSliderValueChangedMessageListener
+  - hash:
+      serializedVersion: 2
+      Hash: 805ea2991950d553549e2131ac1428bb
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: MapBuilder
   platform: 19
   scenePathNames:
   - Assets/Scenes/SampleScene.unity

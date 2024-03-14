@@ -5,7 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Analytics;
 using UnityEngine.Windows;
 using static UnityEngine.GraphicsBuffer;
 
@@ -83,6 +85,11 @@ public class MapBuilder : MonoBehaviour
 
     public TileInfo[,,] Tiles;
 
+    [Header("Map File Components")]
+    public TextAsset[] MapFiles;
+    public int selectedMapID;
+
+
     private void Awake()
     {
         // Singleton Logic
@@ -94,6 +101,9 @@ public class MapBuilder : MonoBehaviour
         {
             Destroy(this);
         }
+
+        MapFiles = Resources.LoadAll<TextAsset>("MapFiles");
+
     }
 
     public void Start()
@@ -103,6 +113,150 @@ public class MapBuilder : MonoBehaviour
 
         //Debug.ClearDeveloperConsole();
         //LoadMapFromFile();
+    }
+
+
+    public void LoadMapV2()
+    {
+        ClearMap();
+
+        // Find mapBuildLimitObj
+        mapBuildLimitObj = GameObject.Find("MapBuildLimit");
+
+        selectedMapID = 1;
+        // Get Text Asset from Database
+        TextAsset mapTextAsset = MapFiles[selectedMapID];
+
+        // Declares Vars
+        Vector3 newPos_gfx = Vector3.zero;
+        Vector3Int newPos_tile = Vector3Int.zero;
+
+        // Split by line
+        string[] lines = mapTextAsset.text.Split('\n');
+
+        int currentLineInt = 0;
+
+        // Readline AND SET POSITION OF MapBuildLimitObj
+        // ALSO ASSIGN mapX, mapY, AND mapZ
+        string[] limitObjPos = lines[2].Split(",");
+        float.TryParse(limitObjPos[0], out float limX);
+        float.TryParse(limitObjPos[1], out float limY);
+        float.TryParse(limitObjPos[2], out float limZ);
+        mapX = Mathf.FloorToInt(limX);
+        mapY = Mathf.FloorToInt(limY);
+        mapZ = Mathf.FloorToInt(limZ);
+
+        Vector3 limPos = new Vector3(mapX, mapY, mapZ);
+        mapBuildLimitObj.transform.position = limPos;
+
+        // PREP TO READ TILE DATA
+        Tiles = new TileInfo[mapX + 1, mapY + 1, mapZ + 1];
+        string currentLine;
+
+        currentLineInt = 4;
+        while ((currentLine = lines[currentLineInt]) != "fileEnd\r\n")
+        {
+
+            if (currentLine.Substring(0,1) == "f")
+            {
+                break;
+            }
+            //Debug.Log(currentLine);
+            if (currentLine != null)
+            {
+                // PARSE LINE DATA INTO SEPERATE MEMBERS
+                string[] dataMembers = currentLine.Split("*");
+
+                // DELIMINATE
+                string[] posValues = dataMembers[0].Split(',');
+
+                // ASSIGN POSITIONS FROM PARSED DATA
+                float.TryParse(posValues[0], out float xPos_gfx);
+                float.TryParse(posValues[1], out float yPos_gfx);
+                float.TryParse(posValues[2], out float zPos_gfx);
+
+
+
+                // INSTANTIATE TILE AT DESIRED POSITION AND SET PROPER PARENT
+                newPos_gfx = new Vector3(xPos_gfx, yPos_gfx, zPos_gfx);
+                GameObject newTile = Instantiate(tilePrefab, newPos_gfx, Quaternion.identity) as GameObject;
+                newTile.transform.parent = GameObject.Find("Tiles").transform;
+
+                // GRAB NEWTILE'S TileInfo SCRIPT
+                TileInfo newTileInfo = newTile.GetComponent<TileInfo>();
+
+                // PARSE AND ASSIGN RAMP STATS
+                Debug.Log(dataMembers[1]);
+                string[] rampData = dataMembers[1].Split(',');
+                if (rampData[0] == "True")
+                {
+                    Debug.Log("Are we even getting down here?");
+                    // IS A RAMP LOGIC
+                    newTileInfo.isRamp = true;
+
+                    // DETERMINES RAMP ORIENTATION
+                    if (rampData[1] == "Forwards")
+                    {
+                        newTileInfo.rampOrientation = TileInfo.Directions.Forwards;
+                    }
+                    else if (rampData[1] == "Right")
+                    {
+                        newTileInfo.rampOrientation = TileInfo.Directions.Right;
+                    }
+                    else if (rampData[1] == "Backwards")
+                    {
+                        newTileInfo.rampOrientation = TileInfo.Directions.Backwards;
+                    }
+                    else
+                    {
+                        newTileInfo.rampOrientation = TileInfo.Directions.Left;
+                    }
+
+
+                }
+                else
+                {
+                    // IS *NOT* A RAMP LOGIC
+                    newTileInfo.isRamp = false;
+                }
+
+                // PARSE AND ASSIGN TILEMAP POS
+                string[] tilemapValues = dataMembers[2].Split(",");
+
+                float.TryParse(posValues[0], out float xPos_tile);
+                float.TryParse(posValues[1], out float yPos_tile);
+                float.TryParse(posValues[2], out float zPos_tile);
+
+                // INSTANTIATE TILE AT DESIRED POSITION AND SET PROPER PARENT
+                newPos_tile = new Vector3Int((int)xPos_tile, (int)yPos_tile, (int)zPos_tile);
+                // Debug.Log(newPos_tile);
+
+                newTileInfo.tilemapPosition = newPos_tile;
+
+                if (newPos_tile.x < mapX && newPos_tile.y < mapY && newPos_tile.z < mapZ)
+                {
+                }
+
+                // ASSIGN NAME
+                string rampString = "Tile";
+                if (rampData[0] == "True") { rampString = "Ramp"; }
+                newTile.name = $"{rampString}-{xPos_tile},{yPos_tile},{zPos_tile}";
+
+                // SLOT INTO Tiles ARRAY
+
+                Tiles[newPos_tile.x, newPos_tile.y, newPos_tile.z] = newTileInfo;
+
+            }
+            currentLineInt++;
+        }
+
+        Debug.Log("Map File Loaded");
+
+        if (Application.isPlaying)
+        {
+            BuildFlowfields();
+
+        }
     }
 
     public void LoadMapFromFile()
@@ -120,8 +274,23 @@ public class MapBuilder : MonoBehaviour
         Vector3 newPos_gfx = Vector3.zero;
         Vector3Int newPos_tile = Vector3Int.zero;
 
+        //AssetDatabase.FindAssets(mapFilePath);
+        //Debug.Log(mapFileTA.text);
+        //string finalPath = AssetDatabase.GUIDToAssetPath("../HARDECK/Assets/MapFiles/" + mapFilePath);
+
         // Create and open reader
-        StreamReader reader = new StreamReader(mapFilePath);
+        //Debug.Log(db.MapFiles[1].text);
+        //StreamReader reader = new StreamReader(AssetDatabase.GetAssetPath(db.MapFiles[1]));
+
+        StreamReader reader = new StreamReader("../HARDECK/Assets/Resources/MapFiles/" + mapFilePath);
+
+        //StreamReader reader = new StreamReader(mapFileTA.);
+
+        // Get Text Asset from Database
+        TextAsset mapTextAsset = MapFiles[selectedMapID];
+
+        // Split by line
+        string[] lines = mapTextAsset.text.Split('\n');
 
         // Jump to data
         reader.ReadLine();
@@ -244,35 +413,7 @@ public class MapBuilder : MonoBehaviour
         {
             BuildFlowfields();
 
-            //foreach(TileInfo tile in Tiles)
-            //{
-            //    Debug.Log(tile.tilemapPosition);
-            //}
-
-            //foreach (Flowfield ff in Flowfields)
-            //{
-            //    int i = 0;
-            //    foreach (TileInfo tile in ff.tiles)
-            //    {
-            //        if (tile.nextTile != null)
-            //        {
-            //            Debug.Log($"{tile.tilemapPosition}, {tile.nextTile.tilemapPosition}");
-
-            //        }
-            //    }
-
-            //    if (ff != null)
-            //    {
-            //        Debug.Log($"{ff.originPoint.tilemapPosition}, {i}");
-            //    }
-            //}
-
-            //DrawFlowfield(Flowfields[3, 0, 3]);
-
         }
-        // Decide what is and isnt pathable
-
-        //Debug.Log(MapBuilder.instance.pathableMapTiles.Length);
 
     }
 

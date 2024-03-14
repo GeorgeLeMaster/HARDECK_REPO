@@ -73,7 +73,7 @@ public class GroundUnitAI : UnitAIBase
             moveVec.Normalize();
             transform.position += (moveVec*Time.deltaTime*3);
 
-            if (Vector3.Distance(transform.position, nextPos) < 0.01f)
+            if (Vector3.Distance(transform.position, nextPos) < 0.1f)
             {
                 if (pathPositions.Count > 0)
                 {

@@ -4,18 +4,13 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(MapBuilder))]
+[CustomEditor(typeof(MapBuilderUI))]
 public class EditorLogic_MapBuilder : Editor
 {
     public override void OnInspectorGUI()
     {
-        MapBuilder mapBuilder = (MapBuilder)target;
+        MapBuilderUI mapBuilder = (MapBuilderUI)target;
 
-
-
-        mapBuilder.tilePrefab = EditorGUILayout.ObjectField("Tile Prefab", mapBuilder.tilePrefab, typeof(Object), true);
-
-        mapBuilder.mapFilePath = EditorGUILayout.TextField("Map File Path", mapBuilder.mapFilePath);
 
 
         if (GUILayout.Button("Load Map from File"))
@@ -32,6 +27,11 @@ public class EditorLogic_MapBuilder : Editor
         if (GUILayout.Button("Clear Map"))
         {
             mapBuilder.ClearMap();
+        }
+
+        if (GUILayout.Button("Load Map V2"))
+        {
+            mapBuilder.LoadMapV2();
         }
     }
 
