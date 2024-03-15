@@ -19,18 +19,25 @@ public class GameManager : MonoBehaviour
     public GameObject commitActionButton;
     public TextMeshProUGUI commitActionText;
 
-    public GameObject noUnitSelectedText;
-
-    public GameObject selectedUnitName_Obj;
+    [Header("Selected Unit Display")]
+    public GameObject selectedUnitDisplay_Obj;
+    //public GameObject selectedUnit_hpBar;
+    public GameObject selectedUnit_Indicator;
+    //public GameObject selectedUnit_Portrait;
     public TextMeshProUGUI selectedUnitName_Text;
+    public Image selectedUnit_PortraitColor;
+    public Image selectedUnit_hpBarFillImage;
 
-    public GameObject selectedUnit_hpBar;
-    public Image selectedUnit_hpBarFillImage; 
+    [Header("Enemy Unit Display")]
+    public GameObject enemyUnitDisplay_Obj;
+    //public GameObject enemyUnit_hpBar;
+    public GameObject enemyUnit_Indicator;
+    //public GameObject enemyUnit_Portrait;
+    public TextMeshProUGUI enemyUnitName_Text;
+    public Image enemyUnit_PortraitColor;
+    public Image enemydUnit_hpBarFillImage;
 
     public LineRenderer moveLine;
-    public GameObject selectedUnitIndicator;
-
-    public GameObject unitPortrait;
 
     [Header("Starting Units")]
     public List<UnitAIBase> Units;
@@ -44,7 +51,8 @@ public class GameManager : MonoBehaviour
 
     public bool controllsLocked;
 
-    public UnitAIBase selectedUnit;
+    public UnitAIBase selectedUnit_Player;
+    public UnitAIBase selectedUnit_Enemy;
 
     // Queued action info
     private int q_actionId;
@@ -56,6 +64,14 @@ public class GameManager : MonoBehaviour
     {
         MapBuilder.instance.LoadMapV2();
         ResetActionQueue();
+        UpdatePlayerActionGFX();
+
+        foreach(UnitAIBase unit in GameObject.FindObjectsOfType<UnitAIBase>())
+        {
+            Units.Add(unit);
+        }
+
+
     }
 
     // Update is called once per frame
@@ -68,11 +84,12 @@ public class GameManager : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity))
             {
-                if (hit.transform.GetComponent<TileInfo>() && selectedUnit != null)
+                if (hit.transform.GetComponent<TileInfo>() && selectedUnit_Player != null)
                 {
+                    selectedUnit_Enemy = null;
                     // Queue up move command for selected unit
                     q_actionId = 0;
-                    q_actingUnit = selectedUnit;
+                    q_actingUnit = selectedUnit_Player;
                     q_actionPos = hit.transform.GetComponent<TileInfo>().tilemapPosition;
                 }
                 else if (hit.transform.GetComponent<UnitAIBase>())
@@ -80,29 +97,62 @@ public class GameManager : MonoBehaviour
                     // Cases where a unit is clicked
                     UnitAIBase hitUnit = hit.transform.GetComponent<UnitAIBase>();
 
-                    if (selectedUnit != null)
+                    // Determine alliance of clicked unit and fill appropriate stats
+                    if (hitUnit.alliance == playerAllianceInt)
                     {
-                        if (hitUnit == selectedUnit)
+                        selectedUnit_Enemy = null;
+
+                        if (selectedUnit_Player != null)
                         {
-                            Debug.Log("Unit Deselected");
-                            // if weve clicked the currently selected unit
-                            ResetActionQueue();
-                            selectedUnit = null;
+                            if (selectedUnit_Player == hitUnit)
+                            {
+                                selectedUnit_Player = null;
+                            }
+                            else
+                            {
+                                selectedUnit_Player = hitUnit;
+                            }
+
                         }
-                        else if (hitUnit.alliance == playerAllianceInt)
+                        else
                         {
-                            // if weve clicked a unit we controll but is not currently selected
-                            Debug.Log("Selected New Unit");
-                            ResetActionQueue();
-                            selectedUnit = hitUnit;
+                            selectedUnit_Player = hitUnit;
                         }
                     }
-                    else if (hitUnit.alliance == playerAllianceInt)
+                    else if (hitUnit.alliance != playerAllianceInt)
                     {
-                        // if weve clicked a unit we controll but is not currently selected
-                        Debug.Log("Selected New Unit");
+                        if (selectedUnit_Enemy != null)
+                        {
+                            if (selectedUnit_Enemy == hitUnit)
+                            {
+                                selectedUnit_Enemy = null;
+                            }
+                            else
+                            {
+                                selectedUnit_Enemy = hitUnit;
+                            }
+
+                        }
+                        else
+                        {
+                            selectedUnit_Enemy = hitUnit;
+                        }
+                    }
+
+
+                    if (selectedUnit_Player != null && selectedUnit_Enemy != null)
+                    {
+                        // Enemy and Controlled Unit selected, queue attack
                         ResetActionQueue();
-                        selectedUnit = hitUnit;
+                        q_actionId = 1;
+                        q_actingUnit = selectedUnit_Player;
+                        q_actionPos = selectedUnit_Enemy.currentPos;
+                    }
+                    else
+                    {
+                        // Not enough units selected for a UvU combat action, reset the queue
+                        ResetActionQueue();
+
                     }
                 }
             }
@@ -148,47 +198,82 @@ public class GameManager : MonoBehaviour
 
     public void UpdatePlayerActionGFX()
     {
-
-        if (selectedUnit != null)
+        // Sets unit displays positions
+        if (selectedUnit_Enemy != null && selectedUnit_Player != null)
         {
-            noUnitSelectedText.SetActive(false);
-            selectedUnitName_Obj.SetActive(true);
-
-            selectedUnitIndicator.SetActive(true);
-            selectedUnitIndicator.transform.SetParent(selectedUnit.gfx.gameObject.transform);
-            selectedUnitIndicator.transform.localPosition = Vector3.zero;
-
-            selectedUnitName_Text.text = selectedUnit.unitName;
-
-            selectedUnit_hpBar.SetActive(true);
-            selectedUnit_hpBarFillImage.fillAmount = selectedUnit.currentHealth / selectedUnit.maxHealth;
-
-            unitPortrait.SetActive(true);
+            selectedUnitDisplay_Obj.GetComponent<RectTransform>().anchoredPosition = new Vector3(-300, -50, 0);
+            enemyUnitDisplay_Obj.GetComponent<RectTransform>().anchoredPosition = new Vector3(300, -50, 0);
 
         }
         else
         {
-            noUnitSelectedText.SetActive(true);
-            selectedUnitName_Obj.SetActive(false);
-
-            selectedUnitIndicator.SetActive(false);
-            selectedUnitIndicator.transform.SetParent(null);
-            selectedUnitIndicator.transform.position = Vector3.zero;
-
-            selectedUnit_hpBar.SetActive(false);
-
-            unitPortrait.SetActive(false);
-
+            selectedUnitDisplay_Obj.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, -50, 0);
+            enemyUnitDisplay_Obj.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, -50, 0);
         }
+
+        // Toggles on and off selected and enemy displays (and selection indicator)
+        if (selectedUnit_Player != null)
+        {
+            selectedUnitDisplay_Obj.SetActive(true);
+
+            selectedUnit_Indicator.SetActive(true);
+            selectedUnit_Indicator.transform.SetParent(selectedUnit_Player.gfx.gameObject.transform);
+            selectedUnit_Indicator.transform.localPosition = Vector3.zero;
+
+            selectedUnitName_Text.text = selectedUnit_Player.unitName;
+
+            selectedUnit_hpBarFillImage.fillAmount = selectedUnit_Player.currentHealth / selectedUnit_Player.maxHealth;
+
+            Color allianceColor = new Color(0, 1, 0);
+            selectedUnit_PortraitColor.color = allianceColor;
+        }
+        else
+        {
+            selectedUnitDisplay_Obj.SetActive(false);
+
+            selectedUnit_Indicator.SetActive(false);
+            selectedUnit_Indicator.transform.SetParent(null);
+            selectedUnit_Indicator.transform.position = Vector3.zero;
+        }
+
+        if (selectedUnit_Enemy != null)
+        {
+            enemyUnitDisplay_Obj.SetActive(true);
+
+            enemyUnit_Indicator.SetActive(true);
+            enemyUnit_Indicator.transform.SetParent(selectedUnit_Enemy.gfx.gameObject.transform);
+            enemyUnit_Indicator.transform.localPosition = Vector3.zero;
+
+            enemyUnitName_Text.text = selectedUnit_Enemy.unitName;
+
+            enemydUnit_hpBarFillImage.fillAmount = selectedUnit_Enemy.currentHealth / selectedUnit_Enemy.maxHealth;
+
+            Color allianceColor = new Color(1, 0, 0);
+            enemyUnit_PortraitColor.color = allianceColor;
+        }
+        else
+        {
+            enemyUnitDisplay_Obj.SetActive(false);
+
+            enemyUnit_Indicator.SetActive(false);
+            enemyUnit_Indicator.transform.SetParent(null);
+            enemyUnit_Indicator.transform.position = Vector3.zero;
+        }
+
+        // Assigns stats
+
 
         // UIs
         if (q_actionId != -1) 
         {
             commitActionButton.SetActive(true);
 
+
+
             switch (q_actionId)
             {
                 case 0:
+                    // Move line logic
                     moveLine.gameObject.SetActive(true);
                     List<Vector3> path = new List<Vector3>();
                     path = MapBuilder.instance.GetPath(q_actionPos, q_actingUnit.currentPos);
@@ -199,7 +284,16 @@ public class GameManager : MonoBehaviour
                         moveLine.SetPosition(i, path[i] + new Vector3(0, 0.1f, 0));
                     }
 
+                    // Update Text
                     commitActionText.text = "MOVE";
+
+                    break;
+
+                case 1:
+                    moveLine.gameObject.SetActive(false);
+
+                    commitActionText.text = "ATTACK";
+                    // Set Up Enemy Ui
 
                     break;
 
@@ -234,5 +328,10 @@ public class GameManager : MonoBehaviour
         UpdatePlayerActionGFX();
     }
 
+    // Menu UI logic
 
+    public void QuitApplication()
+    {
+        Application.Quit();
+    }
 }

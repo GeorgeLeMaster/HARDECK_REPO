@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
+    
+    private float sizeClamp = 3;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -13,18 +16,29 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
-
+        sizeClamp -= Input.mouseScrollDelta.y;
+        sizeClamp = Mathf.Clamp(sizeClamp, 2, 8);
+        Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, sizeClamp, Time.deltaTime * 5);
 
         if (Input.GetMouseButton(2))
         {
-            Cursor.visible = false;
             transform.position += new Vector3(transform.forward.x * 15, 0, transform.forward.z * 15) * -Input.GetAxis("Mouse Y") * Time.deltaTime;
             transform.position += new Vector3(transform.right.x * 15, 0, transform.right.z * 15) * -Input.GetAxis("Mouse X") * Time.deltaTime;
 
+        }
+        if (Input.GetMouseButton(1))
+        {
+            transform.Rotate(Vector3.up * Input.GetAxis("Mouse X") * 100 * Time.deltaTime);
+        }
+
+        if (Input.GetMouseButton(1) || Input.GetMouseButton(2))
+        {
+            Cursor.visible = false;
         }
         else
         {
             Cursor.visible = true;
         }
+
     }
 }

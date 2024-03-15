@@ -123,7 +123,6 @@ public class MapBuilder : MonoBehaviour
         // Find mapBuildLimitObj
         mapBuildLimitObj = GameObject.Find("MapBuildLimit");
 
-        selectedMapID = 1;
         // Get Text Asset from Database
         TextAsset mapTextAsset = MapFiles[selectedMapID];
 
@@ -186,11 +185,9 @@ public class MapBuilder : MonoBehaviour
                 TileInfo newTileInfo = newTile.GetComponent<TileInfo>();
 
                 // PARSE AND ASSIGN RAMP STATS
-                Debug.Log(dataMembers[1]);
                 string[] rampData = dataMembers[1].Split(',');
                 if (rampData[0] == "True")
                 {
-                    Debug.Log("Are we even getting down here?");
                     // IS A RAMP LOGIC
                     newTileInfo.isRamp = true;
 

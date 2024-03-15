@@ -72,6 +72,9 @@ ScriptsOnlyBuild:
   - assembly: Assembly-CSharp
     fullTypeName: GameManager
     methodName: CommitAction
+  - assembly: Assembly-CSharp
+    fullTypeName: GameManager
+    methodName: QuitApplication
   sceneClasses:
     Assets/Scenes/SampleScene.unity:
     - Class: 1
@@ -147,9 +150,9 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 5702}
     - Class: 114
-      Script: {instanceID: 6014}
+      Script: {instanceID: 5852}
     - Class: 114
-      Script: {instanceID: 7782}
+      Script: {instanceID: 6016}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 120
@@ -295,7 +298,7 @@ ScriptsOnlyBuild:
     className: UnityOnBecameVisibleMessageListener
   - hash:
       serializedVersion: 2
-      Hash: b16a56fc8279168d0ef201c70800f4c9
+      Hash: bec2d1654eecb0acfd3f7007690f37be
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: GameManager
@@ -817,6 +820,12 @@ ScriptsOnlyBuild:
     className: TextMeshProUGUI
   - hash:
       serializedVersion: 2
+      Hash: 805ea2991950d553549e2131ac1428bb
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: MapBuilder
+  - hash:
+      serializedVersion: 2
       Hash: da5a949a0bbd2ff91bc51c5805c2c41f
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
@@ -1073,12 +1082,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: UnityOnSliderValueChangedMessageListener
-  - hash:
-      serializedVersion: 2
-      Hash: 805ea2991950d553549e2131ac1428bb
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: MapBuilder
   platform: 19
   scenePathNames:
   - Assets/Scenes/SampleScene.unity
