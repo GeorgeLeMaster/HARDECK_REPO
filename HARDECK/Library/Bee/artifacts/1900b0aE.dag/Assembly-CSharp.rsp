@@ -355,7 +355,6 @@
 "Assets/CameraController.cs"
 "Assets/Scripts/Catalouge.cs"
 "Assets/Scripts/GameManager.cs"
-"Assets/Scripts/GroundUnitAI.cs"
 "Assets/Scripts/Map Builder/MapBuilder.cs"
 "Assets/Scripts/Map Builder/MapBuilderUI.cs"
 "Assets/Scripts/MapFileDatabase.cs"
@@ -363,8 +362,9 @@
 "Assets/Scripts/TileInfo.cs"
 "Assets/Scripts/TileObj.cs"
 "Assets/Scripts/UIManager.cs"
-"Assets/Scripts/UnitAIBase.cs"
-"Assets/Scripts/UnitSO.cs"
+"Assets/Scripts/Unit/GroundUnitAI.cs"
+"Assets/Scripts/Unit/UnitAIBase.cs"
+"Assets/Scripts/Unit/UnitSO.cs"
 "Assets/TestGFXAnchor.cs"
 -langversion:9.0
 

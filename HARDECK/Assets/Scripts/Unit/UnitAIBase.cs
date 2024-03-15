@@ -19,6 +19,11 @@ public class UnitAIBase : MonoBehaviour
     public float currentHealth;
     public float maxHealth;
 
+    public int actionPips;
+    public int movementPips;
+
+    public float damage;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -36,6 +41,8 @@ public class UnitAIBase : MonoBehaviour
 
     virtual public void Move(Vector3Int desiredPos) { }
 
+    virtual public void Attack(Vector3Int desiredPos) { }
+
     public void SnapGFXtoGround()
     {
         LayerMask mask = LayerMask.GetMask("GFXEnvironment");
@@ -47,6 +54,11 @@ public class UnitAIBase : MonoBehaviour
         {
             gfx.transform.position = hit.transform.position;
         }
+    }
+
+    public void TakeDamage(float input)
+    {
+        currentHealth -= input;
     }
 
 }

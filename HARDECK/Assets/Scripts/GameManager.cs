@@ -21,18 +21,16 @@ public class GameManager : MonoBehaviour
 
     [Header("Selected Unit Display")]
     public GameObject selectedUnitDisplay_Obj;
-    //public GameObject selectedUnit_hpBar;
     public GameObject selectedUnit_Indicator;
-    //public GameObject selectedUnit_Portrait;
+    public GameObject selectedUnit_ActionPipIndicator;
+    public GameObject selectedUnit_MovementPipIndicator;
     public TextMeshProUGUI selectedUnitName_Text;
     public Image selectedUnit_PortraitColor;
     public Image selectedUnit_hpBarFillImage;
 
     [Header("Enemy Unit Display")]
     public GameObject enemyUnitDisplay_Obj;
-    //public GameObject enemyUnit_hpBar;
     public GameObject enemyUnit_Indicator;
-    //public GameObject enemyUnit_Portrait;
     public TextMeshProUGUI enemyUnitName_Text;
     public Image enemyUnit_PortraitColor;
     public Image enemydUnit_hpBarFillImage;
@@ -84,7 +82,7 @@ public class GameManager : MonoBehaviour
             RaycastHit hit;
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity))
             {
-                if (hit.transform.GetComponent<TileInfo>() && selectedUnit_Player != null)
+                if (hit.transform.GetComponent<TileInfo>() && selectedUnit_Player != null && selectedUnit_Player.movementPips > 0)
                 {
                     selectedUnit_Enemy = null;
                     // Queue up move command for selected unit
@@ -121,6 +119,7 @@ public class GameManager : MonoBehaviour
                     }
                     else if (hitUnit.alliance != playerAllianceInt)
                     {
+
                         if (selectedUnit_Enemy != null)
                         {
                             if (selectedUnit_Enemy == hitUnit)
@@ -137,10 +136,12 @@ public class GameManager : MonoBehaviour
                         {
                             selectedUnit_Enemy = hitUnit;
                         }
+
+
                     }
 
 
-                    if (selectedUnit_Player != null && selectedUnit_Enemy != null)
+                    if (selectedUnit_Player != null && selectedUnit_Enemy != null && selectedUnit_Player.actionPips > 0)
                     {
                         // Enemy and Controlled Unit selected, queue attack
                         ResetActionQueue();
@@ -201,14 +202,14 @@ public class GameManager : MonoBehaviour
         // Sets unit displays positions
         if (selectedUnit_Enemy != null && selectedUnit_Player != null)
         {
-            selectedUnitDisplay_Obj.GetComponent<RectTransform>().anchoredPosition = new Vector3(-300, -50, 0);
-            enemyUnitDisplay_Obj.GetComponent<RectTransform>().anchoredPosition = new Vector3(300, -50, 0);
+            selectedUnitDisplay_Obj.GetComponent<RectTransform>().anchoredPosition = new Vector3(-255, 50, 0);
+            enemyUnitDisplay_Obj.GetComponent<RectTransform>().anchoredPosition = new Vector3(255, 50, 0);
 
         }
         else
         {
-            selectedUnitDisplay_Obj.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, -50, 0);
-            enemyUnitDisplay_Obj.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, -50, 0);
+            selectedUnitDisplay_Obj.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 50, 0);
+            enemyUnitDisplay_Obj.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 50, 0);
         }
 
         // Toggles on and off selected and enemy displays (and selection indicator)
@@ -226,6 +227,25 @@ public class GameManager : MonoBehaviour
 
             Color allianceColor = new Color(0, 1, 0);
             selectedUnit_PortraitColor.color = allianceColor;
+
+            if (selectedUnit_Player.movementPips > 0)
+            {
+                selectedUnit_MovementPipIndicator.SetActive(true);
+            }
+            else
+            {
+                selectedUnit_MovementPipIndicator.SetActive(false);
+            }
+
+
+            if (selectedUnit_Player.actionPips > 0)
+            {
+                selectedUnit_ActionPipIndicator.SetActive(true);
+            }
+            else
+            {
+                selectedUnit_ActionPipIndicator.SetActive(false);
+            }
         }
         else
         {
@@ -263,7 +283,7 @@ public class GameManager : MonoBehaviour
         // Assigns stats
 
 
-        // UIs
+        // In world UIs
         if (q_actionId != -1) 
         {
             commitActionButton.SetActive(true);
@@ -286,6 +306,7 @@ public class GameManager : MonoBehaviour
 
                     // Update Text
                     commitActionText.text = "MOVE";
+                    commitActionButton.GetComponent<Image>().color = new Color(1, 0.86f,0.36f);
 
                     break;
 
@@ -293,6 +314,7 @@ public class GameManager : MonoBehaviour
                     moveLine.gameObject.SetActive(false);
 
                     commitActionText.text = "ATTACK";
+                    commitActionButton.GetComponent<Image>().color = new Color(1, 0, 0);
                     // Set Up Enemy Ui
 
                     break;
@@ -318,7 +340,17 @@ public class GameManager : MonoBehaviour
         switch (q_actionId)
         {
             case 0:
-                q_actingUnit.Order(q_actionId, q_actionPos);
+                if (q_actingUnit.movementPips > 0)
+                {
+                    q_actingUnit.Order(q_actionId, q_actionPos);
+                }
+                break;
+            case 1:
+                if (q_actingUnit.actionPips > 0)
+                {
+                    q_actingUnit.Order(q_actionId, q_actionPos);
+
+                }
                 break;
 
             default : break;

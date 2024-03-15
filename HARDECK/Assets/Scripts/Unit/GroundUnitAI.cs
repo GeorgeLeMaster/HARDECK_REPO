@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class GroundUnitAI : UnitAIBase 
 {
@@ -36,19 +38,22 @@ public class GroundUnitAI : UnitAIBase
             case 0:
                 Move(desiredPos);
                 break;
+            case 1:
+                Attack(desiredPos);
+                break;
         }
     }
 
     override public void Move(Vector3Int desiredPos) 
     {
-
+        movementPips -= 1;
 
         List<Vector3Int> pathPositions = new List<Vector3Int>();
 
         Flowfield ff = MapBuilder.instance.Flowfields[desiredPos.x, desiredPos.y, desiredPos.z];
 
         TileInfo_Class checkPos = ff.tiles[currentPos.x, currentPos.y, currentPos.z];
-        
+
 
         while(checkPos.tilemapPosition != desiredPos)
         {
@@ -56,9 +61,32 @@ public class GroundUnitAI : UnitAIBase
             checkPos = checkPos.nextTile;
         }
         pathPositions.Add(checkPos.tilemapPosition);
+        Debug.Log(checkPos.pathCost);
         checkPos = checkPos.nextTile;
+        
+
         StartCoroutine( Move_Coroutine(pathPositions) );
 
+    }
+
+    override public void Attack(Vector3Int desiredPos)
+    {
+        actionPips -= 1;
+
+        UnitAIBase attackedUnit = null;
+        foreach(UnitAIBase unit in GameManager.instance.Units)
+        {
+            if (unit.currentPos == desiredPos)
+            {
+                attackedUnit = unit;
+                break;
+            }
+        }
+
+        if (attackedUnit != null )
+        {
+            attackedUnit.TakeDamage(damage);
+        }
     }
 
     IEnumerator Move_Coroutine(List<Vector3Int> pathPositions)
@@ -91,4 +119,6 @@ public class GroundUnitAI : UnitAIBase
         }
 
     }
+
+    
 }
