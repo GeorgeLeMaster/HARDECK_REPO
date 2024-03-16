@@ -14,10 +14,18 @@ public class GameManager : MonoBehaviour
 
     public int playerAllianceInt;
 
+    public EnemyAI enemyAI;
+
     [Header("UI")]
     [Header("Player Interface")]
     public GameObject commitActionButton;
+    public GameObject cancelActionButton;
     public TextMeshProUGUI commitActionText;
+
+    private bool controllsLocked;
+
+    [Header("Menu")]
+    public GameObject menuButtons;
 
     [Header("Selected Unit Display")]
     public GameObject selectedUnitDisplay_Obj;
@@ -27,6 +35,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI selectedUnitName_Text;
     public Image selectedUnit_PortraitColor;
     public Image selectedUnit_hpBarFillImage;
+    public GameObject queuedPipIndicator;
 
     [Header("Enemy Unit Display")]
     public GameObject enemyUnitDisplay_Obj;
@@ -36,9 +45,13 @@ public class GameManager : MonoBehaviour
     public Image enemydUnit_hpBarFillImage;
 
     public LineRenderer moveLine;
+    public GameObject enemyTurnIndicator;
 
-    [Header("Starting Units")]
-    public List<UnitAIBase> Units;
+    [Header("AllUnits")]
+    public List<UnitAIBase> AllUnits;
+    public List<UnitAIBase> PlayerUnits;
+    public List<UnitAIBase> EnemyUnits;
+
     private void Awake()
     {
         instance = this;
@@ -46,8 +59,6 @@ public class GameManager : MonoBehaviour
 
     [Header("Game Components")]
     public int currentTurn = 1;
-
-    public bool controllsLocked;
 
     public UnitAIBase selectedUnit_Player;
     public UnitAIBase selectedUnit_Enemy;
@@ -66,9 +77,18 @@ public class GameManager : MonoBehaviour
 
         foreach(UnitAIBase unit in GameObject.FindObjectsOfType<UnitAIBase>())
         {
-            Units.Add(unit);
-        }
+            AllUnits.Add(unit);
 
+            if (unit.alliance == 0)
+            {
+                PlayerUnits.Add(unit);
+            }
+            else
+            {
+                EnemyUnits.Add(unit);
+            }
+        }
+        StartPlayerTurn();
 
     }
 
@@ -77,94 +97,93 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
-            //DrawFFArrowField();
-
-            RaycastHit hit;
-            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity))
+            if (!controllsLocked)
             {
-                if (hit.transform.GetComponent<TileInfo>() && selectedUnit_Player != null && selectedUnit_Player.movementPips > 0)
+                RaycastHit hit;
+                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity))
                 {
-                    selectedUnit_Enemy = null;
-                    // Queue up move command for selected unit
-                    q_actionId = 0;
-                    q_actingUnit = selectedUnit_Player;
-                    q_actionPos = hit.transform.GetComponent<TileInfo>().tilemapPosition;
-                }
-                else if (hit.transform.GetComponent<UnitAIBase>())
-                {
-                    // Cases where a unit is clicked
-                    UnitAIBase hitUnit = hit.transform.GetComponent<UnitAIBase>();
-
-                    // Determine alliance of clicked unit and fill appropriate stats
-                    if (hitUnit.alliance == playerAllianceInt)
+                    if (hit.transform.GetComponent<TileInfo>() && selectedUnit_Player != null)
                     {
                         selectedUnit_Enemy = null;
+                        // Queue up move command for selected unit
 
-                        if (selectedUnit_Player != null)
+                        if (selectedUnit_Player.movementPips > 0)
                         {
-                            if (selectedUnit_Player == hitUnit)
+                            q_actionId = 0;
+                            q_actingUnit = selectedUnit_Player;
+                            q_actionPos = hit.transform.GetComponent<TileInfo>().tilemapPosition;
+                        }
+                    }
+                    else if (hit.transform.GetComponent<UnitAIBase>())
+                    {
+                        // Cases where a unit is clicked
+                        UnitAIBase hitUnit = hit.transform.GetComponent<UnitAIBase>();
+
+                        // Determine alliance of clicked unit and fill appropriate stats
+                        if (hitUnit.alliance == playerAllianceInt)
+                        {
+                            selectedUnit_Enemy = null;
+
+                            if (selectedUnit_Player != null)
                             {
-                                selectedUnit_Player = null;
+                                if (selectedUnit_Player == hitUnit)
+                                {
+                                    selectedUnit_Player = null;
+                                }
+                                else
+                                {
+                                    selectedUnit_Player = hitUnit;
+                                }
+
                             }
                             else
                             {
                                 selectedUnit_Player = hitUnit;
                             }
-
                         }
-                        else
+                        else if (hitUnit.alliance != playerAllianceInt)
                         {
-                            selectedUnit_Player = hitUnit;
-                        }
-                    }
-                    else if (hitUnit.alliance != playerAllianceInt)
-                    {
 
-                        if (selectedUnit_Enemy != null)
-                        {
-                            if (selectedUnit_Enemy == hitUnit)
+                            if (selectedUnit_Enemy != null)
                             {
-                                selectedUnit_Enemy = null;
+                                if (selectedUnit_Enemy == hitUnit)
+                                {
+                                    selectedUnit_Enemy = null;
+                                }
+                                else
+                                {
+                                    selectedUnit_Enemy = hitUnit;
+                                }
+
                             }
                             else
                             {
                                 selectedUnit_Enemy = hitUnit;
                             }
 
+
+                        }
+
+
+                        if (selectedUnit_Player != null && selectedUnit_Enemy != null && selectedUnit_Player.actionPips > 0)
+                        {
+                            // Enemy and Controlled Unit selected, queue attack
+                            ResetActionQueue();
+                            q_actionId = 1;
+                            q_actingUnit = selectedUnit_Player;
+                            q_actionPos = selectedUnit_Enemy.currentPos;
                         }
                         else
                         {
-                            selectedUnit_Enemy = hitUnit;
+                            // Not enough units selected for a UvU combat action, reset the queue
+                            ResetActionQueue();
+
                         }
-
-
-                    }
-
-
-                    if (selectedUnit_Player != null && selectedUnit_Enemy != null && selectedUnit_Player.actionPips > 0)
-                    {
-                        // Enemy and Controlled Unit selected, queue attack
-                        ResetActionQueue();
-                        q_actionId = 1;
-                        q_actingUnit = selectedUnit_Player;
-                        q_actionPos = selectedUnit_Enemy.currentPos;
-                    }
-                    else
-                    {
-                        // Not enough units selected for a UvU combat action, reset the queue
-                        ResetActionQueue();
-
                     }
                 }
             }
-
             UpdatePlayerActionGFX();
         }
-    }
-
-    void StartPlayerTurn()
-    {
-        ResetActionQueue();
     }
 
     void ResetActionQueue()
@@ -172,29 +191,6 @@ public class GameManager : MonoBehaviour
         q_actionId = -1;
         q_actingUnit = null;
         q_actionPos = new Vector3Int(-1, -1, -1);
-    }
-
-    void DrawFFArrowField()
-    {
-        RaycastHit hit;
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity))
-        {
-            if (hit.transform.GetComponent<TileInfo>())
-            {
-                Vector3Int clickedPos = hit.transform.GetComponent<TileInfo>().tilemapPosition;
-
-                Debug.Log(clickedPos);
-                MapBuilder.instance.DrawFlowfield(MapBuilder.instance.Flowfields[clickedPos.x, clickedPos.y, clickedPos.z]);
-            }
-            else
-            {
-                return;
-            }
-        }
-        else
-        {
-            return;
-        }
     }
 
     public void UpdatePlayerActionGFX()
@@ -231,6 +227,22 @@ public class GameManager : MonoBehaviour
             if (selectedUnit_Player.movementPips > 0)
             {
                 selectedUnit_MovementPipIndicator.SetActive(true);
+
+                if (q_actionId == 0)
+                {
+                    selectedUnit_MovementPipIndicator.transform.localScale = new Vector3(1.2f, 1.2f, 1.2f);
+                    queuedPipIndicator.SetActive(true);
+                    queuedPipIndicator.GetComponent<RectTransform>().anchoredPosition = selectedUnit_MovementPipIndicator.GetComponent<RectTransform>().anchoredPosition;
+                    queuedPipIndicator.GetComponent<RectTransform>().position = selectedUnit_MovementPipIndicator.GetComponent<RectTransform>().position;
+
+                }
+                else
+                {
+                    selectedUnit_MovementPipIndicator.transform.localScale = Vector3.one;
+
+
+                }
+
             }
             else
             {
@@ -241,10 +253,30 @@ public class GameManager : MonoBehaviour
             if (selectedUnit_Player.actionPips > 0)
             {
                 selectedUnit_ActionPipIndicator.SetActive(true);
+
+                if (q_actionId == 1)
+                {
+                    selectedUnit_ActionPipIndicator.transform.localScale = new Vector3(1.2f, 1.2f, 1.2f);
+                    queuedPipIndicator.SetActive(true);
+                    queuedPipIndicator.GetComponent<RectTransform>().anchoredPosition = selectedUnit_ActionPipIndicator.GetComponent<RectTransform>().anchoredPosition;
+                    queuedPipIndicator.GetComponent<RectTransform>().position = selectedUnit_ActionPipIndicator.GetComponent<RectTransform>().position;
+
+                }
+                else
+                {
+                    selectedUnit_ActionPipIndicator.transform.localScale = Vector3.one;
+
+                }
             }
             else
             {
                 selectedUnit_ActionPipIndicator.SetActive(false);
+            }
+
+            if (q_actionId < 0)
+            {
+                queuedPipIndicator.SetActive(false);
+
             }
         }
         else
@@ -287,7 +319,7 @@ public class GameManager : MonoBehaviour
         if (q_actionId != -1) 
         {
             commitActionButton.SetActive(true);
-
+            cancelActionButton.SetActive(true);
 
 
             switch (q_actionId)
@@ -315,7 +347,6 @@ public class GameManager : MonoBehaviour
 
                     commitActionText.text = "ATTACK";
                     commitActionButton.GetComponent<Image>().color = new Color(1, 0, 0);
-                    // Set Up Enemy Ui
 
                     break;
 
@@ -327,6 +358,7 @@ public class GameManager : MonoBehaviour
         else
         {
             commitActionButton.SetActive(false);
+            cancelActionButton.SetActive(false);
             moveLine.gameObject.SetActive(false);
         }
     }
@@ -360,10 +392,46 @@ public class GameManager : MonoBehaviour
         UpdatePlayerActionGFX();
     }
 
+    public void CancelAction()
+    {
+        ResetActionQueue();
+        selectedUnit_Enemy = null;
+        UpdatePlayerActionGFX();
+    }
+
+    // Trun state logic
+    public void EndPlayerTurn()
+    {
+        selectedUnit_Player = null;
+        selectedUnit_Enemy = null;
+        UpdatePlayerActionGFX();
+        enemyAI.BeginTurn();
+        controllsLocked = true;
+        enemyTurnIndicator.SetActive(true);
+    }
+
+    public void StartPlayerTurn()
+    {
+        foreach(UnitAIBase unit in PlayerUnits)
+        {
+            unit.actionPips = 1;
+            unit.movementPips = 1;
+        }
+        UpdatePlayerActionGFX();
+        controllsLocked = false;
+        enemyTurnIndicator.SetActive(false);
+    }
+
+
     // Menu UI logic
 
     public void QuitApplication()
     {
         Application.Quit();
+    }
+
+    public void ToggleMenuUI()
+    {
+        menuButtons.SetActive(!menuButtons.activeInHierarchy);
     }
 }

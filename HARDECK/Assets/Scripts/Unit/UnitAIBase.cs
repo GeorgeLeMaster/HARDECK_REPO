@@ -23,6 +23,9 @@ public class UnitAIBase : MonoBehaviour
     public int movementPips;
 
     public float damage;
+    public float range;
+
+    public GameObject fireGFX_prefab;
 
     // Start is called before the first frame update
     void Start()
@@ -59,6 +62,23 @@ public class UnitAIBase : MonoBehaviour
     public void TakeDamage(float input)
     {
         currentHealth -= input;
+
+        Debug.Log(gameObject.name + $" took {input} damage");
+        if (currentHealth <= 0)
+        {
+            if (GameManager.instance.selectedUnit_Player == this)
+            {
+                GameManager.instance.selectedUnit_Player = null;
+            }
+            else if(GameManager.instance.selectedUnit_Enemy == this)
+            {
+                GameManager.instance.selectedUnit_Enemy = null;
+            }
+            Destroy(gameObject);
+            
+        }
+        GameManager.instance.UpdatePlayerActionGFX();
+
     }
 
 }

@@ -10,7 +10,7 @@ public class CameraController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        Cursor.lockState = CursorLockMode.Confined;
     }
 
     // Update is called once per frame
@@ -26,7 +26,7 @@ public class CameraController : MonoBehaviour
             transform.position += new Vector3(transform.right.x * 15, 0, transform.right.z * 15) * -Input.GetAxis("Mouse X") * Time.deltaTime;
 
         }
-        if (Input.GetMouseButton(1))
+        else if (Input.GetMouseButton(1))
         {
             transform.Rotate(Vector3.up * Input.GetAxis("Mouse X") * 100 * Time.deltaTime);
         }
@@ -38,6 +38,7 @@ public class CameraController : MonoBehaviour
         else
         {
             Cursor.visible = true;
+
         }
 
     }

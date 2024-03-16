@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 [ExecuteAlways]
 public class TileInfo : MonoBehaviour
@@ -26,12 +27,12 @@ public class TileInfo : MonoBehaviour
     public float pathCost;
     public bool isChecked = false;
 
-    public BoxCollider tileColl;
-    public BoxCollider rampColl;
+    public Collider tileColl;
+    public Collider rampColl;
 
     [Header("GFX Members")]
     public GameObject GFXAnchor;
-    private GameObject existingGFX;
+    public GameObject existingGFX;
 
     public GameObject tileGFX_prefab;
     public GameObject rampGFX_prefab;
@@ -41,18 +42,25 @@ public class TileInfo : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (isRamp)
-        {
-            existingGFX = Instantiate(rampGFX_prefab, GFXAnchor.transform);
-            rampColl.enabled = true;
-            tileColl.enabled = false;
-        }
-        else
-        {
-            existingGFX = Instantiate(tileGFX_prefab, GFXAnchor.transform);
-            rampColl.enabled = false;
-            tileColl.enabled = true;
-        }
+
+            if (existingGFX != null)
+            {
+                DestroyImmediate(existingGFX);
+            }
+            if (isRamp)
+            {
+                existingGFX = Instantiate(rampGFX_prefab, GFXAnchor.transform);
+                rampColl.enabled = true;
+                tileColl.enabled = false;
+            }
+            else
+            {
+                existingGFX = Instantiate(tileGFX_prefab, GFXAnchor.transform);
+                rampColl.enabled = false;
+                tileColl.enabled = true;
+            }
+        
+        
     }
 
     // Update is called once per frame
@@ -140,5 +148,7 @@ public class TileInfo : MonoBehaviour
         nextTile = input.nextTile;
         pathCost = input.pathCost;
     }
+
+
     
 }

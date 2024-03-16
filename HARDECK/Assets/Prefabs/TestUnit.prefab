@@ -139,6 +139,10 @@ MonoBehaviour:
   unitName: NAME
   currentHealth: 0
   maxHealth: 5
+  actionPips: 0
+  movementPips: 0
+  damage: 0
+  fireGFX_prefab: {fileID: 9132726147595288269, guid: 54da38d8bb0f2e7408e97fc473b7f7bb, type: 3}
 --- !u!65 &4247051629521341497
 BoxCollider:
   m_ObjectHideFlags: 0

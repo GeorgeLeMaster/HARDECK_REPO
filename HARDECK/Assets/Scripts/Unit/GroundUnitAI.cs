@@ -8,6 +8,7 @@ using UnityEngine.UIElements;
 public class GroundUnitAI : UnitAIBase 
 {
 
+
     // Start is called before the first frame update
     void Start()
     {
@@ -73,8 +74,13 @@ public class GroundUnitAI : UnitAIBase
     {
         actionPips -= 1;
 
+        GameObject fireFX = Instantiate(fireGFX_prefab);
+        fireFX.transform.position = transform.position + new Vector3(0, 0.35f, 0);
+        fireFX.transform.LookAt(desiredPos + new Vector3(0, 0.35f, 0));
+        Destroy( fireFX, 2f );
+        
         UnitAIBase attackedUnit = null;
-        foreach(UnitAIBase unit in GameManager.instance.Units)
+        foreach(UnitAIBase unit in GameManager.instance.AllUnits)
         {
             if (unit.currentPos == desiredPos)
             {
