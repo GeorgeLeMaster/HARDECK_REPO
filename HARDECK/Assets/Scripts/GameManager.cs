@@ -104,14 +104,28 @@ public class GameManager : MonoBehaviour
                 {
                     if (hit.transform.GetComponent<TileInfo>() && selectedUnit_Player != null)
                     {
-                        selectedUnit_Enemy = null;
-                        // Queue up move command for selected unit
+                        bool unoccupied = true;
 
-                        if (selectedUnit_Player.movementPips > 0)
+                        foreach(UnitAIBase u in AllUnits)
                         {
-                            q_actionId = 0;
-                            q_actingUnit = selectedUnit_Player;
-                            q_actionPos = hit.transform.GetComponent<TileInfo>().tilemapPosition;
+                            if (u.currentPos == hit.transform.GetComponent<TileInfo>().tilemapPosition)
+                            {
+                                unoccupied = false;
+                                break;
+                            }
+                        }
+
+                        if (unoccupied)
+                        {
+                            selectedUnit_Enemy = null;
+                            // Queue up move command for selected unit
+
+                            if (selectedUnit_Player.movementPips > 0)
+                            {
+                                q_actionId = 0;
+                                q_actingUnit = selectedUnit_Player;
+                                q_actionPos = hit.transform.GetComponent<TileInfo>().tilemapPosition;
+                            }
                         }
                     }
                     else if (hit.transform.GetComponent<UnitAIBase>())
