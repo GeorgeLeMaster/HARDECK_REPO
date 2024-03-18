@@ -108,7 +108,7 @@ public class EnemyAI : MonoBehaviour
 
         if (closestUnit != null)
         {
-            unit.Attack(closestUnit.currentPos);
+            unit.Attack(closestUnit);
         }
 
         currentUnitID++;

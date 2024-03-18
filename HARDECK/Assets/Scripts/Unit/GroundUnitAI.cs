@@ -34,13 +34,22 @@ public class GroundUnitAI : UnitAIBase
 
     override public void Order(int orderID, Vector3Int desiredPos)
     {
+        UnitAIBase defender = null ;
+        foreach(UnitAIBase unit in GameManager.instance.AllUnits)
+        {
+            if (unit.currentPos == desiredPos) defender = unit;
+        }
+
         switch (orderID)
         {
             case 0:
                 Move(desiredPos);
                 break;
             case 1:
-                Attack(desiredPos);
+                if (defender != null)
+                {
+                    Attack(defender);
+                }
                 break;
         }
     }
@@ -70,29 +79,64 @@ public class GroundUnitAI : UnitAIBase
 
     }
 
-    override public void Attack(Vector3Int desiredPos)
+    override public void Attack(UnitAIBase defender)
     {
         actionPips -= 1;
 
-        GameObject fireFX = Instantiate(fireGFX_prefab);
-        fireFX.transform.position = transform.position + new Vector3(0, 0.35f, 0);
-        fireFX.transform.LookAt(desiredPos + new Vector3(0, 0.35f, 0));
-        Destroy( fireFX, 2f );
-        
-        UnitAIBase attackedUnit = null;
-        foreach(UnitAIBase unit in GameManager.instance.AllUnits)
+        int roll = Random.Range(1,21);
+        Debug.Log(roll + ", " + CalculateHitChance(this, defender));
+
+        bool hits = false;
+
+        if (roll == 20)
         {
-            if (unit.currentPos == desiredPos)
-            {
-                attackedUnit = unit;
-                break;
-            }
+            hits = true;
+            Debug.Log("Hit");
+
+        }
+        else if (roll == 1)
+        {
+            hits = false;
+            Debug.Log("Miss");
+
+        }
+        else if (roll >= CalculateHitChance(this, defender))
+        {
+            hits = true;
+            Debug.Log("Hit");
+
+        }
+        else
+        {
+            hits = false;
+            Debug.Log("Miss");
+
         }
 
-        if (attackedUnit != null )
+
+            GameObject fireFX = Instantiate(fireGFX_prefab);
+            fireFX.transform.position = transform.position + new Vector3(0, 0.35f, 0);
+            fireFX.transform.LookAt(defender.currentPos + new Vector3(0, 0.35f, 0));
+            Destroy(fireFX, 2f);
+
+            UnitAIBase attackedUnit = null;
+            foreach (UnitAIBase unit in GameManager.instance.AllUnits)
+            {
+                if (unit == defender)
+                {
+                    attackedUnit = unit;
+                    break;
+                }
+            }
+
+        if (attackedUnit != null)
         {
-            attackedUnit.TakeDamage(damage);
+            if (hits)
+            {
+                attackedUnit.TakeDamage(damage);
+            }
         }
+        
     }
 
     IEnumerator Move_Coroutine(List<Vector3Int> pathPositions)
@@ -126,5 +170,27 @@ public class GroundUnitAI : UnitAIBase
 
     }
 
+    static public int CalculateHitChance(UnitAIBase attacker, UnitAIBase defender)
+    {
+        int result = 5;
+
+        // DnD style roll, 20 always succseeding, 1 always missing
+
+        if (attacker.currentPos.y > defender.currentPos.y)
+        {
+            result -= 2;
+        }
+        else if (attacker.currentPos.y == defender.currentPos.y)
+        {
+            result += 2;
+
+        }
+        else
+        {
+            result += 6;
+        }
+
+        return result;
+    }
     
 }

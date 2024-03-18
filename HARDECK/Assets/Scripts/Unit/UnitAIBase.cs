@@ -44,7 +44,7 @@ public class UnitAIBase : MonoBehaviour
 
     virtual public void Move(Vector3Int desiredPos) { }
 
-    virtual public void Attack(Vector3Int desiredPos) { }
+    virtual public void Attack(UnitAIBase defender) { }
 
     public void SnapGFXtoGround()
     {
@@ -69,16 +69,21 @@ public class UnitAIBase : MonoBehaviour
             if (GameManager.instance.selectedUnit_Player == this)
             {
                 GameManager.instance.selectedUnit_Player = null;
+                GameManager.instance.PlayerUnits.Remove(this);
             }
             else if(GameManager.instance.selectedUnit_Enemy == this)
             {
                 GameManager.instance.selectedUnit_Enemy = null;
+                GameManager.instance.EnemyUnits.Remove(this);
             }
+            GameManager.instance.AllUnits.Remove(this);
             Destroy(gameObject);
             
         }
         GameManager.instance.UpdatePlayerActionGFX();
 
     }
+
+    
 
 }

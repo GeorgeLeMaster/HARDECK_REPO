@@ -1,4 +1,6 @@
 using JetBrains.Annotations;
+using Palmmedia.ReportGenerator.Core.CodeAnalysis;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -21,6 +23,7 @@ public class GameManager : MonoBehaviour
     public GameObject commitActionButton;
     public GameObject cancelActionButton;
     public TextMeshProUGUI commitActionText;
+    public TextMeshProUGUI hitChanceText;
 
     private bool controllsLocked;
 
@@ -99,6 +102,7 @@ public class GameManager : MonoBehaviour
         {
             if (!controllsLocked)
             {
+                ResetActionQueue();
                 RaycastHit hit;
                 if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity))
                 {
@@ -270,6 +274,17 @@ public class GameManager : MonoBehaviour
 
                 if (q_actionId == 1)
                 {
+                    int hitChance = 0;
+                    hitChance = GroundUnitAI.CalculateHitChance(selectedUnit_Player, selectedUnit_Enemy);
+
+                    //hitChance = Math.Clamp(hitChance,1,19);
+                    if (hitChance < 2)
+                    {
+                        hitChance = 2;
+                    }
+
+                    hitChanceText.gameObject.SetActive(true);
+                    hitChanceText.text = (100-((hitChance-1)/20f*100)).ToString() + "%";
                     selectedUnit_ActionPipIndicator.transform.localScale = new Vector3(1.2f, 1.2f, 1.2f);
                     queuedPipIndicator.SetActive(true);
                     queuedPipIndicator.GetComponent<RectTransform>().anchoredPosition = selectedUnit_ActionPipIndicator.GetComponent<RectTransform>().anchoredPosition;
@@ -279,6 +294,7 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     selectedUnit_ActionPipIndicator.transform.localScale = Vector3.one;
+                    hitChanceText.gameObject.SetActive(false);
 
                 }
             }
