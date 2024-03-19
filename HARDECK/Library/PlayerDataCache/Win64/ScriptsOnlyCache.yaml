@@ -8,6 +8,7 @@ ScriptsOnlyBuild:
     - GroundUnitAI
     - MapBuilder
     - MapBuilderUI
+    - PopupLogic
     - TestGFXAnchor
     - TileInfo
     - UIManager
@@ -168,6 +169,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 6018}
     - Class: 114
       Script: {instanceID: 7782}
+    - Class: 114
+      Script: {instanceID: 345424}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 120
@@ -323,7 +326,7 @@ ScriptsOnlyBuild:
     className: UnityOnBecameVisibleMessageListener
   - hash:
       serializedVersion: 2
-      Hash: 3699c070a271bf2562e7030b0c4e5ef2
+      Hash: 8623864a4e40606c4cf4406790d28e9c
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: GameManager
@@ -1113,6 +1116,12 @@ ScriptsOnlyBuild:
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: UI_Pulsate
+  - hash:
+      serializedVersion: 2
+      Hash: 927d7967a872bb53961e7348e56775cc
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: PopupLogic
   platform: 19
   scenePathNames:
   - Assets/Scenes/SampleScene.unity

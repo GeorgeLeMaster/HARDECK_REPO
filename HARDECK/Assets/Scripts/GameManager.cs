@@ -1,5 +1,4 @@
 using JetBrains.Annotations;
-using Palmmedia.ReportGenerator.Core.CodeAnalysis;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,8 +21,10 @@ public class GameManager : MonoBehaviour
     [Header("Player Interface")]
     public GameObject commitActionButton;
     public GameObject cancelActionButton;
+    public GameObject endTurnButton;
     public TextMeshProUGUI commitActionText;
     public TextMeshProUGUI hitChanceText;
+    public GameObject worldTextPopupPrefab;
 
     private bool controllsLocked;
 
@@ -213,6 +214,7 @@ public class GameManager : MonoBehaviour
 
     public void UpdatePlayerActionGFX()
     {
+        hitChanceText.gameObject.SetActive(false);
         // Sets unit displays positions
         if (selectedUnit_Enemy != null && selectedUnit_Player != null)
         {
@@ -233,7 +235,7 @@ public class GameManager : MonoBehaviour
 
             selectedUnit_Indicator.SetActive(true);
             selectedUnit_Indicator.transform.SetParent(selectedUnit_Player.gfx.gameObject.transform);
-            selectedUnit_Indicator.transform.localPosition = Vector3.zero;
+            selectedUnit_Indicator.transform.localPosition = Vector3.zero + new Vector3(0, 0.25f, 0);
 
             selectedUnitName_Text.text = selectedUnit_Player.unitName;
 
@@ -278,13 +280,13 @@ public class GameManager : MonoBehaviour
                     hitChance = GroundUnitAI.CalculateHitChance(selectedUnit_Player, selectedUnit_Enemy);
 
                     //hitChance = Math.Clamp(hitChance,1,19);
-                    if (hitChance < 2)
+                    if (hitChance < 1)
                     {
-                        hitChance = 2;
+                        hitChance = 1;
                     }
 
                     hitChanceText.gameObject.SetActive(true);
-                    hitChanceText.text = (100-((hitChance-1)/20f*100)).ToString() + "%";
+                    hitChanceText.text = (100-((hitChance)/20f*100)).ToString() + "%";
                     selectedUnit_ActionPipIndicator.transform.localScale = new Vector3(1.2f, 1.2f, 1.2f);
                     queuedPipIndicator.SetActive(true);
                     queuedPipIndicator.GetComponent<RectTransform>().anchoredPosition = selectedUnit_ActionPipIndicator.GetComponent<RectTransform>().anchoredPosition;
@@ -438,6 +440,8 @@ public class GameManager : MonoBehaviour
         enemyAI.BeginTurn();
         controllsLocked = true;
         enemyTurnIndicator.SetActive(true);
+        endTurnButton.SetActive(false);
+        
     }
 
     public void StartPlayerTurn()
@@ -450,6 +454,8 @@ public class GameManager : MonoBehaviour
         UpdatePlayerActionGFX();
         controllsLocked = false;
         enemyTurnIndicator.SetActive(false);
+        endTurnButton.SetActive(true);
+
     }
 
 

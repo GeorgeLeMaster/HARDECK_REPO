@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class UnitAIBase : MonoBehaviour
@@ -62,6 +63,21 @@ public class UnitAIBase : MonoBehaviour
     public void TakeDamage(float input)
     {
         currentHealth -= input;
+
+        GameObject obj = Instantiate(GameManager.instance.worldTextPopupPrefab, transform.position + new Vector3(0,0.5f,0), Quaternion.identity);
+        TextMeshProUGUI txt = obj.GetComponentsInChildren<TextMeshProUGUI>()[0];
+        if (input == -1)
+        {
+            txt.text = "MISS";
+            txt.color = Color.white;
+            return;
+
+        }
+        else
+        {
+            txt.text = input.ToString();
+            txt.color = Color.red;
+        }
 
         Debug.Log(gameObject.name + $" took {input} damage");
         if (currentHealth <= 0)

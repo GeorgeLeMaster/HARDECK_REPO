@@ -135,6 +135,10 @@ public class GroundUnitAI : UnitAIBase
             {
                 attackedUnit.TakeDamage(damage);
             }
+            else
+            {
+                attackedUnit.TakeDamage(-1);
+            }
         }
         
     }

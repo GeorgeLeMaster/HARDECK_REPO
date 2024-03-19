@@ -258,165 +258,15 @@ public class MapBuilder : MonoBehaviour
 
     public void LoadMapFromFile()
     {
-
-        // Find mapBuildLimitObj
-        mapBuildLimitObj = GameObject.Find("MapBuildLimit");
-
-        // Clears old map 
-        ClearMap();
-
-        Debug.Log("Loading Map from " + mapFilePath);
-
-        // Declares Vars
-        Vector3 newPos_gfx = Vector3.zero;
-        Vector3Int newPos_tile = Vector3Int.zero;
-
-        //AssetDatabase.FindAssets(mapFilePath);
-        //Debug.Log(mapFileTA.text);
-        //string finalPath = AssetDatabase.GUIDToAssetPath("../HARDECK/Assets/MapFiles/" + mapFilePath);
-
-        // Create and open reader
-        //Debug.Log(db.MapFiles[1].text);
-        //StreamReader reader = new StreamReader(AssetDatabase.GetAssetPath(db.MapFiles[1]));
-
-        StreamReader reader = new StreamReader("../HARDECK/Assets/Resources/MapFiles/" + mapFilePath);
-
-        //StreamReader reader = new StreamReader(mapFileTA.);
-
-        // Get Text Asset from Database
-        TextAsset mapTextAsset = MapFiles[selectedMapID];
-
-        // Split by line
-        string[] lines = mapTextAsset.text.Split('\n');
-
-        // Jump to data
-        reader.ReadLine();
-        reader.ReadLine();
-
-        // Readline AND SET POSITION OF MapBuildLimitObj
-        // ALSO ASSIGN mapX, mapY, AND mapZ
-        string[] limitObjPos = reader.ReadLine().Split(",");
-        float.TryParse(limitObjPos[0], out float limX);
-        float.TryParse(limitObjPos[1], out float limY);
-        float.TryParse(limitObjPos[2], out float limZ);
-        mapX = Mathf.FloorToInt(limX);
-        mapY = Mathf.FloorToInt(limY);
-        mapZ = Mathf.FloorToInt(limZ);
-
-        Vector3 limPos = new Vector3(mapX, mapY, mapZ);
-        mapBuildLimitObj.transform.position = limPos;
-
-        // JUMP LINE
-        reader.ReadLine();
-
-        // PREP TO READ TILE DATA
-        Tiles = new TileInfo[mapX + 1, mapY + 1, mapZ + 1];
-        string currentLine;
-
-        while ((currentLine = reader.ReadLine()) != "fileEnd") 
-        {
-
-            if (currentLine != null)
-            {
-                // PARSE LINE DATA INTO SEPERATE MEMBERS
-                string[] dataMembers = currentLine.Split("*");
-
-                // DELIMINATE
-                string[] posValues = dataMembers[0].Split(',');
-
-                // ASSIGN POSITIONS FROM PARSED DATA
-                float.TryParse(posValues[0], out float xPos_gfx);
-                float.TryParse(posValues[1], out float yPos_gfx);
-                float.TryParse(posValues[2], out float zPos_gfx);
-
-                
-
-                // INSTANTIATE TILE AT DESIRED POSITION AND SET PROPER PARENT
-                newPos_gfx = new Vector3(xPos_gfx, yPos_gfx, zPos_gfx);
-                GameObject newTile = Instantiate(tilePrefab, newPos_gfx, Quaternion.identity) as GameObject;
-                newTile.transform.parent = GameObject.Find("Tiles").transform;
-
-                // GRAB NEWTILE'S TileInfo SCRIPT
-                TileInfo newTileInfo = newTile.GetComponent<TileInfo>();
-
-                // PARSE AND ASSIGN RAMP STATS
-                string[] rampData = dataMembers[1].Split(',');
-                if (rampData[0] == "True")
-                {
-
-                    // IS A RAMP LOGIC
-                    newTileInfo.isRamp = true;
-
-                    // DETERMINES RAMP ORIENTATION
-                    if (rampData[1] == "Forwards")
-                    {
-                        newTileInfo.rampOrientation = TileInfo.Directions.Forwards;
-                    }
-                    else if (rampData[1] == "Right")
-                    {
-                        newTileInfo.rampOrientation = TileInfo.Directions.Right;
-                    }
-                    else if (rampData[1] == "Backwards")
-                    {
-                        newTileInfo.rampOrientation = TileInfo.Directions.Backwards;
-                    }
-                    else
-                    {
-                        newTileInfo.rampOrientation = TileInfo.Directions.Left;
-                    }
-
-
-                }
-                else
-                {
-                    // IS *NOT* A RAMP LOGIC
-                    newTileInfo.isRamp = false;
-                }
-
-                // PARSE AND ASSIGN TILEMAP POS
-                string[] tilemapValues = dataMembers[2].Split(",");
-
-                float.TryParse(posValues[0], out float xPos_tile);
-                float.TryParse(posValues[1], out float yPos_tile);
-                float.TryParse(posValues[2], out float zPos_tile);
-
-                // INSTANTIATE TILE AT DESIRED POSITION AND SET PROPER PARENT
-                newPos_tile = new Vector3Int((int)xPos_tile, (int)yPos_tile, (int)zPos_tile);
-               // Debug.Log(newPos_tile);
-
-                newTileInfo.tilemapPosition = newPos_tile;
-
-                if (newPos_tile.x < mapX && newPos_tile.y < mapY && newPos_tile.z < mapZ) {
-                }
-
-                // ASSIGN NAME
-                string rampString = "Tile";
-                if (rampData[0] == "True") { rampString = "Ramp"; }
-                newTile.name = $"{rampString}-{xPos_tile},{yPos_tile},{zPos_tile}";
-
-                // SLOT INTO Tiles ARRAY
-
-                Tiles[newPos_tile.x, newPos_tile.y, newPos_tile.z] = newTileInfo;
-
-            }
-        }
-
-
-        Debug.Log("Map File Loaded");
-
-        reader.Close();
-
-        if (Application.isPlaying)
-        {
-            BuildFlowfields();
-
-        }
+        LoadMapV2();
 
     }
 
     public void SaveMapToFile()
     {
+        //SaveMapV2();
 
+       // mapFilePath = AssetDatabase.GetAssetPath(MapFiles[selectedMapID]);
         // DEBUG INIT
         Debug.Log("Saving map to " + mapFilePath);
 
@@ -462,6 +312,26 @@ public class MapBuilder : MonoBehaviour
         writer.WriteLine("fileEnd");
 
         writer.Close();
+    }
+
+    public void SaveMapV2()
+    {
+        TextAsset mapFile = MapFiles[selectedMapID];
+
+        // FIND PARENT OBJ
+        GameObject tiles = GameObject.Find("Tiles");
+        mapBuildLimitObj = GameObject.Find("MapBuildLimit");
+
+        string sizeLine = mapBuildLimitObj.transform.position.ToString();
+        sizeLine = sizeLine.Substring(1, sizeLine.Length - 2);
+
+        string[] lines = mapFile.text.Split('\n');
+        lines[0] = "Tiles";
+        lines[2] = sizeLine;
+
+        int i = 4;
+
+
     }
 
     public void ClearMap()
