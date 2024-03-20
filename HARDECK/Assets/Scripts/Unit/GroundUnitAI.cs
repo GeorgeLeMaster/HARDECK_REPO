@@ -145,6 +145,7 @@ public class GroundUnitAI : UnitAIBase
 
     IEnumerator Move_Coroutine(List<Vector3Int> pathPositions)
     {
+        GameManager.instance.controllsLocked = true;
         Vector3Int nextPos = pathPositions.First();
         pathPositions.Remove(nextPos);
         currentPos = nextPos;
@@ -168,9 +169,10 @@ public class GroundUnitAI : UnitAIBase
                     break;
                 }
             }
-            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();  
 
         }
+        GameManager.instance.controllsLocked = false;
 
     }
 

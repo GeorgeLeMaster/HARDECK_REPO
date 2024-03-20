@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI hitChanceText;
     public GameObject worldTextPopupPrefab;
 
-    private bool controllsLocked;
+    public bool controllsLocked;
 
     [Header("Menu")]
     public GameObject menuButtons;

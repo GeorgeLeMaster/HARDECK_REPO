@@ -62,11 +62,11 @@ public class UnitAIBase : MonoBehaviour
 
     public void TakeDamage(float input)
     {
-        currentHealth -= input;
+
 
         GameObject obj = Instantiate(GameManager.instance.worldTextPopupPrefab, transform.position + new Vector3(0,0.5f,0), Quaternion.identity);
         TextMeshProUGUI txt = obj.GetComponentsInChildren<TextMeshProUGUI>()[0];
-        if (input == -1)
+        if (input <= 0)
         {
             txt.text = "MISS";
             txt.color = Color.white;
@@ -78,6 +78,8 @@ public class UnitAIBase : MonoBehaviour
             txt.text = input.ToString();
             txt.color = Color.red;
         }
+
+        currentHealth -= input;
 
         Debug.Log(gameObject.name + $" took {input} damage");
         if (currentHealth <= 0)
@@ -97,6 +99,7 @@ public class UnitAIBase : MonoBehaviour
             
         }
         GameManager.instance.UpdatePlayerActionGFX();
+
 
     }
 
