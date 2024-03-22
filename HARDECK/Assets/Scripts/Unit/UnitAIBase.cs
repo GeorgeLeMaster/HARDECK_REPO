@@ -9,9 +9,7 @@ public class UnitAIBase : MonoBehaviour
     public Vector3Int currentPos;
     public GameObject gfx;
 
-    public UnitSO unitSOtemplate;
-
-    public UnitSO instanceSO;
+    public UnitSO unitSO;
 
     public int alliance;
 
@@ -23,10 +21,13 @@ public class UnitAIBase : MonoBehaviour
     public int actionPips;
     public int movementPips;
 
-    public float damage;
+    public int moveSpeed;
     public float range;
+    public float damage;
+    public float damageMod;
 
     public GameObject fireGFX_prefab;
+
 
     // Start is called before the first frame update
     void Start()
@@ -39,7 +40,7 @@ public class UnitAIBase : MonoBehaviour
 
     }
 
-    virtual public void Spawn(Vector3Int input) { }
+    virtual public void Spawn(Vector3Int input, UnitSO soInput, int allInput) { }
 
     virtual public void Order(int orderID, Vector3Int desiredPos) { }
 
@@ -81,7 +82,7 @@ public class UnitAIBase : MonoBehaviour
 
         currentHealth -= input;
 
-        Debug.Log(gameObject.name + $" took {input} damage");
+        //Debug.Log(gameObject.name + $" took {input} damage");
         if (currentHealth <= 0)
         {
             if (GameManager.instance.selectedUnit_Player == this)

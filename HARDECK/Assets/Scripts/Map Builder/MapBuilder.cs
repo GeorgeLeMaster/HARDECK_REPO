@@ -89,6 +89,7 @@ public class MapBuilder : MonoBehaviour
     public TextAsset[] MapFiles;
     public int selectedMapID;
 
+    public GameObject[] GFXOBJ_TileSets;
 
     private void Awake()
     {
@@ -103,7 +104,7 @@ public class MapBuilder : MonoBehaviour
         }
 
         MapFiles = Resources.LoadAll<TextAsset>("MapFiles");
-
+        GFXOBJ_TileSets = Resources.LoadAll<GameObject>("GFXOBJs");
     }
 
     public void Start()
@@ -329,7 +330,7 @@ public class MapBuilder : MonoBehaviour
         lines[0] = "Tiles";
         lines[2] = sizeLine;
 
-        int i = 4;
+        //int i = 4;
 
 
     }
@@ -353,7 +354,7 @@ public class MapBuilder : MonoBehaviour
 
         // Initalize checklist
 
-        Debug.Log($"{mapX}, {mapY}, {mapZ}");
+        //Debug.Log($"{mapX}, {mapY}, {mapZ}");
         // Initalize flowfields array
 
         Flowfields = new Flowfield[mapX+1, mapY+1, mapZ+1];
@@ -629,13 +630,18 @@ public class MapBuilder : MonoBehaviour
 
         while (checkPos.tilemapPosition != to)
         {
-            Vector3 offsetA = Vector3.zero;
+            Vector3 offsetA = new Vector3(0, 0.05f, 0);
             if (checkPos.isRamp)
             {
-                offsetA = new Vector3(0, -0.5f, 0);
+                offsetA = new Vector3(0, -0.3f, 0);
+
             }
+
+
             pathPositions.Add(checkPos.tilemapPosition + offsetA);
+
             checkPos = checkPos.nextTile;
+
         }
         Vector3 offset = Vector3.zero;
         if (checkPos.isRamp)
@@ -651,15 +657,17 @@ public class MapBuilder : MonoBehaviour
 
     bool TilesConnected(TileInfo_Class a, TileInfo_Class b)
     {
-        TileInfo_Class rampTile;
-        TileInfo_Class flatTile;
+        TileInfo_Class rampTile = new TileInfo_Class();
+        TileInfo_Class flatTile = new TileInfo_Class();
 
         if (a.isRamp && b.isRamp)
         {
-            return true;
+            if (a.rampOrientation == b.rampOrientation)
+            {
+                return true;
+            }
         }
-
-        if (a.isRamp)
+        else if (a.isRamp)
         {
             rampTile = a;
             flatTile = b;
@@ -671,7 +679,25 @@ public class MapBuilder : MonoBehaviour
         }
         else
         {
-            return true;
+            int xOff = a.tilemapPosition.x - b.tilemapPosition.x;
+            int zOff = a.tilemapPosition.z - b.tilemapPosition.z;
+
+            if (xOff == 0 || zOff == 0)
+            {
+                return true;
+            }
+
+            Vector3Int newPosA = a.tilemapPosition + new Vector3Int(-xOff, 0, 0);
+            Vector3Int newPosB = a.tilemapPosition + new Vector3Int(0, 0, -zOff);
+
+            if (Tiles[newPosA.x, newPosA.y, newPosA.z] != null && Tiles[newPosB.x, newPosB.y, newPosB.z] != null)
+            {
+                return true;
+            }
+
+            return false;
+
+            //return true;
         }
 
         Vector3Int upPos = rampTile.tilemapPosition;
@@ -679,7 +705,7 @@ public class MapBuilder : MonoBehaviour
 
         if (rampTile.rampOrientation == TileInfo.Directions.Forwards)
         {
-            upPos += new Vector3Int(0,0,-1);
+            upPos += new Vector3Int(0, 0, -1);
             downPos += new Vector3Int(0, -1, 1);
 
         }

@@ -8,7 +8,15 @@ public class UnitSO : ScriptableObject
 
     public string unitName;
 
-    public GameObject gfx;
+    public GameObject gfxPrefab;
 
-    public UnitAIBase unitAI;
+    [Header("Stats")]
+    public int moveSpeed;
+
+    public int range;
+
+    public int damage;
+    public int damageMod;
+
+    public int maxHealth;
 }

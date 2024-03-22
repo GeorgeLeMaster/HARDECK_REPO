@@ -17,6 +17,9 @@ public class GameManager : MonoBehaviour
 
     public EnemyAI enemyAI;
 
+    public Material playerMat;
+    public Material enemyMat;
+
     [Header("UI")]
     [Header("Player Interface")]
     public GameObject commitActionButton;
@@ -83,7 +86,7 @@ public class GameManager : MonoBehaviour
         {
             AllUnits.Add(unit);
 
-            if (unit.alliance == 0)
+            if (unit.alliance == playerAllianceInt)
             {
                 PlayerUnits.Add(unit);
             }
@@ -241,7 +244,7 @@ public class GameManager : MonoBehaviour
 
             selectedUnit_hpBarFillImage.fillAmount = selectedUnit_Player.currentHealth / selectedUnit_Player.maxHealth;
 
-            Color allianceColor = new Color(0, 1, 0);
+            Color allianceColor = playerMat.color;
             selectedUnit_PortraitColor.color = allianceColor;
 
             if (selectedUnit_Player.movementPips > 0)
@@ -332,7 +335,7 @@ public class GameManager : MonoBehaviour
 
             enemydUnit_hpBarFillImage.fillAmount = selectedUnit_Enemy.currentHealth / selectedUnit_Enemy.maxHealth;
 
-            Color allianceColor = new Color(1, 0, 0);
+            Color allianceColor = enemyMat.color;
             enemyUnit_PortraitColor.color = allianceColor;
         }
         else
@@ -365,7 +368,8 @@ public class GameManager : MonoBehaviour
                     //Debug.Log(path.Count);
                     for(int i = 0; i < path.Count; i++)
                     {
-                        moveLine.SetPosition(i, path[i] + new Vector3(0, 0.1f, 0));
+                        moveLine.SetPosition(i, path[i] + new Vector3(0, 0.025f, 0));
+                        
                     }
 
                     // Update Text
