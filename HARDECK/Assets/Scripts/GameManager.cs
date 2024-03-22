@@ -20,6 +20,9 @@ public class GameManager : MonoBehaviour
     public Material playerMat;
     public Material enemyMat;
 
+    public Color playerColor;
+    public Color enemyColor;
+
     [Header("UI")]
     [Header("Player Interface")]
     public GameObject commitActionButton;
@@ -59,7 +62,7 @@ public class GameManager : MonoBehaviour
     public List<UnitAIBase> PlayerUnits;
     public List<UnitAIBase> EnemyUnits;
 
-    private void Awake()
+    private void Awake()  
     {
         instance = this;
     }
@@ -81,6 +84,9 @@ public class GameManager : MonoBehaviour
         MapBuilder.instance.LoadMapV2();
         ResetActionQueue();
         UpdatePlayerActionGFX();
+
+        playerMat.color = playerColor;
+        enemyMat.color = enemyColor;
 
         foreach(UnitAIBase unit in GameObject.FindObjectsOfType<UnitAIBase>())
         {

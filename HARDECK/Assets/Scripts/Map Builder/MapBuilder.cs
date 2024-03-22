@@ -248,7 +248,19 @@ public class MapBuilder : MonoBehaviour
             currentLineInt++;
         }
 
-        Debug.Log("Map File Loaded");
+        // Scenery objs
+        currentLineInt++;
+
+        while ((currentLine = lines[currentLineInt]).Substring(0, 1) != "s")
+        {
+
+            if (currentLine.Substring(0, 1) == "f")
+            {
+                break;
+            }
+        }
+
+            Debug.Log("Map File Loaded");
 
         if (Application.isPlaying)
         {
@@ -271,23 +283,31 @@ public class MapBuilder : MonoBehaviour
         // DEBUG INIT
         Debug.Log("Saving map to " + mapFilePath);
 
+        //// FIND PARENT OBJ
+        //GameObject tiles = GameObject.Find("Tiles");
+
+
+
+        string dataToSave = "";
+
+        // Header
+        dataToSave += "Tiles\n*\n";
+
         // FIND PARENT OBJ
         GameObject tiles = GameObject.Find("Tiles");
-
-        // OPEN WRITER AND TITLE FILE
-        StreamWriter writer = new StreamWriter(mapFilePath);
         mapBuildLimitObj = GameObject.Find("MapBuildLimit");
+
+        // Determine size of map and write to file
         string sizeLine = mapBuildLimitObj.transform.position.ToString();
         sizeLine = sizeLine.Substring(1, sizeLine.Length - 2);
 
-        writer.WriteLine($"Tiles\n*\n{sizeLine}\n*");
+        dataToSave += sizeLine + "\n*\n";
 
-        // RECORDS TILE OBJ POSITIONS AND RAMP INFO AS RECORDED IN TILEINFO
-        foreach(Transform transform in tiles.GetComponentsInChildren<Transform>())
+        foreach (Transform transform in tiles.GetComponentsInChildren<Transform>())
         {
             if (transform.gameObject.GetComponent<TileInfo>() != null)
             {
-                
+
 
                 TileInfo currentTileInfo = transform.gameObject.GetComponent<TileInfo>();
 
@@ -305,33 +325,98 @@ public class MapBuilder : MonoBehaviour
                     tilemapPos = tilemapPos.Substring(1, tilemapPos.Length - 2);
 
 
-                    writer.WriteLine($"{positionString}*{rampBool},{rampOrientation}*{tilemapPos}");
+                    dataToSave += ($"{positionString}*{rampBool},{rampOrientation}*{tilemapPos}\n");
                 }
+            }
+
+
+        }
+
+        dataToSave += "fileEnd\n";
+
+        // Now we're doing the scenery objects
+
+        // objects will have a position, rotation, scale, folders string, and id string
+        // should work idk
+
+        // Find scenery parent obj
+        GameObject sceneryObj = GameObject.Find("Scenery");
+        
+        foreach(Transform t in sceneryObj.GetComponentsInChildren<Transform>())
+        {
+            GameObject obj = t.gameObject;
+            GFXOBJContainter c = obj.GetComponent<GFXOBJContainter>();
+
+            if (obj != null && c != null)
+            {
+                string newLine = $"{c.tilesetName},{c.objId},{t.position},{t.rotation},{t.localScale}\n";
+                dataToSave += newLine;
             }
         }
 
-        writer.WriteLine("fileEnd");
+        dataToSave += "sceneEnd";
+        // OPEN WRITER AND TITLE FILE
+        StreamWriter writer = new StreamWriter(mapFilePath);
+
+        writer.WriteLine(dataToSave);
 
         writer.Close();
+
     }
 
     public void SaveMapV2()
     {
         TextAsset mapFile = MapFiles[selectedMapID];
 
+        string dataToSave = "";
+
+        // Header
+        dataToSave += "Tiles\n*\n";
+
         // FIND PARENT OBJ
         GameObject tiles = GameObject.Find("Tiles");
         mapBuildLimitObj = GameObject.Find("MapBuildLimit");
 
+        // Determine size of map and write to file
         string sizeLine = mapBuildLimitObj.transform.position.ToString();
         sizeLine = sizeLine.Substring(1, sizeLine.Length - 2);
 
-        string[] lines = mapFile.text.Split('\n');
-        lines[0] = "Tiles";
-        lines[2] = sizeLine;
+        dataToSave += sizeLine + "\n*\n";
 
-        //int i = 4;
+        foreach (Transform transform in tiles.GetComponentsInChildren<Transform>())
+        {
+            if (transform.gameObject.GetComponent<TileInfo>() != null)
+            {
 
+
+                TileInfo currentTileInfo = transform.gameObject.GetComponent<TileInfo>();
+
+                if (currentTileInfo.tilemapPosition.y <= mapY)
+                {
+
+                    string positionString = transform.position.ToString();
+                    positionString = positionString.Substring(1, positionString.Length - 2);
+
+                    string rampBool = currentTileInfo.isRamp.ToString();
+
+                    string rampOrientation = currentTileInfo.rampOrientation.ToString();
+
+                    string tilemapPos = currentTileInfo.tilemapPosition.ToString();
+                    tilemapPos = tilemapPos.Substring(1, tilemapPos.Length - 2);
+
+
+                    dataToSave += ($"{positionString}*{rampBool},{rampOrientation}*{tilemapPos}\n");
+                }
+            }
+
+
+        }
+
+        dataToSave += "fileEnd";
+
+       // MapFiles[selectedMapID] = (TextAsset)dataToSave;
+
+        Debug.Log(dataToSave);
 
     }
 
@@ -628,26 +713,31 @@ public class MapBuilder : MonoBehaviour
         TileInfo_Class checkPos = ff.tiles[from.x, from.y, from.z];
 
 
+        Vector3 offset = new Vector3(0, 0.05f, 0);
         while (checkPos.tilemapPosition != to)
         {
-            Vector3 offsetA = new Vector3(0, 0.05f, 0);
             if (checkPos.isRamp)
             {
-                offsetA = new Vector3(0, -0.3f, 0);
-
+                offset = new Vector3(0, -0.3f, 0);
+            }
+            else
+            {
+                offset = new Vector3(0, 0.05f, 0);
             }
 
-
-            pathPositions.Add(checkPos.tilemapPosition + offsetA);
-
+            pathPositions.Add(checkPos.tilemapPosition + offset);
             checkPos = checkPos.nextTile;
-
         }
-        Vector3 offset = Vector3.zero;
+
         if (checkPos.isRamp)
         {
-            offset = new Vector3(0, -0.5f, 0);
+            offset = new Vector3(0, -0.3f, 0);
         }
+        else
+        {
+            offset = new Vector3(0, 0.05f, 0);
+        }
+
         pathPositions.Add(checkPos.tilemapPosition + offset);
         checkPos = checkPos.nextTile;
 

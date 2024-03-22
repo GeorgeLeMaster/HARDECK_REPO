@@ -19,7 +19,7 @@ public class TestGFXAnchor : MonoBehaviour
         LayerMask mask = LayerMask.GetMask("GFXEnvironment");
 
         RaycastHit hit;
-        if (Physics.Raycast(transform.position + new Vector3 (0, 0.5f, 0), Vector3.down, out hit, 10f, mask))
+        if (Physics.Raycast(transform.position + new Vector3 (0, 1f, 0), Vector3.down, out hit, 10f, mask))
         {
             gfxAnchor.transform.position = hit.point;
         }

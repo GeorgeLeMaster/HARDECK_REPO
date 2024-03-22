@@ -13,5 +13,9 @@ MonoBehaviour:
   m_Name: Debug_GroundUnit
   m_EditorClassIdentifier: 
   unitName: Guy
-  gfx: {fileID: 313357584474113673, guid: b9eddd3fe7fbda84387b56abd4c856b2, type: 3}
-  unitAI: {fileID: 0}
+  gfxPrefab: {fileID: 0}
+  moveSpeed: 0
+  range: 0
+  damage: 0
+  damageMod: 0
+  maxHealth: 0
