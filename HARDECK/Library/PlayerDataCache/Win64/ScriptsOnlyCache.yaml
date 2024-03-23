@@ -1,10 +1,13 @@
 ScriptsOnlyBuild:
   usedScripts:
+    Assembly-CSharp:
+    - GFXOBJContainter
     Assembly-CSharp.dll:
     - CameraController
     - Catalouge
     - EnemyAI
     - GFXContainer
+    - GFXOBJContainter
     - GameManager
     - GroundUnitAI
     - MapBuilder
@@ -32,6 +35,8 @@ ScriptsOnlyBuild:
     - UnityEditor.TestTools.TestRunner.Api.CallbacksHolder
     - UnityEditor.TestTools.TestRunner.TestListCacheData
     - UnityEditor.TestTools.TestRunner.TestRun.TestJobDataHolder
+    UnityEngine.UI:
+    - UnityEngine.UI.Selectable
     UnityEngine.UI.dll:
     - UnityEngine.EventSystems.EventSystem
     - UnityEngine.EventSystems.StandaloneInputModule
@@ -123,57 +128,59 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1560}
+      Script: {instanceID: 16624}
     - Class: 114
-      Script: {instanceID: 1562}
+      Script: {instanceID: 16626}
     - Class: 114
-      Script: {instanceID: 1604}
+      Script: {instanceID: 16668}
     - Class: 114
-      Script: {instanceID: 2124}
+      Script: {instanceID: 16760}
     - Class: 114
-      Script: {instanceID: 2180}
+      Script: {instanceID: 17010}
     - Class: 114
-      Script: {instanceID: 2596}
+      Script: {instanceID: 17192}
     - Class: 114
-      Script: {instanceID: 2798}
+      Script: {instanceID: 17248}
     - Class: 114
-      Script: {instanceID: 3082}
+      Script: {instanceID: 17364}
     - Class: 114
-      Script: {instanceID: 4060}
+      Script: {instanceID: 17658}
     - Class: 114
-      Script: {instanceID: 4308}
+      Script: {instanceID: 17670}
     - Class: 114
-      Script: {instanceID: 4350}
+      Script: {instanceID: 17872}
     - Class: 114
-      Script: {instanceID: 4912}
+      Script: {instanceID: 18026}
     - Class: 114
-      Script: {instanceID: 4998}
+      Script: {instanceID: 18160}
     - Class: 114
-      Script: {instanceID: 5684}
+      Script: {instanceID: 18188}
     - Class: 114
-      Script: {instanceID: 5996}
+      Script: {instanceID: 18562}
     - Class: 114
-      Script: {instanceID: 7762}
+      Script: {instanceID: 19142}
     - Class: 114
-      Script: {instanceID: 7766}
+      Script: {instanceID: 19390}
     - Class: 114
-      Script: {instanceID: 7778}
+      Script: {instanceID: 19432}
     - Class: 114
-      Script: {instanceID: 7782}
+      Script: {instanceID: 19700}
     - Class: 114
-      Script: {instanceID: 7786}
+      Script: {instanceID: 19998}
     - Class: 114
-      Script: {instanceID: 7790}
+      Script: {instanceID: 20086}
     - Class: 114
-      Script: {instanceID: 7794}
+      Script: {instanceID: 20648}
     - Class: 114
-      Script: {instanceID: 7798}
+      Script: {instanceID: 20772}
     - Class: 114
-      Script: {instanceID: 7810}
+      Script: {instanceID: 20842}
     - Class: 114
-      Script: {instanceID: 7818}
+      Script: {instanceID: 20924}
     - Class: 114
-      Script: {instanceID: 25146}
+      Script: {instanceID: 21088}
+    - Class: 114
+      Script: {instanceID: 22852}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 120
@@ -233,6 +240,12 @@ ScriptsOnlyBuild:
     className: UnityOnScrollbarValueChangedMessageListener
   - hash:
       serializedVersion: 2
+      Hash: 55d1913eb7af4dfddcb7772e285bbafa
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: GroundUnitAI
+  - hash:
+      serializedVersion: 2
       Hash: a3901985eb076c1c9b7562fca82ca3e0
     assemblyName: Unity.Timeline
     namespaceName: UnityEngine.Timeline
@@ -261,6 +274,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: UnityOnMouseExitMessageListener
+  - hash:
+      serializedVersion: 2
+      Hash: ccee49cff7ab34bf00b6fa38ac758497
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: EnemyAI
   - hash:
       serializedVersion: 2
       Hash: c1848b3fb5fe586caaba18d3c3abe845
@@ -305,6 +324,12 @@ ScriptsOnlyBuild:
     className: UnityOnJointBreakMessageListener
   - hash:
       serializedVersion: 2
+      Hash: e24b3f09742f0bc735826b1bc3ce8ffe
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: UnitSO
+  - hash:
+      serializedVersion: 2
       Hash: 1ab136900c0edaeeb49424c852595030
     assemblyName: UnityEngine.UI
     namespaceName: UnityEngine.UI
@@ -315,6 +340,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: UnityOnBecameVisibleMessageListener
+  - hash:
+      serializedVersion: 2
+      Hash: 19b08d5dc3e2eb33b51b4d4aa56b2b62
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: GameManager
   - hash:
       serializedVersion: 2
       Hash: e987953190eb4c12cf19df790566dc2c
@@ -371,6 +402,12 @@ ScriptsOnlyBuild:
     className: GraphicRaycaster
   - hash:
       serializedVersion: 2
+      Hash: 4393a0b8568e7b3a0a81bef870d5d6b7
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: UnitAIBase
+  - hash:
+      serializedVersion: 2
       Hash: 3b5263a98bcc71d9a9d1d78a31b34ced
     assemblyName: Unity.TextMeshPro
     namespaceName: TMPro
@@ -407,6 +444,12 @@ ScriptsOnlyBuild:
     className: TestResultRendererCallback
   - hash:
       serializedVersion: 2
+      Hash: 927d7967a872bb53961e7348e56775cc
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: PopupLogic
+  - hash:
+      serializedVersion: 2
       Hash: b98001682cba83786775c9e415b89a61
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
@@ -423,6 +466,12 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI
     namespaceName: UnityEngine.UI
     className: Button
+  - hash:
+      serializedVersion: 2
+      Hash: dcb7387445970d78125be4ea1e3d21c4
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: TileInfo
   - hash:
       serializedVersion: 2
       Hash: d90629714fa6b0145fcaffc87f5c6559
@@ -495,6 +544,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: UnityOnControllerColliderHitMessageListener
+  - hash:
+      serializedVersion: 2
+      Hash: fcd9a14c31ecc091d4de82aac00efbdb
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: CameraController
   - hash:
       serializedVersion: 2
       Hash: 960935b102b3064f4b924de16426e340
@@ -629,6 +684,18 @@ ScriptsOnlyBuild:
     className: UnityOnPointerClickMessageListener
   - hash:
       serializedVersion: 2
+      Hash: 4d5789e664afbde0de4149d1dc95d749
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: TileObj
+  - hash:
+      serializedVersion: 2
+      Hash: 883606dbbc135079c88fb50060bf995f
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: GFXContainer
+  - hash:
+      serializedVersion: 2
       Hash: 0b63f6d3335e11939ce8790b904c8691
     assemblyName: Unity.Timeline
     namespaceName: UnityEngine.Timeline
@@ -731,6 +798,12 @@ ScriptsOnlyBuild:
     className: UnityOnTriggerExitMessageListener
   - hash:
       serializedVersion: 2
+      Hash: c72167357857f16dd402b4a70dadf06f
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: MapFileDatabase
+  - hash:
+      serializedVersion: 2
       Hash: 17f82e3e7d8f8b07a270a4aad9bfe79d
     assemblyName: Unity.TextMeshPro
     namespaceName: TMPro
@@ -773,6 +846,12 @@ ScriptsOnlyBuild:
     className: StateGraphAsset
   - hash:
       serializedVersion: 2
+      Hash: 4b5616d2ba7ed9cab593fc6018dda150
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: MapBuilderUI
+  - hash:
+      serializedVersion: 2
       Hash: ef38c1407dba8c1f5d69f5db61a694fe
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
@@ -789,6 +868,18 @@ ScriptsOnlyBuild:
     assemblyName: Unity.TextMeshPro
     namespaceName: TMPro
     className: TextMeshProUGUI
+  - hash:
+      serializedVersion: 2
+      Hash: 18c03510632eb37b853e43d913c11b08
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: GFXOBJContainter
+  - hash:
+      serializedVersion: 2
+      Hash: 8fb5a3aef7317867f65e7189c4b03651
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: MapBuilder
   - hash:
       serializedVersion: 2
       Hash: da5a949a0bbd2ff91bc51c5805c2c41f
@@ -1019,6 +1110,12 @@ ScriptsOnlyBuild:
     className: UnityOnToggleValueChangedMessageListener
   - hash:
       serializedVersion: 2
+      Hash: d4143b6a478e76c9b1e4f312b804753c
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: PlayerManager
+  - hash:
+      serializedVersion: 2
       Hash: 8bf800a764665b085fe469e8aea7f167
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
@@ -1043,95 +1140,11 @@ ScriptsOnlyBuild:
     className: UnityOnSliderValueChangedMessageListener
   - hash:
       serializedVersion: 2
-      Hash: 55d1913eb7af4dfddcb7772e285bbafa
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: GroundUnitAI
-  - hash:
-      serializedVersion: 2
-      Hash: 927d7967a872bb53961e7348e56775cc
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: PopupLogic
-  - hash:
-      serializedVersion: 2
-      Hash: 4393a0b8568e7b3a0a81bef870d5d6b7
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: UnitAIBase
-  - hash:
-      serializedVersion: 2
-      Hash: c72167357857f16dd402b4a70dadf06f
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: MapFileDatabase
-  - hash:
-      serializedVersion: 2
-      Hash: fcd9a14c31ecc091d4de82aac00efbdb
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: CameraController
-  - hash:
-      serializedVersion: 2
-      Hash: 4192d323e305f5c89665dcf01d0fe31f
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: GameManager
-  - hash:
-      serializedVersion: 2
       Hash: 97d9f59340e875e65b823d7f02bf6799
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: UI_Pulsate
-  - hash:
-      serializedVersion: 2
-      Hash: 8fb5a3aef7317867f65e7189c4b03651
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: MapBuilder
-  - hash:
-      serializedVersion: 2
-      Hash: ccee49cff7ab34bf00b6fa38ac758497
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: EnemyAI
-  - hash:
-      serializedVersion: 2
-      Hash: e24b3f09742f0bc735826b1bc3ce8ffe
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: UnitSO
-  - hash:
-      serializedVersion: 2
-      Hash: d4143b6a478e76c9b1e4f312b804753c
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: PlayerManager
-  - hash:
-      serializedVersion: 2
-      Hash: 4b5616d2ba7ed9cab593fc6018dda150
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: MapBuilderUI
-  - hash:
-      serializedVersion: 2
-      Hash: 4d5789e664afbde0de4149d1dc95d749
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: TileObj
-  - hash:
-      serializedVersion: 2
-      Hash: dcb7387445970d78125be4ea1e3d21c4
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: TileInfo
-  - hash:
-      serializedVersion: 2
-      Hash: 883606dbbc135079c88fb50060bf995f
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: GFXContainer
   platform: 19
   scenePathNames:
   - Assets/Scenes/SampleScene.unity
-  playerPath: C:/HARDECK_REPO/Builds/HARDECK.exe
+  playerPath: D:/Unity (D)/HARDECK_REPO/Builds/HARDECK.exe

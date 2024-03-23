@@ -251,16 +251,52 @@ public class MapBuilder : MonoBehaviour
         // Scenery objs
         currentLineInt++;
 
+        GameObject sceneryObj = GameObject.Find("Scenery");
+
         while ((currentLine = lines[currentLineInt]).Substring(0, 1) != "s")
         {
 
-            if (currentLine.Substring(0, 1) == "f")
+
+            string[] dataMembers = currentLine.Split("*");
+
+            //0: string
+            //1: id
+            //2: pos
+            //3: rot
+            //4: scale
+
+            dataMembers[2] = dataMembers[2].Substring(1, dataMembers[2].Length - 2);
+            dataMembers[3] = dataMembers[3].Substring(1, dataMembers[3].Length - 2);
+            dataMembers[4] = dataMembers[4].Substring(1, dataMembers[4].Length - 2);
+
+            GameObject[] tilesetObjs = Resources.LoadAll<GameObject>($"GFXOBJs/{dataMembers[0]}");
+
+            string[] posValuesS = dataMembers[2].Split(",");
+            float.TryParse(posValuesS[0], out float xPos_gfx);
+            float.TryParse(posValuesS[1], out float yPos_gfx);
+            float.TryParse(posValuesS[2], out float zPos_gfx);
+            
+            Vector3 pos = new Vector3(xPos_gfx, yPos_gfx, zPos_gfx);
+
+            string[] rotValuesS = dataMembers[3].Split(",");
+            float.TryParse(rotValuesS[0], out float xRot_gfx);
+            float.TryParse(rotValuesS[1], out float yRot_gfx);
+            float.TryParse(rotValuesS[2], out float zRot_gfx);
+
+            Vector3 rot = new Vector3(xRot_gfx, yRot_gfx, zRot_gfx);
+
+            GameObject newObj =  Instantiate(tilesetObjs[int.Parse(dataMembers[1])], pos, new Quaternion(rot.x, rot.y, rot.z, 0));
+            newObj.transform.SetParent(sceneryObj.transform);
+         //   Debug.Log($"{dataMembers[0]},{dataMembers[1]},{dataMembers[2]},{dataMembers[3]},{dataMembers[4]}");
+            currentLineInt++;
+            if (currentLineInt > 10000)
             {
+
                 break;
             }
         }
 
-            Debug.Log("Map File Loaded");
+        Debug.Log("Map File Loaded");
 
         if (Application.isPlaying)
         {
@@ -349,7 +385,7 @@ public class MapBuilder : MonoBehaviour
 
             if (obj != null && c != null)
             {
-                string newLine = $"{c.tilesetName},{c.objId},{t.position},{t.rotation},{t.localScale}\n";
+                string newLine = $"{c.tilesetName}*{c.objId}*{t.position}*{t.rotation}*{t.localScale}\n";
                 dataToSave += newLine;
             }
         }
@@ -430,7 +466,13 @@ public class MapBuilder : MonoBehaviour
         newTilesObj.name = "Tiles";
         newTilesObj.transform.parent = GameObject.Find("Environment").transform;
 
-        
+        GameObject scenery = GameObject.Find("Scenery");
+
+        DestroyImmediate(scenery);
+
+        GameObject newSceneryObj = new GameObject();
+        newSceneryObj.name = "Scenery";
+        newSceneryObj.transform.parent = GameObject.Find("Environment").transform;
     }
 
     public void BuildFlowfields()
