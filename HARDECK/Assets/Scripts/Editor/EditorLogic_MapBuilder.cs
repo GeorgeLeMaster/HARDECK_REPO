@@ -29,10 +29,6 @@ public class EditorLogic_MapBuilder : Editor
             mapBuilder.ClearMap();
         }
 
-        if (GUILayout.Button("Load Map V2"))
-        {
-            mapBuilder.LoadMapV2();
-        }
     }
 
 }

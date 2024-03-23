@@ -14,6 +14,8 @@ public class Structure : MonoBehaviour
 
     public int ownerId;
 
+    public bool playerHq;
+
     private void Start()
     {
         LineRenderer lr = GetComponent<LineRenderer>();
@@ -43,13 +45,18 @@ public class Structure : MonoBehaviour
 
     public void CheckOwnership()
     {
+        Physics.OverlapBox();
+
         for (int x = -WidthHeight.x; x < WidthHeight.x + 1; x++)
         {
             for (int z = -WidthHeight.y; z < WidthHeight.y + 1; z++)
             {
                 TileInfo newTile = MapBuilder.instance.Tiles[tilemapPos.x + x, tilemapPos.y, tilemapPos.z + z];
 
-
+                if (newTile != null)
+                {
+                    // check if there is a unit on that tile
+                }
             }
         }
     }

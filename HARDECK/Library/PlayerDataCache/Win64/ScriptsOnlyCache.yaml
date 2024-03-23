@@ -2,7 +2,9 @@ ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp:
     - GFXOBJContainter
+    - Structure
     Assembly-CSharp.dll:
+    - AlphaMapSelector
     - CameraController
     - Catalouge
     - EnemyAI
@@ -13,6 +15,7 @@ ScriptsOnlyBuild:
     - MapBuilder
     - MapBuilderUI
     - PopupLogic
+    - Structure
     - TestGFXAnchor
     - TileInfo
     - UIManager
@@ -26,6 +29,7 @@ ScriptsOnlyBuild:
     - TMPro.TMP_SpriteAsset
     - TMPro.TMP_StyleSheet
     Unity.TextMeshPro.dll:
+    - TMPro.TMP_Dropdown
     - TMPro.TMP_FontAsset
     - TMPro.TMP_Settings
     - TMPro.TMP_SpriteAsset
@@ -44,13 +48,20 @@ ScriptsOnlyBuild:
     - UnityEngine.UI.CanvasScaler
     - UnityEngine.UI.GraphicRaycaster
     - UnityEngine.UI.Image
+    - UnityEngine.UI.Mask
+    - UnityEngine.UI.ScrollRect
+    - UnityEngine.UI.Scrollbar
     - UnityEngine.UI.Selectable
+    - UnityEngine.UI.Toggle
   serializedClasses:
     Unity.TextMeshPro:
     - TMPro.FaceInfo_Legacy
     - TMPro.FontAssetCreationSettings
     - TMPro.KerningTable
     - TMPro.TMP_Character
+    - TMPro.TMP_Dropdown/DropdownEvent
+    - TMPro.TMP_Dropdown/OptionData
+    - TMPro.TMP_Dropdown/OptionDataList
     - TMPro.TMP_FontFeatureTable
     - TMPro.TMP_FontWeightPair
     - TMPro.TMP_GlyphAdjustmentRecord
@@ -76,8 +87,14 @@ ScriptsOnlyBuild:
     - UnityEngine.UI.ColorBlock
     - UnityEngine.UI.MaskableGraphic/CullStateChangedEvent
     - UnityEngine.UI.Navigation
+    - UnityEngine.UI.ScrollRect/ScrollRectEvent
+    - UnityEngine.UI.Scrollbar/ScrollEvent
     - UnityEngine.UI.SpriteState
+    - UnityEngine.UI.Toggle/ToggleEvent
   methodsToPreserve:
+  - assembly: Assembly-CSharp
+    fullTypeName: AlphaMapSelector
+    methodName: LoadGameScene
   - assembly: Assembly-CSharp
     fullTypeName: GameManager
     methodName: CancelAction
@@ -92,9 +109,12 @@ ScriptsOnlyBuild:
     methodName: QuitApplication
   - assembly: Assembly-CSharp
     fullTypeName: GameManager
+    methodName: QuitToMenu
+  - assembly: Assembly-CSharp
+    fullTypeName: GameManager
     methodName: ToggleMenuUI
   sceneClasses:
-    Assets/Scenes/SampleScene.unity:
+    Assets/Scenes/GameScene.unity:
     - Class: 1
       Script: {instanceID: 0}
     - Class: 4
@@ -128,59 +148,55 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 16624}
+      Script: {instanceID: 1600}
     - Class: 114
-      Script: {instanceID: 16626}
+      Script: {instanceID: 1748}
     - Class: 114
-      Script: {instanceID: 16668}
+      Script: {instanceID: 2122}
     - Class: 114
-      Script: {instanceID: 16760}
+      Script: {instanceID: 2294}
     - Class: 114
-      Script: {instanceID: 17010}
+      Script: {instanceID: 2588}
     - Class: 114
-      Script: {instanceID: 17192}
+      Script: {instanceID: 2600}
     - Class: 114
-      Script: {instanceID: 17248}
+      Script: {instanceID: 2802}
     - Class: 114
-      Script: {instanceID: 17364}
+      Script: {instanceID: 3088}
     - Class: 114
-      Script: {instanceID: 17658}
+      Script: {instanceID: 4356}
     - Class: 114
-      Script: {instanceID: 17670}
+      Script: {instanceID: 5002}
     - Class: 114
-      Script: {instanceID: 17872}
+      Script: {instanceID: 5540}
     - Class: 114
-      Script: {instanceID: 18026}
+      Script: {instanceID: 5688}
     - Class: 114
-      Script: {instanceID: 18160}
+      Script: {instanceID: 5838}
     - Class: 114
-      Script: {instanceID: 18188}
+      Script: {instanceID: 6002}
     - Class: 114
-      Script: {instanceID: 18562}
+      Script: {instanceID: 7932}
     - Class: 114
-      Script: {instanceID: 19142}
+      Script: {instanceID: 7936}
     - Class: 114
-      Script: {instanceID: 19390}
+      Script: {instanceID: 7940}
     - Class: 114
-      Script: {instanceID: 19432}
+      Script: {instanceID: 7944}
     - Class: 114
-      Script: {instanceID: 19700}
+      Script: {instanceID: 7952}
     - Class: 114
-      Script: {instanceID: 19998}
+      Script: {instanceID: 7956}
     - Class: 114
-      Script: {instanceID: 20086}
+      Script: {instanceID: 7960}
     - Class: 114
-      Script: {instanceID: 20648}
+      Script: {instanceID: 7964}
     - Class: 114
-      Script: {instanceID: 20772}
+      Script: {instanceID: 7972}
     - Class: 114
-      Script: {instanceID: 20842}
+      Script: {instanceID: 7976}
     - Class: 114
-      Script: {instanceID: 20924}
-    - Class: 114
-      Script: {instanceID: 21088}
-    - Class: 114
-      Script: {instanceID: 22852}
+      Script: {instanceID: 7984}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 120
@@ -207,19 +223,104 @@ ScriptsOnlyBuild:
       Script: {instanceID: 0}
     - Class: 224
       Script: {instanceID: 0}
+    - Class: 258
+      Script: {instanceID: 0}
+    Assets/Scenes/Menu.unity:
+    - Class: 1
+      Script: {instanceID: 0}
+    - Class: 4
+      Script: {instanceID: 0}
+    - Class: 20
+      Script: {instanceID: 0}
+    - Class: 21
+      Script: {instanceID: 0}
+    - Class: 23
+      Script: {instanceID: 0}
+    - Class: 28
+      Script: {instanceID: 0}
+    - Class: 33
+      Script: {instanceID: 0}
+    - Class: 43
+      Script: {instanceID: 0}
+    - Class: 48
+      Script: {instanceID: 0}
+    - Class: 49
+      Script: {instanceID: 0}
+    - Class: 64
+      Script: {instanceID: 0}
+    - Class: 65
+      Script: {instanceID: 0}
+    - Class: 81
+      Script: {instanceID: 0}
+    - Class: 89
+      Script: {instanceID: 0}
+    - Class: 104
+      Script: {instanceID: 0}
+    - Class: 108
+      Script: {instanceID: 0}
+    - Class: 114
+      Script: {instanceID: 1600}
+    - Class: 114
+      Script: {instanceID: 1748}
+    - Class: 114
+      Script: {instanceID: 2178}
+    - Class: 114
+      Script: {instanceID: 2600}
+    - Class: 114
+      Script: {instanceID: 2606}
+    - Class: 114
+      Script: {instanceID: 2802}
+    - Class: 114
+      Script: {instanceID: 3088}
+    - Class: 114
+      Script: {instanceID: 3836}
+    - Class: 114
+      Script: {instanceID: 4066}
+    - Class: 114
+      Script: {instanceID: 4314}
+    - Class: 114
+      Script: {instanceID: 4884}
+    - Class: 114
+      Script: {instanceID: 5002}
+    - Class: 114
+      Script: {instanceID: 5540}
+    - Class: 114
+      Script: {instanceID: 5688}
+    - Class: 114
+      Script: {instanceID: 6002}
+    - Class: 114
+      Script: {instanceID: 6010}
+    - Class: 114
+      Script: {instanceID: 7028}
+    - Class: 114
+      Script: {instanceID: 7932}
+    - Class: 114
+      Script: {instanceID: 7972}
+    - Class: 114
+      Script: {instanceID: 88070}
+    - Class: 115
+      Script: {instanceID: 0}
+    - Class: 120
+      Script: {instanceID: 0}
+    - Class: 128
+      Script: {instanceID: 0}
+    - Class: 135
+      Script: {instanceID: 0}
+    - Class: 157
+      Script: {instanceID: 0}
+    - Class: 196
+      Script: {instanceID: 0}
+    - Class: 213
+      Script: {instanceID: 0}
+    - Class: 222
+      Script: {instanceID: 0}
+    - Class: 223
+      Script: {instanceID: 0}
+    - Class: 224
+      Script: {instanceID: 0}
+    - Class: 258
+      Script: {instanceID: 0}
   scriptHashData:
-  - hash:
-      serializedVersion: 2
-      Hash: 540882762544409cc4530e60db00e951
-    assemblyName: UnityEngine.UI
-    namespaceName: UnityEngine.UI
-    className: CanvasScaler
-  - hash:
-      serializedVersion: 2
-      Hash: 00bbd9db8634496d079d17711b2ff7c4
-    assemblyName: UnityEngine.UI
-    namespaceName: UnityEngine.UI
-    className: Selectable
   - hash:
       serializedVersion: 2
       Hash: 55060a7bf226ac385ce19ebd450f199f
@@ -240,12 +341,6 @@ ScriptsOnlyBuild:
     className: UnityOnScrollbarValueChangedMessageListener
   - hash:
       serializedVersion: 2
-      Hash: 55d1913eb7af4dfddcb7772e285bbafa
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: GroundUnitAI
-  - hash:
-      serializedVersion: 2
       Hash: a3901985eb076c1c9b7562fca82ca3e0
     assemblyName: Unity.Timeline
     namespaceName: UnityEngine.Timeline
@@ -256,6 +351,12 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI
     namespaceName: UnityEngine.UI
     className: LayoutElement
+  - hash:
+      serializedVersion: 2
+      Hash: 00bbd9db8634496d079d17711b2ff7c4
+    assemblyName: UnityEngine.UI
+    namespaceName: UnityEngine.UI
+    className: Selectable
   - hash:
       serializedVersion: 2
       Hash: 8703b6ae2b0eefd9dafbc44d8d333fb1
@@ -274,12 +375,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: UnityOnMouseExitMessageListener
-  - hash:
-      serializedVersion: 2
-      Hash: ccee49cff7ab34bf00b6fa38ac758497
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: EnemyAI
   - hash:
       serializedVersion: 2
       Hash: c1848b3fb5fe586caaba18d3c3abe845
@@ -444,12 +539,6 @@ ScriptsOnlyBuild:
     className: TestResultRendererCallback
   - hash:
       serializedVersion: 2
-      Hash: 927d7967a872bb53961e7348e56775cc
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: PopupLogic
-  - hash:
-      serializedVersion: 2
       Hash: b98001682cba83786775c9e415b89a61
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
@@ -466,12 +555,6 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI
     namespaceName: UnityEngine.UI
     className: Button
-  - hash:
-      serializedVersion: 2
-      Hash: dcb7387445970d78125be4ea1e3d21c4
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: TileInfo
   - hash:
       serializedVersion: 2
       Hash: d90629714fa6b0145fcaffc87f5c6559
@@ -544,12 +627,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: UnityOnControllerColliderHitMessageListener
-  - hash:
-      serializedVersion: 2
-      Hash: fcd9a14c31ecc091d4de82aac00efbdb
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: CameraController
   - hash:
       serializedVersion: 2
       Hash: 960935b102b3064f4b924de16426e340
@@ -684,18 +761,6 @@ ScriptsOnlyBuild:
     className: UnityOnPointerClickMessageListener
   - hash:
       serializedVersion: 2
-      Hash: 4d5789e664afbde0de4149d1dc95d749
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: TileObj
-  - hash:
-      serializedVersion: 2
-      Hash: 883606dbbc135079c88fb50060bf995f
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: GFXContainer
-  - hash:
-      serializedVersion: 2
       Hash: 0b63f6d3335e11939ce8790b904c8691
     assemblyName: Unity.Timeline
     namespaceName: UnityEngine.Timeline
@@ -762,12 +827,6 @@ ScriptsOnlyBuild:
     className: Toggle
   - hash:
       serializedVersion: 2
-      Hash: 92f3a57fb5f699f70f2229e1c4d4ba2f
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: TestGFXAnchor
-  - hash:
-      serializedVersion: 2
       Hash: 522f6865b4ec12522e602206785309f8
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
@@ -796,12 +855,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
     className: UnityOnTriggerExitMessageListener
-  - hash:
-      serializedVersion: 2
-      Hash: c72167357857f16dd402b4a70dadf06f
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: MapFileDatabase
   - hash:
       serializedVersion: 2
       Hash: 17f82e3e7d8f8b07a270a4aad9bfe79d
@@ -846,10 +899,10 @@ ScriptsOnlyBuild:
     className: StateGraphAsset
   - hash:
       serializedVersion: 2
-      Hash: 4b5616d2ba7ed9cab593fc6018dda150
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: MapBuilderUI
+      Hash: 540882762544409cc4530e60db00e951
+    assemblyName: UnityEngine.UI
+    namespaceName: UnityEngine.UI
+    className: CanvasScaler
   - hash:
       serializedVersion: 2
       Hash: ef38c1407dba8c1f5d69f5db61a694fe
@@ -868,12 +921,6 @@ ScriptsOnlyBuild:
     assemblyName: Unity.TextMeshPro
     namespaceName: TMPro
     className: TextMeshProUGUI
-  - hash:
-      serializedVersion: 2
-      Hash: 18c03510632eb37b853e43d913c11b08
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: GFXOBJContainter
   - hash:
       serializedVersion: 2
       Hash: 8fb5a3aef7317867f65e7189c4b03651
@@ -1110,12 +1157,6 @@ ScriptsOnlyBuild:
     className: UnityOnToggleValueChangedMessageListener
   - hash:
       serializedVersion: 2
-      Hash: d4143b6a478e76c9b1e4f312b804753c
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: PlayerManager
-  - hash:
-      serializedVersion: 2
       Hash: 8bf800a764665b085fe469e8aea7f167
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
@@ -1140,11 +1181,96 @@ ScriptsOnlyBuild:
     className: UnityOnSliderValueChangedMessageListener
   - hash:
       serializedVersion: 2
+      Hash: 18c03510632eb37b853e43d913c11b08
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: GFXOBJContainter
+  - hash:
+      serializedVersion: 2
+      Hash: 92f3a57fb5f699f70f2229e1c4d4ba2f
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: TestGFXAnchor
+  - hash:
+      serializedVersion: 2
+      Hash: 55d1913eb7af4dfddcb7772e285bbafa
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: GroundUnitAI
+  - hash:
+      serializedVersion: 2
+      Hash: 927d7967a872bb53961e7348e56775cc
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: PopupLogic
+  - hash:
+      serializedVersion: 2
+      Hash: c72167357857f16dd402b4a70dadf06f
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: MapFileDatabase
+  - hash:
+      serializedVersion: 2
+      Hash: fcd9a14c31ecc091d4de82aac00efbdb
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: CameraController
+  - hash:
+      serializedVersion: 2
+      Hash: 883606dbbc135079c88fb50060bf995f
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: GFXContainer
+  - hash:
+      serializedVersion: 2
       Hash: 97d9f59340e875e65b823d7f02bf6799
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: UI_Pulsate
+  - hash:
+      serializedVersion: 2
+      Hash: ccee49cff7ab34bf00b6fa38ac758497
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: EnemyAI
+  - hash:
+      serializedVersion: 2
+      Hash: d4143b6a478e76c9b1e4f312b804753c
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: PlayerManager
+  - hash:
+      serializedVersion: 2
+      Hash: ec3736fe3e743a607da0803116c4c8b2
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: Structure
+  - hash:
+      serializedVersion: 2
+      Hash: 4b5616d2ba7ed9cab593fc6018dda150
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: MapBuilderUI
+  - hash:
+      serializedVersion: 2
+      Hash: 4d5789e664afbde0de4149d1dc95d749
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: TileObj
+  - hash:
+      serializedVersion: 2
+      Hash: dcb7387445970d78125be4ea1e3d21c4
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: TileInfo
+  - hash:
+      serializedVersion: 2
+      Hash: 51855d14070273734b703b2b9449e947
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: AlphaMapSelector
   platform: 19
   scenePathNames:
-  - Assets/Scenes/SampleScene.unity
-  playerPath: D:/Unity (D)/HARDECK_REPO/Builds/HARDECK.exe
+  - Assets/Scenes/Menu.unity
+  - Assets/Scenes/GameScene.unity
+  playerPath: C:/HARDECK_REPO/Builds/HARDECK.exe

@@ -110,8 +110,8 @@ public class MapBuilder : MonoBehaviour
     public void Start()
     {
 
-
-
+        selectedMapID = PlayerPrefs.GetInt("pref_selectedMapId");
+        LoadMapV2();
         //Debug.ClearDeveloperConsole();
         //LoadMapFromFile();
     }
@@ -390,10 +390,12 @@ public class MapBuilder : MonoBehaviour
             }
         }
 
-        dataToSave += "sceneEnd";
+        dataToSave += "sceneEnd\n";
+
+
+
         // OPEN WRITER AND TITLE FILE
         StreamWriter writer = new StreamWriter(mapFilePath);
-
         writer.WriteLine(dataToSave);
 
         writer.Close();
