@@ -63,6 +63,8 @@ public class GameManager : MonoBehaviour
     public List<UnitAIBase> PlayerUnits;
     public List<UnitAIBase> EnemyUnits;
 
+    public List<Structure> structures;
+
     private void Awake()  
     {
         instance = this;
@@ -457,6 +459,12 @@ public class GameManager : MonoBehaviour
 
     public void StartPlayerTurn()
     {
+
+        foreach(Structure st in structures)
+        {
+            st.CheckOwnership();
+        }
+
         foreach(UnitAIBase unit in PlayerUnits)
         {
             unit.actionPips = 1;

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Xml;
 using UnityEngine;
 
 public class Structure : MonoBehaviour
@@ -45,19 +46,76 @@ public class Structure : MonoBehaviour
 
     public void CheckOwnership()
     {
-        Physics.OverlapBox();
+        LayerMask mask = LayerMask.GetMask("Unit");
 
-        for (int x = -WidthHeight.x; x < WidthHeight.x + 1; x++)
+        Collider[] c = Physics.OverlapBox(transform.position, new Vector3(WidthHeight.x, 1, WidthHeight.y), Quaternion.identity, mask); 
+        bool playerUnit = false;
+        bool enemyUnit = false;
+        
+        foreach(Collider u in c)
         {
-            for (int z = -WidthHeight.y; z < WidthHeight.y + 1; z++)
-            {
-                TileInfo newTile = MapBuilder.instance.Tiles[tilemapPos.x + x, tilemapPos.y, tilemapPos.z + z];
+            UnitAIBase unit = u.GetComponent<UnitAIBase>();
 
-                if (newTile != null)
-                {
-                    // check if there is a unit on that tile
-                }
+            if (unit.alliance == 0)
+            {
+                playerUnit = true;
             }
+            else
+            {
+                enemyUnit = true;
+            }
+
+            if (playerUnit && enemyUnit)
+            {
+                break;
+            }
+        }
+
+        if (ownerId == -1)
+        {
+            // if neutral
+            if (playerUnit && !enemyUnit)
+            {
+                ownerId = 0;
+            }
+            else if (enemyUnit && !playerUnit)
+            {
+                ownerId = 1;
+            }
+        }
+        else if (ownerId == 0)
+        {
+            // owned by player
+            if (enemyUnit && !playerUnit)
+            {
+                ownerId = -1;
+            }
+        }
+        else if (ownerId == 1)
+        {
+            // owned by enemy
+            if (!enemyUnit && playerUnit)
+            {
+                ownerId = -1;
+            }
+        }
+
+        LineRenderer lr = GetComponent<LineRenderer>();
+
+        switch (ownerId)
+        {
+            case 0:
+                lr.startColor = GameManager.instance.playerColor;
+                lr.endColor = GameManager.instance.playerColor;
+                break;
+            case 1:
+                lr.startColor = GameManager.instance.enemyColor;
+                lr.endColor = GameManager.instance.enemyColor;
+                break;
+            default:
+                lr.startColor = Color.white;
+                lr.endColor = Color.white;
+                break;
         }
     }
 
