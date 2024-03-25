@@ -312,7 +312,7 @@ public class MapBuilder : MonoBehaviour
             {
                 if (t != null)
                 {
-                    GameObject newFT = Instantiate(FOWPrefab, t.tilemapPosition, Quaternion.identity);
+                    GameObject newFT = Instantiate(FOWPrefab, t.tilemapPosition + new Vector3(0,0.1f,0), Quaternion.identity);
                     FOWtiles[t.tilemapPosition.x, t.tilemapPosition.y, t.tilemapPosition.z] = newFT;
                     newFT.transform.SetParent(fowParent.transform);
                 }

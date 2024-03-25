@@ -130,7 +130,8 @@ public class GameManager : MonoBehaviour
             {
                 ResetActionQueue();
                 RaycastHit hit;
-                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity))
+                LayerMask mask = LayerMask.GetMask("Tile", "Unit");
+                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, mask))
                 {
                     if (hit.transform.GetComponent<TileInfo>() && selectedUnit_Player != null)
                     {
@@ -164,7 +165,7 @@ public class GameManager : MonoBehaviour
                         UnitAIBase hitUnit = hit.transform.GetComponent<UnitAIBase>();
 
                         // Determine alliance of clicked unit and fill appropriate stats
-                        if (hitUnit.alliance == playerAllianceInt && hitUnit.gfx.active)
+                        if (hitUnit.alliance == playerAllianceInt && hitUnit.gfx)
                         {
                             selectedUnit_Enemy = null;
 
@@ -537,11 +538,11 @@ public class GameManager : MonoBehaviour
 
         foreach(UnitAIBase u in EnemyUnits)
         {
-            if (showSpots.Contains(u.currentPos))
+            if (showSpots.Contains(u.currentPos + new Vector3(0,0.1f,0)))
             {
                 u.gfx.SetActive(true);
             }
-            else if (hideSpots.Contains(u.currentPos))
+            else if (hideSpots.Contains(u.currentPos + new Vector3(0, 0.1f, 0)))
             {
                 u.gfx.SetActive(false);
 

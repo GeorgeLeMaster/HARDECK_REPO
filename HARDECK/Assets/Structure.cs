@@ -21,11 +21,11 @@ public class Structure : MonoBehaviour
     {
         LineRenderer lr = GetComponent<LineRenderer>();
 
-        lr.SetPosition(0, new Vector3( WidthHeight.x + 0.5f, 0.1f,  WidthHeight.y + 0.5f));
-        lr.SetPosition(1, new Vector3(-WidthHeight.x - 0.5f, 0.1f,  WidthHeight.y + 0.5f));
-        lr.SetPosition(2, new Vector3(-WidthHeight.x - 0.5f, 0.1f, -WidthHeight.y - 0.5f));
-        lr.SetPosition(3, new Vector3( WidthHeight.x + 0.5f, 0.1f, -WidthHeight.y - 0.5f));
-        lr.SetPosition(4, new Vector3( WidthHeight.x + 0.5f, 0.1f,  WidthHeight.y + 0.5f));
+        lr.SetPosition(0, new Vector3( WidthHeight.x + 0.5f, 0.025f,  WidthHeight.y + 0.5f));
+        lr.SetPosition(1, new Vector3(-WidthHeight.x - 0.5f, 0.025f,  WidthHeight.y + 0.5f));
+        lr.SetPosition(2, new Vector3(-WidthHeight.x - 0.5f, 0.025f, -WidthHeight.y - 0.5f));
+        lr.SetPosition(3, new Vector3( WidthHeight.x + 0.5f, 0.025f, -WidthHeight.y - 0.5f));
+        lr.SetPosition(4, new Vector3( WidthHeight.x + 0.5f, 0.025f,  WidthHeight.y + 0.5f));
 
         switch (ownerId)
         {
