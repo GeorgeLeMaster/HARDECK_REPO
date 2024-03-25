@@ -78,7 +78,7 @@ public class GroundUnitAI : UnitAIBase
 
     override public void Move(Vector3Int desiredPos) 
     {
-        movementPips -= 1;
+  
 
         List<Vector3Int> pathPositions = new List<Vector3Int>();
 
@@ -86,19 +86,24 @@ public class GroundUnitAI : UnitAIBase
 
         TileInfo_Class checkPos = ff.tiles[currentPos.x, currentPos.y, currentPos.z];
 
-
-        while(checkPos.tilemapPosition != desiredPos)
-        {
-            pathPositions.Add(checkPos.tilemapPosition);
-            checkPos = checkPos.nextTile;
-        }
-        pathPositions.Add(checkPos.tilemapPosition);
         //Debug.Log(checkPos.pathCost);
-        checkPos = checkPos.nextTile;
-        
 
-        StartCoroutine( Move_Coroutine(pathPositions) );
+        if (checkPos.pathCost <= moveSpeed)
+        {
+            movementPips -= 1;
 
+            while (checkPos.tilemapPosition != desiredPos)
+            {
+                pathPositions.Add(checkPos.tilemapPosition);
+                checkPos = checkPos.nextTile;
+            }
+            pathPositions.Add(checkPos.tilemapPosition);
+            //Debug.Log(checkPos.pathCost);
+            checkPos = checkPos.nextTile;
+
+
+            StartCoroutine(Move_Coroutine(pathPositions));
+        }
     }
 
     override public void Attack(UnitAIBase defender)
@@ -188,7 +193,7 @@ public class GroundUnitAI : UnitAIBase
                     pathPositions.Remove(nextPos);
                     currentPos = nextPos;
                     gfx.transform.LookAt(new Vector3(nextPos.x, gfx.transform.position.y, nextPos.z));
-
+                    GameManager.instance.APFOW();
                 }
                 else
                 {

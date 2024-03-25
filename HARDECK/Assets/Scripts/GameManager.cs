@@ -29,11 +29,16 @@ public class GameManager : MonoBehaviour
     public GameObject commitActionButton;
     public GameObject cancelActionButton;
     public GameObject endTurnButton;
+    public GameObject movementTooFarText;
+    public GameObject outOfRangeText;
     public TextMeshProUGUI commitActionText;
     public TextMeshProUGUI hitChanceText;
     public GameObject worldTextPopupPrefab;
 
     public bool controllsLocked;
+
+    public List<MeshRenderer> allSurroundingTiles;
+    public List<MeshRenderer> visableTiles;
 
     [Header("Menu")]
     public GameObject menuButtons;
@@ -85,8 +90,8 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         MapBuilder.instance.LoadMapV2();
-        ResetActionQueue();
-        UpdatePlayerActionGFX();
+        //ResetActionQueue();
+        //UpdatePlayerActionGFX();
 
         playerMat.color = playerColor;
         enemyMat.color = enemyColor;
@@ -104,9 +109,17 @@ public class GameManager : MonoBehaviour
                 EnemyUnits.Add(unit);
             }
         }
-        StartPlayerTurn();
+        foreach (UnitAIBase u in EnemyUnits)
+        {
+            u.gfx.SetActive(false);
+
+        }
+        //StartPlayerTurn();
+        //APFOW();
 
     }
+
+    
 
     // Update is called once per frame
     void Update()
@@ -151,7 +164,7 @@ public class GameManager : MonoBehaviour
                         UnitAIBase hitUnit = hit.transform.GetComponent<UnitAIBase>();
 
                         // Determine alliance of clicked unit and fill appropriate stats
-                        if (hitUnit.alliance == playerAllianceInt)
+                        if (hitUnit.alliance == playerAllianceInt && hitUnit.gfx.active)
                         {
                             selectedUnit_Enemy = null;
 
@@ -358,14 +371,13 @@ public class GameManager : MonoBehaviour
 
         // Assigns stats
 
-
+        movementTooFarText.SetActive(false);
+        outOfRangeText.SetActive(false);
+        commitActionButton.SetActive(false);
+        cancelActionButton.SetActive(false);
         // In world UIs
         if (q_actionId != -1) 
         {
-            commitActionButton.SetActive(true);
-            cancelActionButton.SetActive(true);
-
-
             switch (q_actionId)
             {
                 case 0:
@@ -381,17 +393,51 @@ public class GameManager : MonoBehaviour
                         
                     }
 
-                    // Update Text
-                    commitActionText.text = "MOVE";
-                    commitActionButton.GetComponent<Image>().color = new Color(1, 0.86f,0.36f);
+                    Flowfield ff = MapBuilder.instance.Flowfields[q_actingUnit.currentPos.x, q_actingUnit.currentPos.y, q_actingUnit.currentPos.z];
+                    float cost = ff.tiles[q_actionPos.x, q_actionPos.y, q_actionPos.z].pathCost;
+
+                    Color goodColor = new Color(0,1,0,1);
+                    Color badColor = new Color(0, 1, 0, 0.2f);
+
+
+                    if (cost <= q_actingUnit.moveSpeed && cost != -1)
+                    {
+                        commitActionText.text = "MOVE";
+                        commitActionButton.GetComponent<Image>().color = new Color(1, 0.86f, 0.36f);
+                        moveLine.startColor = goodColor;
+                        moveLine.endColor = goodColor;
+                        commitActionButton.SetActive(true);
+                        cancelActionButton.SetActive(true);
+                        movementTooFarText.SetActive(false);
+                    }
+                    else
+                    {
+
+                        movementTooFarText.SetActive(true);
+                        commitActionButton.GetComponent<Image>().color = new Color(0.8f, 0.86f, 0.16f);
+                        moveLine.startColor = badColor;
+                        moveLine.endColor = badColor;
+                    }
+
 
                     break;
 
                 case 1:
-                    moveLine.gameObject.SetActive(false);
+                    if (Vector3.Distance(q_actionPos, q_actingUnit.currentPos) <= q_actingUnit.range)
+                    {
+                        moveLine.gameObject.SetActive(false);
+                        commitActionButton.SetActive(true);
+                        cancelActionButton.SetActive(true);
+                        outOfRangeText.SetActive(false);
+                        commitActionText.text = "ATTACK";
+                        commitActionButton.GetComponent<Image>().color = new Color(1, 0, 0);
+                    }
+                    else
+                    {
+                        outOfRangeText.SetActive(true);
 
-                    commitActionText.text = "ATTACK";
-                    commitActionButton.GetComponent<Image>().color = new Color(1, 0, 0);
+
+                    }
 
                     break;
 
@@ -454,11 +500,59 @@ public class GameManager : MonoBehaviour
         controllsLocked = true;
         enemyTurnIndicator.SetActive(true);
         endTurnButton.SetActive(false);
+        visableTiles.Clear();
+        allSurroundingTiles.Clear();
         
+    }
+
+    public void APFOW()
+    {
+        List<Vector3> hideSpots = new List<Vector3>();
+        List<Vector3> showSpots = new List<Vector3>();
+        visableTiles.Clear();
+        allSurroundingTiles.Clear();
+
+        foreach (UnitAIBase u in PlayerUnits)
+        {
+            if (u != null && u.currentHealth > 0)
+            {
+                MapBuilder.instance.UpdateFOW(u);
+            }
+        }
+
+        foreach (MeshRenderer r in allSurroundingTiles)
+        {
+            if (visableTiles.Contains(r))
+            {
+                r.enabled = false;
+                showSpots.Add(r.transform.position);
+            }
+            else
+            {
+                r.enabled = true;
+                hideSpots.Add(r.transform.position);
+
+            }
+        }
+
+        foreach(UnitAIBase u in EnemyUnits)
+        {
+            if (showSpots.Contains(u.currentPos))
+            {
+                u.gfx.SetActive(true);
+            }
+            else if (hideSpots.Contains(u.currentPos))
+            {
+                u.gfx.SetActive(false);
+
+            }
+        }
     }
 
     public void StartPlayerTurn()
     {
+
+        Debug.Log("start");
 
         foreach(Structure st in structures)
         {
@@ -470,7 +564,7 @@ public class GameManager : MonoBehaviour
             unit.actionPips = 1;
             unit.movementPips = 1;
         }
-        UpdatePlayerActionGFX();
+        //UpdatePlayerActionGFX();
         controllsLocked = false;
         enemyTurnIndicator.SetActive(false);
         endTurnButton.SetActive(true);
@@ -493,5 +587,11 @@ public class GameManager : MonoBehaviour
     public void ToggleMenuUI()
     {
         menuButtons.SetActive(!menuButtons.activeInHierarchy);
+    }
+
+    private IEnumerator firstFOWupdate()
+    {
+        yield return new WaitForEndOfFrame();
+        APFOW();
     }
 }

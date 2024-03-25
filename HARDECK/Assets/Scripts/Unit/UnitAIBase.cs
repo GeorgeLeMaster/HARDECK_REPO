@@ -25,6 +25,7 @@ public class UnitAIBase : MonoBehaviour
     public float range;
     public float damage;
     public float damageMod;
+    public float visionRadius;
 
     public GameObject fireGFX_prefab;
 
@@ -96,6 +97,7 @@ public class UnitAIBase : MonoBehaviour
                 GameManager.instance.EnemyUnits.Remove(this);
             }
             GameManager.instance.AllUnits.Remove(this);
+            GameManager.instance.APFOW();
             Destroy(gameObject);
             
         }

@@ -19,7 +19,7 @@ public class TileInfo_Class
     public TileInfo.Directions rampOrientation;
 
     public TileInfo_Class nextTile = null;
-    public float pathCost;
+    public float pathCost = -1f;
     public bool isChecked = false;
 
     public TileInfo_Class() { }
@@ -85,6 +85,9 @@ public class MapBuilder : MonoBehaviour
 
     public TileInfo[,,] Tiles;
 
+    public GameObject FOWPrefab;
+    public GameObject[,,] FOWtiles;
+
     [Header("Map File Components")]
     public TextAsset[] MapFiles;
     public int selectedMapID;
@@ -110,8 +113,7 @@ public class MapBuilder : MonoBehaviour
     public void Start()
     {
 
-        selectedMapID = PlayerPrefs.GetInt("pref_selectedMapId");
-        LoadMapV2();
+        //LoadMapV2();
         //Debug.ClearDeveloperConsole();
         //LoadMapFromFile();
     }
@@ -120,6 +122,7 @@ public class MapBuilder : MonoBehaviour
     public void LoadMapV2()
     {
         ClearMap();
+        selectedMapID = PlayerPrefs.GetInt("pref_selectedMapId");
 
         // Find mapBuildLimitObj
         mapBuildLimitObj = GameObject.Find("MapBuildLimit");
@@ -302,7 +305,28 @@ public class MapBuilder : MonoBehaviour
         {
             BuildFlowfields();
 
+            GameObject fowParent = GameObject.Find("FOW");
+            //  Build FOW
+            FOWtiles = new GameObject[mapX + 1, mapY + 1, mapZ + 1];
+            foreach (TileInfo t in Tiles)
+            {
+                if (t != null)
+                {
+                    GameObject newFT = Instantiate(FOWPrefab, t.tilemapPosition, Quaternion.identity);
+                    FOWtiles[t.tilemapPosition.x, t.tilemapPosition.y, t.tilemapPosition.z] = newFT;
+                    newFT.transform.SetParent(fowParent.transform);
+                }
+            }
+
+            GameManager.instance.allSurroundingTiles = new List<MeshRenderer>();
+            GameManager.instance.visableTiles = new List<MeshRenderer>();
+
+             GameManager.instance.StartPlayerTurn();
+
+            GameManager.instance.StartCoroutine("firstFOWupdate");
         }
+
+
     }
 
     public void LoadMapFromFile()
@@ -475,6 +499,14 @@ public class MapBuilder : MonoBehaviour
         GameObject newSceneryObj = new GameObject();
         newSceneryObj.name = "Scenery";
         newSceneryObj.transform.parent = GameObject.Find("Environment").transform;
+
+        GameObject fow = GameObject.Find("FOW");
+
+        DestroyImmediate(fow);
+
+        GameObject newFOWObj = new GameObject();
+        newFOWObj.name = "FOW";
+        newFOWObj.transform.parent = GameObject.Find("Environment").transform;
     }
 
     public void BuildFlowfields()
@@ -571,6 +603,12 @@ public class MapBuilder : MonoBehaviour
 
                                         if (newTile.nextTile == null)
                                         {
+                                            float pathMod = 1f;
+                                            if (xOff != 0 && zOff != 0)
+                                            {
+                                                pathMod++;
+                                            }
+                                            newTile.pathCost = checkTile.pathCost + pathMod;
                                             newTile.nextTile = checkTile;
                                             //newTile.nextTile = result.originPoint;
 
@@ -592,7 +630,12 @@ public class MapBuilder : MonoBehaviour
 
                                                 if (a == b)
                                                 {
-
+                                                    float pathMod = 1f;
+                                                    if (xOff != 0 && zOff != 0)
+                                                    {
+                                                        pathMod++;
+                                                    }
+                                                    newTile.pathCost = checkTile.pathCost + pathMod;
                                                     newTile.nextTile = checkTile;
                                                 }
                                             }
@@ -602,6 +645,7 @@ public class MapBuilder : MonoBehaviour
 
                                         if (newTile.isChecked == false && !toCheck.Contains(newTile))
                                         {
+
                                             toCheck.Add(newTile);
                                         }
 
@@ -756,10 +800,25 @@ public class MapBuilder : MonoBehaviour
 
         TileInfo_Class checkPos = ff.tiles[from.x, from.y, from.z];
 
-
-        Vector3 offset = new Vector3(0, 0.05f, 0);
-        while (checkPos.tilemapPosition != to)
+        if (checkPos.pathCost != -1)
         {
+
+            Vector3 offset = new Vector3(0, 0.05f, 0);
+            while (checkPos.tilemapPosition != to)
+            {
+                if (checkPos.isRamp)
+                {
+                    offset = new Vector3(0, -0.3f, 0);
+                }
+                else
+                {
+                    offset = new Vector3(0, 0.05f, 0);
+                }
+
+                pathPositions.Add(checkPos.tilemapPosition + offset);
+                checkPos = checkPos.nextTile;
+            }
+
             if (checkPos.isRamp)
             {
                 offset = new Vector3(0, -0.3f, 0);
@@ -771,21 +830,11 @@ public class MapBuilder : MonoBehaviour
 
             pathPositions.Add(checkPos.tilemapPosition + offset);
             checkPos = checkPos.nextTile;
+
+            // Debug.Log(result.Count);
+
         }
 
-        if (checkPos.isRamp)
-        {
-            offset = new Vector3(0, -0.3f, 0);
-        }
-        else
-        {
-            offset = new Vector3(0, 0.05f, 0);
-        }
-
-        pathPositions.Add(checkPos.tilemapPosition + offset);
-        checkPos = checkPos.nextTile;
-
-        // Debug.Log(result.Count);
         return pathPositions;
     }
 
@@ -867,6 +916,40 @@ public class MapBuilder : MonoBehaviour
         }
 
         return false;
+    }
+
+    public void UpdateFOW(UnitAIBase input)
+    {
+        Debug.Log("a");
+
+        Vector3 pos = input.currentPos + new Vector3(0,0.5f,0);
+        LayerMask mask = LayerMask.GetMask("FOW");
+
+        Collider[] fowTiles = Physics.OverlapCapsule(new Vector3(pos.x, -10, pos.z), new Vector3(pos.x, 10, pos.z), input.moveSpeed, mask);
+
+        mask = LayerMask.GetMask("GFXEnvironment");
+        //Debug.Log()
+        foreach (Collider c in fowTiles)
+        {
+            
+            // raycst from input pos to c pos, if hit something, nothing, if not, hit tile
+            Vector3 dir = c.transform.position - pos;
+            float dist = Vector3.Distance(pos, c.transform.position);
+            if (!GameManager.instance.allSurroundingTiles.Contains(c.gameObject.GetComponent<MeshRenderer>()))
+            {
+                GameManager.instance.allSurroundingTiles.Add(c.gameObject.GetComponent<MeshRenderer>());
+            }
+            if (!Physics.Raycast(pos, dir.normalized, dist, mask))
+            {
+                if (!GameManager.instance.visableTiles.Contains(c.gameObject.GetComponent<MeshRenderer>()))
+                {
+                    GameManager.instance.visableTiles.Add(c.gameObject.GetComponent<MeshRenderer>());
+                }
+            }
+
+
+
+        }
     }
 
 }
