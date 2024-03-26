@@ -165,7 +165,7 @@ public class GameManager : MonoBehaviour
                         UnitAIBase hitUnit = hit.transform.GetComponent<UnitAIBase>();
 
                         // Determine alliance of clicked unit and fill appropriate stats
-                        if (hitUnit.alliance == playerAllianceInt && hitUnit.gfx)
+                        if (hitUnit.alliance == playerAllianceInt)
                         {
                             selectedUnit_Enemy = null;
 
@@ -186,7 +186,7 @@ public class GameManager : MonoBehaviour
                                 selectedUnit_Player = hitUnit;
                             }
                         }
-                        else if (hitUnit.alliance != playerAllianceInt)
+                        else if (hitUnit.alliance != playerAllianceInt && hitUnit.gfx.activeInHierarchy)
                         {
 
                             if (selectedUnit_Enemy != null)
