@@ -10,7 +10,7 @@ public class MapBuilderUI : MonoBehaviour
     {
         //MapBuilder.instance.LoadMapFromFile();
         PlayerPrefs.SetInt("pref_selectedMapId", GameObject.Find("MapBuilder").GetComponent<MapBuilder>().selectedMapID);
-        GameObject.Find("MapBuilder").GetComponent<MapBuilder>().LoadMapFromFile();
+        GameObject.Find("MapBuilder").GetComponent<MapBuilder>().LoadMapV2();
     }
 
     public void SaveMapToFile()

@@ -122,13 +122,17 @@ public class MapBuilder : MonoBehaviour
     public void LoadMapV2()
     {
         ClearMap();
+        if (Application.isEditor)
+        {
+            PlayerPrefs.SetInt("pref_selectedMapId", selectedMapID);
+        }
         selectedMapID = PlayerPrefs.GetInt("pref_selectedMapId");
-
         // Find mapBuildLimitObj
         mapBuildLimitObj = GameObject.Find("MapBuildLimit");
 
         // Get Text Asset from Database
         TextAsset mapTextAsset = MapFiles[selectedMapID];
+        Debug.Log(mapTextAsset);
 
         // Declares Vars
         Vector3 newPos_gfx = Vector3.zero;
@@ -157,13 +161,9 @@ public class MapBuilder : MonoBehaviour
         string currentLine;
 
         currentLineInt = 4;
-        while ((currentLine = lines[currentLineInt]) != "fileEnd\r\n")
+        while (!(currentLine = lines[currentLineInt]).Contains("fileEnd"))
         {
 
-            if (currentLine.Substring(0,1) == "f")
-            {
-                break;
-            }
             //Debug.Log(currentLine);
             if (currentLine != null)
             {
@@ -256,9 +256,8 @@ public class MapBuilder : MonoBehaviour
 
         GameObject sceneryObj = GameObject.Find("Scenery");
 
-        while ((currentLine = lines[currentLineInt]).Substring(0, 1) != "s")
+        while (!(currentLine = lines[currentLineInt]).Contains("sceneEnd") && currentLine != "")
         {
-
 
             string[] dataMembers = currentLine.Split("*");
 
@@ -267,7 +266,6 @@ public class MapBuilder : MonoBehaviour
             //2: pos
             //3: rot
             //4: scale
-
             dataMembers[2] = dataMembers[2].Substring(1, dataMembers[2].Length - 2);
             dataMembers[3] = dataMembers[3].Substring(1, dataMembers[3].Length - 2);
             dataMembers[4] = dataMembers[4].Substring(1, dataMembers[4].Length - 2);
@@ -303,8 +301,25 @@ public class MapBuilder : MonoBehaviour
 
         if (Application.isPlaying)
         {
-            BuildFlowfields();
+            // Inits flowfields array and builds one for each valid tile
+            Flowfields = new Flowfield[mapX + 1, mapY + 1, mapZ + 1];
+            for (int y = 0; y <= mapY; y++)
+            {
+                for (int z = 0; z <= mapZ; z++)
+                {
+                    for (int x = 0; x <= mapX; x++)
+                    {
+                        TileInfo currentTile = Tiles[x, y, z];
+                        if (currentTile != null)
+                        {
+                            Flowfield ff = BuildFlowfield(currentTile);
+                            Flowfields[currentTile.tilemapPosition.x, currentTile.tilemapPosition.y, currentTile.tilemapPosition.z] = ff;
+                        }
+                    }
+                }
+            }
 
+            // Builds FOW
             GameObject fowParent = GameObject.Find("FOW");
             //  Build FOW
             FOWtiles = new GameObject[mapX + 1, mapY + 1, mapZ + 1];
@@ -312,68 +327,52 @@ public class MapBuilder : MonoBehaviour
             {
                 if (t != null)
                 {
-                    GameObject newFT = Instantiate(FOWPrefab, t.tilemapPosition + new Vector3(0,0.1f,0), Quaternion.identity);
+                    GameObject newFT = Instantiate(FOWPrefab, t.tilemapPosition + new Vector3(0,0.01f,0), Quaternion.identity);
                     FOWtiles[t.tilemapPosition.x, t.tilemapPosition.y, t.tilemapPosition.z] = newFT;
                     newFT.transform.SetParent(fowParent.transform);
+                    newFT.gameObject.GetComponent<TileOverlayLogic>().SetOverlay("FOW_showfow");
                 }
             }
 
-            GameManager.instance.allSurroundingTiles = new List<MeshRenderer>();
-            GameManager.instance.visableTiles = new List<MeshRenderer>();
+            GameManager.instance.currentFOWTiles = new List<TileOverlayLogic>();
+            GameManager.instance.lastFOWTiles = new List<TileOverlayLogic>();
 
-             GameManager.instance.StartPlayerTurn();
+            GameManager.instance.StartPlayerTurn();
 
             GameManager.instance.StartCoroutine("firstFOWupdate");
         }
-
-
-    }
-
-    public void LoadMapFromFile()
-    {
-        LoadMapV2();
-
     }
 
     public void SaveMapToFile()
     {
-        //SaveMapV2();
-
-       // mapFilePath = AssetDatabase.GetAssetPath(MapFiles[selectedMapID]);
         // DEBUG INIT
         Debug.Log("Saving map to " + mapFilePath);
 
-        //// FIND PARENT OBJ
-        //GameObject tiles = GameObject.Find("Tiles");
-
-
-
-        string dataToSave = "";
-
-        // Header
-        dataToSave += "Tiles\n*\n";
-
-        // FIND PARENT OBJ
+        // Find parent and data OBJs
         GameObject tiles = GameObject.Find("Tiles");
         mapBuildLimitObj = GameObject.Find("MapBuildLimit");
+
+        // Init data string; this string is our entire file. Is that a good coding practice? Maybe!
+        string dataToSave = "";
+
+        // HEADER
+        dataToSave += "Tiles\n*\n";
 
         // Determine size of map and write to file
         string sizeLine = mapBuildLimitObj.transform.position.ToString();
         sizeLine = sizeLine.Substring(1, sizeLine.Length - 2);
-
         dataToSave += sizeLine + "\n*\n";
 
+        // Save tile info to file, one tile per line
         foreach (Transform transform in tiles.GetComponentsInChildren<Transform>())
         {
             if (transform.gameObject.GetComponent<TileInfo>() != null)
             {
-
-
+                // init new tile info
                 TileInfo currentTileInfo = transform.gameObject.GetComponent<TileInfo>();
 
                 if (currentTileInfo.tilemapPosition.y <= mapY)
                 {
-
                     string positionString = transform.position.ToString();
                     positionString = positionString.Substring(1, positionString.Length - 2);
 
@@ -384,20 +383,16 @@ public class MapBuilder : MonoBehaviour
                     string tilemapPos = currentTileInfo.tilemapPosition.ToString();
                     tilemapPos = tilemapPos.Substring(1, tilemapPos.Length - 2);
 
-
                     dataToSave += ($"{positionString}*{rampBool},{rampOrientation}*{tilemapPos}\n");
                 }
             }
-
-
         }
 
+        // End pathfinding tiles section
         dataToSave += "fileEnd\n";
 
         // Now we're doing the scenery objects
-
         // objects will have a position, rotation, scale, folders string, and id string
-        // should work idk
 
         // Find scenery parent obj
         GameObject sceneryObj = GameObject.Find("Scenery");
@@ -416,134 +411,37 @@ public class MapBuilder : MonoBehaviour
 
         dataToSave += "sceneEnd\n";
 
-
-
-        // OPEN WRITER AND TITLE FILE
+        // Open writer, write dataToSave string, close reader
         StreamWriter writer = new StreamWriter(mapFilePath);
         writer.WriteLine(dataToSave);
-
         writer.Close();
-
-    }
-
-    public void SaveMapV2()
-    {
-        TextAsset mapFile = MapFiles[selectedMapID];
-
-        string dataToSave = "";
-
-        // Header
-        dataToSave += "Tiles\n*\n";
-
-        // FIND PARENT OBJ
-        GameObject tiles = GameObject.Find("Tiles");
-        mapBuildLimitObj = GameObject.Find("MapBuildLimit");
-
-        // Determine size of map and write to file
-        string sizeLine = mapBuildLimitObj.transform.position.ToString();
-        sizeLine = sizeLine.Substring(1, sizeLine.Length - 2);
-
-        dataToSave += sizeLine + "\n*\n";
-
-        foreach (Transform transform in tiles.GetComponentsInChildren<Transform>())
-        {
-            if (transform.gameObject.GetComponent<TileInfo>() != null)
-            {
-
-
-                TileInfo currentTileInfo = transform.gameObject.GetComponent<TileInfo>();
-
-                if (currentTileInfo.tilemapPosition.y <= mapY)
-                {
-
-                    string positionString = transform.position.ToString();
-                    positionString = positionString.Substring(1, positionString.Length - 2);
-
-                    string rampBool = currentTileInfo.isRamp.ToString();
-
-                    string rampOrientation = currentTileInfo.rampOrientation.ToString();
-
-                    string tilemapPos = currentTileInfo.tilemapPosition.ToString();
-                    tilemapPos = tilemapPos.Substring(1, tilemapPos.Length - 2);
-
-
-                    dataToSave += ($"{positionString}*{rampBool},{rampOrientation}*{tilemapPos}\n");
-                }
-            }
-
-
-        }
-
-        dataToSave += "fileEnd";
-
-       // MapFiles[selectedMapID] = (TextAsset)dataToSave;
-
-        Debug.Log(dataToSave);
-
     }
 
     public void ClearMap()
     {
+        // DESTROY AND REPLACE EVERYTHING
         GameObject tiles = GameObject.Find("Tiles");
-
         DestroyImmediate(tiles);
-
         GameObject newTilesObj = new GameObject();
         newTilesObj.name = "Tiles";
         newTilesObj.transform.parent = GameObject.Find("Environment").transform;
 
         GameObject scenery = GameObject.Find("Scenery");
-
         DestroyImmediate(scenery);
-
         GameObject newSceneryObj = new GameObject();
         newSceneryObj.name = "Scenery";
         newSceneryObj.transform.parent = GameObject.Find("Environment").transform;
 
         GameObject fow = GameObject.Find("FOW");
-
         DestroyImmediate(fow);
-
         GameObject newFOWObj = new GameObject();
         newFOWObj.name = "FOW";
         newFOWObj.transform.parent = GameObject.Find("Environment").transform;
     }
 
-    public void BuildFlowfields()
-    {
-
-
-        // Initalize checklist
-
-        //Debug.Log($"{mapX}, {mapY}, {mapZ}");
-        // Initalize flowfields array
-
-        Flowfields = new Flowfield[mapX+1, mapY+1, mapZ+1];
-        //Debug.Log(Flowfields.Length);
-
-        for (int y = 0; y <= mapY; y++)
-        {
-            for (int z = 0; z <= mapZ; z++)
-            {
-                for (int x = 0; x <= mapX; x++)
-                {
-
-                    TileInfo currentTile = Tiles[x, y, z];
-                    if (currentTile != null)
-                    {
-
-                        Flowfield ff = BuildFlowfield(currentTile);
-
-                        Flowfields[currentTile.tilemapPosition.x, currentTile.tilemapPosition.y, currentTile.tilemapPosition.z] = ff;
-                    }
-                }
-            }
-        }
-
-    }
-
     public Flowfield BuildFlowfield(TileInfo origin)
     {
+        // Builds a flowfield for a single tile
         Flowfield result = new Flowfield(origin);
 
         foreach(TileInfo_Class tile in result.tiles)
@@ -564,10 +462,8 @@ public class MapBuilder : MonoBehaviour
             TileInfo_Class checkTile;
 
             // Grab current tile to build ff for
-           // Debug.Log(origin.tilemapPosition);
             TileInfo_Class currentTile = result.tiles[origin.tilemapPosition.x, origin.tilemapPosition.y, origin.tilemapPosition.z];
             currentTile.pathCost = 0;
-           // result.originPoint = currentTile;
             result.originPoint.nextTile = null;
 
             // Add it to the toCheckList
@@ -581,13 +477,12 @@ public class MapBuilder : MonoBehaviour
                 //Debug.Log(toCheck.Count());
                 checkTile = toCheck.First();
 
-
                 for (int yOff = -1; yOff <= 1; yOff++)
                 {
-                        for (int xOff = -1; xOff <= 1; xOff++)
-                        {
-                    for (int zOff = -1; zOff <= 1; zOff++)
+                    for (int xOff = -1; xOff <= 1; xOff++)
                     {
+                        for (int zOff = -1; zOff <= 1; zOff++)
+                        {
                             int newX = checkTile.tilemapPosition.x + xOff;
                             int newY = checkTile.tilemapPosition.y + yOff;
                             int newZ = checkTile.tilemapPosition.z + zOff;
@@ -610,13 +505,9 @@ public class MapBuilder : MonoBehaviour
                                             }
                                             newTile.pathCost = checkTile.pathCost + pathMod;
                                             newTile.nextTile = checkTile;
-                                            //newTile.nextTile = result.originPoint;
-
                                         }
                                         else
                                         {
-                                            //newTile.nextTile = result.originPoint;
-
                                             if (checkTile.nextTile != null)
                                             {
                                                 Vector3 a = checkTile.tilemapPosition - newTile.tilemapPosition;
@@ -633,7 +524,7 @@ public class MapBuilder : MonoBehaviour
                                                     float pathMod = 1f;
                                                     if (xOff != 0 && zOff != 0)
                                                     {
-                                                        pathMod++;
+                                                        pathMod += 0.34f;
                                                     }
                                                     newTile.pathCost = checkTile.pathCost + pathMod;
                                                     newTile.nextTile = checkTile;
@@ -652,8 +543,6 @@ public class MapBuilder : MonoBehaviour
                                     }
                                 }
                             }
-
-
                         } // Offset loops
                     } // " "
                 } // " "
@@ -668,9 +557,7 @@ public class MapBuilder : MonoBehaviour
                     Debug.Log("Killswitch");
                     break;
                 }
-
             } // toCheck loop
-
         }
 
         result.originPoint.nextTile = null;
@@ -729,65 +616,6 @@ public class MapBuilder : MonoBehaviour
         Gizmos.DrawLine(pos_3, pos_7);
         Gizmos.DrawLine(pos_4, pos_8);
 
-    }
-
-    public void DrawFlowfield(Flowfield ff)
-    {
-        GameObject ap = GameObject.Find("ArrowParent");
-
-        DestroyImmediate(ap);
-
-        GameObject newAp = new GameObject();
-        newAp.name = "ArrowParent";
-        newAp.transform.parent = GameObject.Find("Environment").transform;
-        
-
-        //Debug.Log(ff.originPoint.tilemapPosition);
-        foreach(TileInfo_Class tile in ff.tiles)
-        {
-            if (tile != null)
-            {
-                if (tile.tilemapPosition != ff.originPoint.tilemapPosition && tile.nextTile != null)
-                {
-                    GameObject arrow = Instantiate(GameManager.instance.arrowPrefab);
-                    arrow.transform.position = tile.tilemapPosition;
-                    arrow.transform.LookAt(tile.nextTile.tilemapPosition);
-                    arrow.transform.parent = newAp.transform;
-                }
-            }
-        }
-    }
-
-    void DrawPath(List<Vector3> input )
-    {
-        //Debug.Log(input.Count());
-        //foreach(Vector3 pos in input)
-        //{
-        //    Debug.Log(pos);
-        //}
-
-        LineRenderer lr;
-
-        if (gameObject.GetComponent<LineRenderer>())
-        {
-            lr = gameObject.GetComponent<LineRenderer>();
-        }
-        else
-        {
-            lr = gameObject.AddComponent<LineRenderer>();
-        }
-
-        lr.alignment = LineAlignment.View;
-        lr.startWidth = 0.05f;
-        lr.numCapVertices = 3;
-        lr.numCornerVertices = 3;
-
-        lr.positionCount = input.Count;
-
-        for (int i = 0; i < input.Count; i++)
-        {
-            lr.SetPosition(i, input[i] + new Vector3(0, 0.1f, 0));
-        }
     }
 
     public List<Vector3> GetPath(Vector3Int to, Vector3Int from)
@@ -920,7 +748,7 @@ public class MapBuilder : MonoBehaviour
 
     public void UpdateFOW(UnitAIBase input)
     {
-        Debug.Log("a");
+        //Debug.Log("a");
 
         Vector3 pos = input.currentPos + new Vector3(0,0.5f,0);
         LayerMask mask = LayerMask.GetMask("FOW");
@@ -935,20 +763,10 @@ public class MapBuilder : MonoBehaviour
             // raycst from input pos to c pos, if hit something, nothing, if not, hit tile
             Vector3 dir = c.transform.position - pos;
             float dist = Vector3.Distance(pos, c.transform.position);
-            if (!GameManager.instance.allSurroundingTiles.Contains(c.gameObject.GetComponent<MeshRenderer>()))
-            {
-                GameManager.instance.allSurroundingTiles.Add(c.gameObject.GetComponent<MeshRenderer>());
-            }
-            if (!Physics.Raycast(pos, dir.normalized, dist, mask))
-            {
-                if (!GameManager.instance.visableTiles.Contains(c.gameObject.GetComponent<MeshRenderer>()))
-                {
-                    GameManager.instance.visableTiles.Add(c.gameObject.GetComponent<MeshRenderer>());
-                }
-            }
-
-
-
+            //if (!GameManager.instance.currentFOWTiles.Contains(c.gameObject.GetComponent<TileOverlayLogic>()) && !Physics.Raycast(pos, dir.normalized, dist, mask))
+            //{
+                GameManager.instance.currentFOWTiles.Add(c.gameObject.GetComponent<TileOverlayLogic>());
+            //}
         }
     }
 

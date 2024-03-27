@@ -193,6 +193,7 @@ public class GroundUnitAI : UnitAIBase
                     pathPositions.Remove(nextPos);
                     currentPos = nextPos;
                     gfx.transform.LookAt(new Vector3(nextPos.x, gfx.transform.position.y, nextPos.z));
+                    MapBuilder.instance.UpdateFOW(this);
                     GameManager.instance.APFOW();
                 }
                 else

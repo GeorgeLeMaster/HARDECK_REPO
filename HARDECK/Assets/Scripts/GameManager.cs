@@ -37,8 +37,8 @@ public class GameManager : MonoBehaviour
 
     public bool controllsLocked;
 
-    public List<MeshRenderer> allSurroundingTiles;
-    public List<MeshRenderer> visableTiles;
+    public List<TileOverlayLogic> lastFOWTiles;
+    public List<TileOverlayLogic> currentFOWTiles;
 
     [Header("Menu")]
     public GameObject menuButtons;
@@ -501,8 +501,7 @@ public class GameManager : MonoBehaviour
         controllsLocked = true;
         enemyTurnIndicator.SetActive(true);
         endTurnButton.SetActive(false);
-        visableTiles.Clear();
-        allSurroundingTiles.Clear();
+
         
     }
 
@@ -510,8 +509,12 @@ public class GameManager : MonoBehaviour
     {
         List<Vector3> hideSpots = new List<Vector3>();
         List<Vector3> showSpots = new List<Vector3>();
-        visableTiles.Clear();
-        allSurroundingTiles.Clear();
+
+        // clear out last frame list, set = to current frame list
+
+        lastFOWTiles = new List<TileOverlayLogic>(currentFOWTiles);
+        
+        currentFOWTiles.Clear();
 
         foreach (UnitAIBase u in PlayerUnits)
         {
@@ -521,28 +524,25 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        foreach (MeshRenderer r in allSurroundingTiles)
+        foreach (TileOverlayLogic t in lastFOWTiles)
         {
-            if (visableTiles.Contains(r))
-            {
-                r.enabled = false;
-                showSpots.Add(r.transform.position);
-            }
-            else
-            {
-                r.enabled = true;
-                hideSpots.Add(r.transform.position);
-
-            }
+            t.SetOverlay("FOW_rem");
+            hideSpots.Add(t.transform.position);
         }
+        foreach (TileOverlayLogic t in currentFOWTiles)
+        {
+            t.SetOverlay("FOW_hidefow");
+            showSpots.Add(t.transform.position);
+        }
+
 
         foreach(UnitAIBase u in EnemyUnits)
         {
-            if (showSpots.Contains(u.currentPos + new Vector3(0,0.1f,0)))
+            if (showSpots.Contains(u.currentPos + new Vector3(0,0.01f,0)))
             {
                 u.gfx.SetActive(true);
             }
-            else if (hideSpots.Contains(u.currentPos + new Vector3(0, 0.1f, 0)))
+            else if (hideSpots.Contains(u.currentPos + new Vector3(0, 0.01f, 0)))
             {
                 u.gfx.SetActive(false);
 
