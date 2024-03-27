@@ -37,8 +37,12 @@ public class GameManager : MonoBehaviour
 
     public bool controllsLocked;
 
+    [HideInInspector]
     public List<TileOverlayLogic> lastFOWTiles;
+    [HideInInspector]
     public List<TileOverlayLogic> currentFOWTiles;
+
+    public GameObject selectedTileIndicator;
 
     [Header("Menu")]
     public GameObject menuButtons;
@@ -119,11 +123,29 @@ public class GameManager : MonoBehaviour
 
     }
 
-    
+
 
     // Update is called once per frame
     void Update()
     {
+        RaycastHit conHit;
+        LayerMask conMask = LayerMask.GetMask("Tile", "Unit");
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out conHit, Mathf.Infinity, conMask))
+        {
+            if (conHit.transform.GetComponent<TileInfo>())
+            {
+                selectedTileIndicator.transform.position = conHit.transform.GetComponent<TileInfo>().tilemapPosition;
+            }
+            else
+            {
+                selectedTileIndicator.transform.position = new Vector3(0, -10f, 0);
+            }
+        }
+        else
+        {
+            selectedTileIndicator.transform.position = new Vector3(0, -10f, 0);
+        }
+
         if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
         {
             if (!controllsLocked)
@@ -133,11 +155,20 @@ public class GameManager : MonoBehaviour
                 LayerMask mask = LayerMask.GetMask("Tile", "Unit");
                 if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, mask))
                 {
+                    if (hit.transform.GetComponent<TileInfo>())
+                    {
+                        selectedTileIndicator.transform.position = hit.transform.GetComponent<TileInfo>().tilemapPosition;
+                    }
+                    else
+                    {
+                        selectedTileIndicator.transform.position = new Vector3(0, -10f, 0);
+                    }
+
                     if (hit.transform.GetComponent<TileInfo>() && selectedUnit_Player != null)
                     {
                         bool unoccupied = true;
 
-                        foreach(UnitAIBase u in AllUnits)
+                        foreach (UnitAIBase u in AllUnits)
                         {
                             if (u.currentPos == hit.transform.GetComponent<TileInfo>().tilemapPosition)
                             {
@@ -538,11 +569,11 @@ public class GameManager : MonoBehaviour
 
         foreach(UnitAIBase u in EnemyUnits)
         {
-            if (showSpots.Contains(u.currentPos + new Vector3(0,0.01f,0)))
+            if (showSpots.Contains(u.currentPos))
             {
                 u.gfx.SetActive(true);
             }
-            else if (hideSpots.Contains(u.currentPos + new Vector3(0, 0.01f, 0)))
+            else if (hideSpots.Contains(u.currentPos))
             {
                 u.gfx.SetActive(false);
 

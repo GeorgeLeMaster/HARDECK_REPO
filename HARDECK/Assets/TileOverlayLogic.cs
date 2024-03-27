@@ -24,19 +24,19 @@ public class TileOverlayLogic : MonoBehaviour
         {
             case "FOW_showfow":
                 overlay.sprite = FOW;
-                overlay.color = new Color(1, 1, 1, 1);
+                overlay.color = new Color(0,0,0, 1);
                 currentState = "FOW_showfow";
                 break;
 
             case "FOW_hidefow":
                 overlay.sprite = FOW;
-                overlay.color = new Color(1,1,1,0);
+                overlay.color = new Color(0,0,0,0);
                 currentState = "FOW_hidefow";
                 break;
 
             case "FOW_rem":
                 overlay.sprite = FOW;
-                overlay.color = new Color(1, 1, 1, 0.5f);
+                overlay.color = new Color(0, 0, 0, 0.5f);
                 currentState = "FOW_rem";
                 break;
 

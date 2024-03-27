@@ -52,6 +52,8 @@ public class GroundUnitAI : UnitAIBase
 
         currentHealth = soInput.maxHealth;
         maxHealth = soInput.maxHealth;
+
+        visionRadius = soInput.visionRadius;
     }
 
     override public void Order(int orderID, Vector3Int desiredPos)

@@ -19,4 +19,6 @@ public class UnitSO : ScriptableObject
     public int damageMod;
 
     public int maxHealth;
+
+    public int visionRadius;
 }

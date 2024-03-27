@@ -327,7 +327,7 @@ public class MapBuilder : MonoBehaviour
             {
                 if (t != null)
                 {
-                    GameObject newFT = Instantiate(FOWPrefab, t.tilemapPosition + new Vector3(0,0.01f,0), Quaternion.identity);
+                    GameObject newFT = Instantiate(FOWPrefab, t.tilemapPosition, Quaternion.identity);
                     FOWtiles[t.tilemapPosition.x, t.tilemapPosition.y, t.tilemapPosition.z] = newFT;
                     newFT.transform.SetParent(fowParent.transform);
                     newFT.gameObject.GetComponent<TileOverlayLogic>().SetOverlay("FOW_showfow");
@@ -410,6 +410,11 @@ public class MapBuilder : MonoBehaviour
         }
 
         dataToSave += "sceneEnd\n";
+
+        // Save unit data for later spawning
+        // Order of data:
+        // unit SO id
+        // unit SO data (name, moveSpeed, range, damage, damageMod, maxHealth)
 
         // Open writer, write dataToSave string, close reader
         StreamWriter writer = new StreamWriter(mapFilePath);
@@ -753,7 +758,7 @@ public class MapBuilder : MonoBehaviour
         Vector3 pos = input.currentPos + new Vector3(0,0.5f,0);
         LayerMask mask = LayerMask.GetMask("FOW");
 
-        Collider[] fowTiles = Physics.OverlapCapsule(new Vector3(pos.x, -10, pos.z), new Vector3(pos.x, 10, pos.z), input.moveSpeed, mask);
+        Collider[] fowTiles = Physics.OverlapCapsule(new Vector3(pos.x, -10, pos.z), new Vector3(pos.x, 10, pos.z), input.visionRadius, mask);
 
         mask = LayerMask.GetMask("GFXEnvironment");
         //Debug.Log()
