@@ -100,7 +100,8 @@ public class GameManager : MonoBehaviour
         playerMat.color = playerColor;
         enemyMat.color = enemyColor;
 
-        foreach(UnitAIBase unit in GameObject.FindObjectsOfType<UnitAIBase>())
+
+        foreach (UnitAIBase unit in GameObject.FindObjectsOfType<UnitAIBase>())
         {
             AllUnits.Add(unit);
 
@@ -118,6 +119,8 @@ public class GameManager : MonoBehaviour
             u.gfx.SetActive(false);
 
         }
+
+
         //StartPlayerTurn();
         //APFOW();
 
@@ -544,7 +547,7 @@ public class GameManager : MonoBehaviour
         // clear out last frame list, set = to current frame list
 
         lastFOWTiles = new List<TileOverlayLogic>(currentFOWTiles);
-        
+
         currentFOWTiles.Clear();
 
         foreach (UnitAIBase u in PlayerUnits)
@@ -554,6 +557,27 @@ public class GameManager : MonoBehaviour
                 MapBuilder.instance.UpdateFOW(u);
             }
         }
+
+        foreach (Structure st in structures)
+        {
+            if (st.ownerId == playerAllianceInt)
+            {
+                for (int x = -st.WidthHeight.x; x <= st.WidthHeight.x; x++)
+                {
+                    for (int z = -st.WidthHeight.y; z <= st.WidthHeight.y; z++)
+                    {
+                        //if (st.tilemapPos.x + x >= 0 && st.tilemapPos.x + x < MapBuilder.instance.mapX - 1 && st.tilemapPos.x + x >= 0 && st.tilemapPos.x + x < MapBuilder.instance.mapX - 1) 
+                        //{
+                        if (MapBuilder.instance.FOWtiles[st.tilemapPos.x + x, st.tilemapPos.y, st.tilemapPos.z + z] != null)
+                        {
+                            currentFOWTiles.Add(MapBuilder.instance.FOWtiles[st.tilemapPos.x + x, st.tilemapPos.y, st.tilemapPos.z + z].GetComponent<TileOverlayLogic>());
+                        }
+                        // }
+                    }
+                }
+            }
+        }
+
 
         foreach (TileOverlayLogic t in lastFOWTiles)
         {
@@ -567,7 +591,7 @@ public class GameManager : MonoBehaviour
         }
 
 
-        foreach(UnitAIBase u in EnemyUnits)
+        foreach (UnitAIBase u in EnemyUnits)
         {
             if (showSpots.Contains(u.currentPos))
             {
@@ -577,6 +601,18 @@ public class GameManager : MonoBehaviour
             {
                 u.gfx.SetActive(false);
 
+            }
+        }
+
+        foreach (Structure st in structures)
+        {
+            if (showSpots.Contains(st.tilemapPos) && st.ownerId != playerAllianceInt)
+            {
+                st.ShowGFX();
+            }
+            else if (st.ownerId != playerAllianceInt)
+            {
+                st.HideGFX();
             }
         }
     }
@@ -623,6 +659,11 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator firstFOWupdate()
     {
+        structures.Clear();
+        foreach (Structure s in GameObject.Find("Structures").GetComponentsInChildren<Structure>())
+        {
+            structures.Add(s);
+        }
         yield return new WaitForEndOfFrame();
         APFOW();
     }

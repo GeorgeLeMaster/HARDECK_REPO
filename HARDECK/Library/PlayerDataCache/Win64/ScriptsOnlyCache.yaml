@@ -44,6 +44,9 @@ ScriptsOnlyBuild:
     - UnityEditor.TestTools.TestRunner.TestListCacheData
     - UnityEditor.TestTools.TestRunner.TestRun.TestJobDataHolder
     UnityEngine.UI:
+    - UnityEngine.UI.CanvasScaler
+    - UnityEngine.UI.GraphicRaycaster
+    - UnityEngine.UI.Image
     - UnityEngine.UI.Selectable
     UnityEngine.UI.dll:
     - UnityEngine.EventSystems.EventSystem
@@ -197,8 +200,6 @@ ScriptsOnlyBuild:
       Script: {instanceID: 5780}
     - Class: 114
       Script: {instanceID: 5862}
-    - Class: 114
-      Script: {instanceID: 5896}
     - Class: 114
       Script: {instanceID: 6028}
     - Class: 114
@@ -1017,7 +1018,7 @@ ScriptsOnlyBuild:
     className: MapBuilder
   - hash:
       serializedVersion: 2
-      Hash: 4f3ba26e9d7f5488ac2b09dfdd6d3124
+      Hash: 71f72fc3ff0b3757d1cc2c591e06cee9
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: Structure

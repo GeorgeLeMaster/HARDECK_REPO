@@ -17,10 +17,17 @@ public class Structure : MonoBehaviour
 
     public bool playerHq;
 
+    public GameObject buildingGfx;
+    public GameObject hideGFX_h;
+    public GameObject hideGFX_d;
+
+
+    bool discovered = false;
+
     private void Start()
     {
         LineRenderer lr = GetComponent<LineRenderer>();
-        float yOff = 0.1f;
+        float yOff = 0.2f;
         lr.SetPosition(0, new Vector3( WidthHeight.x + 0.5f, yOff,  WidthHeight.y + 0.5f));
         lr.SetPosition(1, new Vector3(-WidthHeight.x - 0.5f, yOff,  WidthHeight.y + 0.5f));
         lr.SetPosition(2, new Vector3(-WidthHeight.x - 0.5f, yOff, -WidthHeight.y - 0.5f));
@@ -119,5 +126,30 @@ public class Structure : MonoBehaviour
         }
     }
 
+    public void ShowGFX()
+    {
+        LineRenderer lr = GetComponent<LineRenderer>();
+        lr.enabled = true;
+        discovered = true;
 
+        buildingGfx.SetActive(true);
+
+        hideGFX_h.SetActive(false);
+    }
+
+    public void HideGFX()
+    {
+
+        if (!discovered)
+        {
+            LineRenderer lr = GetComponent<LineRenderer>();
+            lr.enabled = false;
+
+            buildingGfx.SetActive(false);
+
+            hideGFX_h.SetActive(true);
+
+        }
+
+    }
 }

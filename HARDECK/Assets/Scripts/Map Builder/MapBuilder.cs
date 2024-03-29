@@ -129,10 +129,10 @@ public class MapBuilder : MonoBehaviour
         selectedMapID = PlayerPrefs.GetInt("pref_selectedMapId");
         // Find mapBuildLimitObj
         mapBuildLimitObj = GameObject.Find("MapBuildLimit");
-
+        Debug.Log("Loading map from " + MapFiles[selectedMapID].name + ".txt");
         // Get Text Asset from Database
         TextAsset mapTextAsset = MapFiles[selectedMapID];
-        Debug.Log(mapTextAsset);
+        //Debug.Log(mapTextAsset);
 
         // Declares Vars
         Vector3 newPos_gfx = Vector3.zero;
@@ -222,7 +222,6 @@ public class MapBuilder : MonoBehaviour
                 }
 
                 // PARSE AND ASSIGN TILEMAP POS
-                string[] tilemapValues = dataMembers[2].Split(",");
 
                 float.TryParse(posValues[0], out float xPos_tile);
                 float.TryParse(posValues[1], out float yPos_tile);
@@ -251,7 +250,7 @@ public class MapBuilder : MonoBehaviour
             currentLineInt++;
         }
 
-        // Scenery objs
+        // Scenery objs--------------------------------------------------------------------------------------------
         currentLineInt++;
 
         GameObject sceneryObj = GameObject.Find("Scenery");
@@ -297,6 +296,57 @@ public class MapBuilder : MonoBehaviour
             }
         }
 
+
+        //Structures-----------------------------------------------------------------------------------------------
+        currentLineInt++;
+
+        GameObject sObj = GameObject.Find("Structures");
+        GameObject structurePrefab = Resources.Load("Structures/StructureTest") as GameObject;
+       // GameManager.instance.structures = new List<Structure>();
+        while (!(currentLine = lines[currentLineInt]).Contains("structEnd") && currentLine != "")
+        {
+            Debug.Log(currentLine);
+            string[] dataMembers = currentLine.Split("*");
+            dataMembers[0] = dataMembers[0].Substring(1, dataMembers[0].Length-2);
+            dataMembers[1] = dataMembers[1].Substring(1, dataMembers[1].Length - 2);
+
+            string[] posValues = dataMembers[0].Split(",");
+
+            int.TryParse(posValues[0], out int xPos_s);
+            int.TryParse(posValues[1], out int yPos_s);
+            int.TryParse(posValues[2], out int zPos_s);
+
+            GameObject obj = Instantiate(structurePrefab, new Vector3(xPos_s, yPos_s, zPos_s), Quaternion.identity);
+
+
+            Structure sLogic = obj.GetComponent<Structure>();
+
+            sLogic.tilemapPos = new Vector3Int(xPos_s, yPos_s, zPos_s);
+            posValues = dataMembers[1].Split(",");
+            int.TryParse(posValues[0], out int w);
+            int.TryParse(posValues[1], out int h);
+
+            sLogic.WidthHeight = new Vector2Int(w,h);
+
+            //Debug.Log(dataMembers[2]+dataMembers[3]+dataMembers[4]);
+            sLogic.ownerId = int.Parse(dataMembers[2]);
+            sLogic.provideGround = bool.Parse(dataMembers[3]);
+            sLogic.provideHeavy = bool.Parse(dataMembers[4]);
+            sLogic.provideAir = bool.Parse(dataMembers[5]);
+
+            obj.transform.position = sLogic.tilemapPos;
+            obj.transform.SetParent(sObj.transform);
+            //GameManager.instance.structures.Add(sLogic);
+
+            currentLineInt++;
+            if (currentLineInt > 10000)
+            {
+
+                break;
+            }
+        }
+
+
         Debug.Log("Map File Loaded");
 
         if (Application.isPlaying)
@@ -337,14 +387,15 @@ public class MapBuilder : MonoBehaviour
             GameManager.instance.currentFOWTiles = new List<TileOverlayLogic>();
             GameManager.instance.lastFOWTiles = new List<TileOverlayLogic>();
 
+            GameManager.instance.StartCoroutine("firstFOWupdate");
             GameManager.instance.StartPlayerTurn();
 
-            GameManager.instance.StartCoroutine("firstFOWupdate");
         }
     }
 
     public void SaveMapToFile()
     {
+        mapFilePath = "Assets/Resources/MapFiles/" + MapFiles[selectedMapID].name + ".txt";
         // DEBUG INIT
         Debug.Log("Saving map to " + mapFilePath);
 
@@ -396,8 +447,8 @@ public class MapBuilder : MonoBehaviour
 
         // Find scenery parent obj
         GameObject sceneryObj = GameObject.Find("Scenery");
-        
-        foreach(Transform t in sceneryObj.GetComponentsInChildren<Transform>())
+
+        foreach (Transform t in sceneryObj.GetComponentsInChildren<Transform>())
         {
             GameObject obj = t.gameObject;
             GFXOBJContainter c = obj.GetComponent<GFXOBJContainter>();
@@ -411,12 +462,24 @@ public class MapBuilder : MonoBehaviour
 
         dataToSave += "sceneEnd\n";
 
+        // Save structure data
+        // needs to save: structure pos, widthHeight, ownerInt, grantsBools
+        GameObject structObj = GameObject.Find("Structures");
+
+        foreach (Structure st in structObj.GetComponentsInChildren<Structure>())
+        {
+            if (st != null)
+                dataToSave += $"{st.tilemapPos}*{st.WidthHeight}*{st.ownerId}*{st.provideGround}*{st.provideHeavy}*{st.provideAir}\n";
+        }
+
+        dataToSave += "structEnd\n";
         // Save unit data for later spawning
         // Order of data:
         // unit SO id
         // unit SO data (name, moveSpeed, range, damage, damageMod, maxHealth)
 
         // Open writer, write dataToSave string, close reader
+        Debug.Log(mapFilePath);
         StreamWriter writer = new StreamWriter(mapFilePath);
         writer.WriteLine(dataToSave);
         writer.Close();
@@ -442,6 +505,12 @@ public class MapBuilder : MonoBehaviour
         GameObject newFOWObj = new GameObject();
         newFOWObj.name = "FOW";
         newFOWObj.transform.parent = GameObject.Find("Environment").transform;
+
+        GameObject st = GameObject.Find("Structures");
+        DestroyImmediate(st);
+        GameObject newSobj = new GameObject();
+        newSobj.name = "Structures";
+        newSobj.transform.parent = GameObject.Find("Environment").transform;
     }
 
     public Flowfield BuildFlowfield(TileInfo origin)
@@ -755,12 +824,13 @@ public class MapBuilder : MonoBehaviour
     {
         //Debug.Log("a");
 
-        Vector3 pos = input.currentPos + new Vector3(0,0.5f,0);
+        Vector3 pos = input.currentPos + new Vector3(0,0.99f,0);
         LayerMask mask = LayerMask.GetMask("FOW");
 
         Collider[] fowTiles = Physics.OverlapCapsule(new Vector3(pos.x, -10, pos.z), new Vector3(pos.x, 10, pos.z), input.visionRadius, mask);
 
         mask = LayerMask.GetMask("GFXEnvironment");
+
         //Debug.Log()
         foreach (Collider c in fowTiles)
         {
@@ -768,10 +838,10 @@ public class MapBuilder : MonoBehaviour
             // raycst from input pos to c pos, if hit something, nothing, if not, hit tile
             Vector3 dir = c.transform.position - pos;
             float dist = Vector3.Distance(pos, c.transform.position);
-            //if (!GameManager.instance.currentFOWTiles.Contains(c.gameObject.GetComponent<TileOverlayLogic>()) && !Physics.Raycast(pos, dir.normalized, dist, mask))
-            //{
+            if (!GameManager.instance.currentFOWTiles.Contains(c.gameObject.GetComponent<TileOverlayLogic>()) && !Physics.Raycast(pos, dir.normalized, dist, mask))
+            {
                 GameManager.instance.currentFOWTiles.Add(c.gameObject.GetComponent<TileOverlayLogic>());
-            //}
+            }
         }
     }
 
