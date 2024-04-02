@@ -302,10 +302,10 @@ public class MapBuilder : MonoBehaviour
 
         GameObject sObj = GameObject.Find("Structures");
         GameObject structurePrefab = Resources.Load("Structures/StructureTest") as GameObject;
-       // GameManager.instance.structures = new List<Structure>();
+
         while (!(currentLine = lines[currentLineInt]).Contains("structEnd") && currentLine != "")
         {
-            Debug.Log(currentLine);
+            //Debug.Log(currentLine);
             string[] dataMembers = currentLine.Split("*");
             dataMembers[0] = dataMembers[0].Substring(1, dataMembers[0].Length-2);
             dataMembers[1] = dataMembers[1].Substring(1, dataMembers[1].Length - 2);
@@ -346,6 +346,54 @@ public class MapBuilder : MonoBehaviour
             }
         }
 
+        //Units------------------------------------------------------------------------------------------------------
+        currentLineInt++;
+
+        GameObject uObj = GameObject.Find("Units");
+        GameObject guPrefab = Resources.Load("Units/OBJs/GroundUnitPrefab") as GameObject;
+        // unit SO data (name, moveSpeed, range, damage, damageMod, maxHealth)
+
+        while (!(currentLine = lines[currentLineInt]).Contains("unitEnd") && currentLine != "")
+        {
+            string[] dataMembers = currentLine.Split("*");
+
+            int aInt = int.Parse(dataMembers[1]);
+            string uName = dataMembers[2];
+
+            int.TryParse(dataMembers[3], out int ms);
+            float.TryParse(dataMembers[4], out float r);
+            float.TryParse(dataMembers[5], out float d);
+            float.TryParse(dataMembers[6], out float dm);
+            float.TryParse(dataMembers[7], out float mh);
+
+            GameObject newUnit = Instantiate(guPrefab);
+            newUnit.transform.parent = uObj.transform;
+
+            UnitAIBase ai = newUnit.GetComponent<UnitAIBase>();
+
+            ai.moveSpeed = ms;
+            ai.range = r;
+            ai.damage = d;
+            ai.damageMod = dm;
+            ai.maxHealth = mh;
+            ai.currentHealth = mh;
+
+            ai.visionRadius = ms;
+
+            ai.alliance = aInt;
+            ai.name = uName;
+
+            Vector3 pos = ParseStringToVector3(dataMembers[8]);
+            ai.currentPos = new Vector3Int((int)pos.x, (int)pos.y, (int)pos.z);
+            ai.Spawn(ai.currentPos, Resources.Load("Units/GFX/GFX_Infantryman") as GameObject);
+
+            currentLineInt++;
+            if (currentLineInt > 10000)
+            {
+
+                break;
+            }
+        }
 
         Debug.Log("Map File Loaded");
 
@@ -477,6 +525,18 @@ public class MapBuilder : MonoBehaviour
         // Order of data:
         // unit SO id
         // unit SO data (name, moveSpeed, range, damage, damageMod, maxHealth)
+        GameObject unitObj = GameObject.Find("Units");
+
+        foreach (UnitAIBase t in unitObj.GetComponentsInChildren<UnitAIBase>())
+        {
+            if (t != null)
+            {
+                dataToSave += $"{t.unitSO.name}*{t.alliance.ToString()}*{t.unitName}*{t.moveSpeed}*{t.range}*{t.damage}*{t.damageMod}*{t.maxHealth}*{t.currentPos}\n";
+            }
+        }
+
+
+        dataToSave += "unitEnd\n";
 
         // Open writer, write dataToSave string, close reader
         Debug.Log(mapFilePath);
@@ -511,6 +571,12 @@ public class MapBuilder : MonoBehaviour
         GameObject newSobj = new GameObject();
         newSobj.name = "Structures";
         newSobj.transform.parent = GameObject.Find("Environment").transform;
+
+        GameObject u = GameObject.Find("Units");
+        DestroyImmediate(u);
+        GameObject newU = new GameObject();
+        newU.name = "Units";
+        newU.transform.parent = GameObject.Find("Units").transform;
     }
 
     public Flowfield BuildFlowfield(TileInfo origin)
@@ -845,4 +911,18 @@ public class MapBuilder : MonoBehaviour
         }
     }
 
+    private Vector3 ParseStringToVector3(string input)
+    {
+        Vector3 result = Vector3.zero;
+
+        input = input.Substring(1, input.Length-2);
+
+        string[] dataMembers = input.Split(',');
+
+        result.x = float.Parse(dataMembers[0]);
+        result.y = float.Parse(dataMembers[1]);
+        result.z = float.Parse(dataMembers[2]);
+
+        return result;
+    }
 }

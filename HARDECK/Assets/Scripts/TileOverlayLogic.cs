@@ -36,7 +36,7 @@ public class TileOverlayLogic : MonoBehaviour
 
             case "FOW_rem":
                 overlay.sprite = FOW;
-                overlay.color = new Color(0, 0, 0, 0.5f);
+                overlay.color = new Color(0, 0, 0, 0.75f);
                 currentState = "FOW_rem";
                 break;
 

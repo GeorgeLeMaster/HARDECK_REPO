@@ -41,7 +41,7 @@ public class UnitAIBase : MonoBehaviour
 
     }
 
-    virtual public void Spawn(Vector3Int input, UnitSO soInput, int allInput) { }
+    virtual public void Spawn(Vector3Int input, GameObject gfxInput) { }
 
     virtual public void Order(int orderID, Vector3Int desiredPos) { }
 

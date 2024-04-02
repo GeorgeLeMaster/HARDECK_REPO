@@ -1,6 +1,7 @@
 ScriptsOnlyBuild:
   usedScripts:
     Assembly-CSharp:
+    - GFXAnchor
     - GFXContainer
     - GFXOBJContainter
     - GroundUnitAI
@@ -11,6 +12,7 @@ ScriptsOnlyBuild:
     - CameraController
     - Catalouge
     - EnemyAI
+    - GFXAnchor
     - GFXContainer
     - GFXOBJContainter
     - GameManager
@@ -19,7 +21,6 @@ ScriptsOnlyBuild:
     - MapBuilderUI
     - PopupLogic
     - Structure
-    - TestGFXAnchor
     - TileInfo
     - TileOverlayLogic
     - UIManager
@@ -201,11 +202,13 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 5862}
     - Class: 114
+      Script: {instanceID: 5896}
+    - Class: 114
       Script: {instanceID: 6028}
     - Class: 114
-      Script: {instanceID: 7730}
+      Script: {instanceID: 7792}
     - Class: 114
-      Script: {instanceID: 7794}
+      Script: {instanceID: 7798}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 120
@@ -300,6 +303,8 @@ ScriptsOnlyBuild:
     - Class: 114
       Script: {instanceID: 4902}
     - Class: 114
+      Script: {instanceID: 4936}
+    - Class: 114
       Script: {instanceID: 5024}
     - Class: 114
       Script: {instanceID: 5710}
@@ -326,6 +331,10 @@ ScriptsOnlyBuild:
     - Class: 157
       Script: {instanceID: 0}
     - Class: 196
+      Script: {instanceID: 0}
+    - Class: 198
+      Script: {instanceID: 0}
+    - Class: 199
       Script: {instanceID: 0}
     - Class: 213
       Script: {instanceID: 0}
@@ -478,7 +487,7 @@ ScriptsOnlyBuild:
     className: UnityOnBecameVisibleMessageListener
   - hash:
       serializedVersion: 2
-      Hash: 5b03d913e65c40ffe5426eb176293760
+      Hash: 29a6a726a3824c6a5ea505c6bdf5c66f
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: GameManager
@@ -898,10 +907,10 @@ ScriptsOnlyBuild:
     className: Toggle
   - hash:
       serializedVersion: 2
-      Hash: 92f3a57fb5f699f70f2229e1c4d4ba2f
+      Hash: a6d7376913e2dcca54fc74d37bf1e5a9
     assemblyName: Assembly-CSharp
     namespaceName: 
-    className: TestGFXAnchor
+    className: GFXAnchor
   - hash:
       serializedVersion: 2
       Hash: 522f6865b4ec12522e602206785309f8
@@ -1270,12 +1279,6 @@ ScriptsOnlyBuild:
     className: TouchInputModule
   - hash:
       serializedVersion: 2
-      Hash: c4bd2f56a5a1e60fa718186c949e967c
-    assemblyName: Assembly-CSharp
-    namespaceName: 
-    className: TileOverlayLogic
-  - hash:
-      serializedVersion: 2
       Hash: 00eef92bf387da2c9009267123d9d674
     assemblyName: Unity.VisualScripting.Core
     namespaceName: Unity.VisualScripting
@@ -1292,6 +1295,12 @@ ScriptsOnlyBuild:
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: UI_Pulsate
+  - hash:
+      serializedVersion: 2
+      Hash: c4bd2f56a5a1e60fa718186c949e967c
+    assemblyName: Assembly-CSharp
+    namespaceName: 
+    className: TileOverlayLogic
   platform: 19
   scenePathNames:
   - Assets/Scenes/Menu.unity

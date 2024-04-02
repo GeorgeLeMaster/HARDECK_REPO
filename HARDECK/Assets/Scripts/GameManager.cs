@@ -11,8 +11,6 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
-    public GameObject arrowPrefab;
-    public GameObject arrowParent;
 
     public int playerAllianceInt;
 

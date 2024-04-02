@@ -13,7 +13,7 @@ public class GroundUnitAI : UnitAIBase
     // Start is called before the first frame update
     void Start()
     {
-        Spawn(currentPos,unitSO,alliance);
+        //Spawn(currentPos,unitSO,alliance);
 
     }
 
@@ -23,17 +23,17 @@ public class GroundUnitAI : UnitAIBase
 
     }
 
-    override public void Spawn(Vector3Int input, UnitSO soInput, int allInput)
+    override public void Spawn(Vector3Int input, GameObject gfxInput)
     {
         // Snap To Position
         currentPos = input;
         transform.position = currentPos;
 
-        GameObject gfxobj = Instantiate(soInput.gfxPrefab, gfx.transform);
+        GameObject gfxobj = Instantiate(gfxInput, gfx.transform);
         GFXContainer gfxc = gfxobj.GetComponent<GFXContainer>();
         foreach(GameObject obj in gfxc.coloredOBJs)
         {
-            if (allInput == GameManager.instance.playerAllianceInt)
+            if (alliance == GameManager.instance.playerAllianceInt)
             {
                 obj.GetComponent<MeshRenderer>().material = GameManager.instance.playerMat;
             }
@@ -43,17 +43,8 @@ public class GroundUnitAI : UnitAIBase
             }
         }
 
-        moveSpeed = soInput.moveSpeed;
-        range = soInput.range;
-        damage = soInput.damage;
-        damageMod = soInput.damageMod;
-
-        unitName = soInput.unitName;
-
-        currentHealth = soInput.maxHealth;
-        maxHealth = soInput.maxHealth;
-
-        visionRadius = soInput.visionRadius;
+        actionPips = 1;
+        movementPips = 1;
     }
 
     override public void Order(int orderID, Vector3Int desiredPos)
