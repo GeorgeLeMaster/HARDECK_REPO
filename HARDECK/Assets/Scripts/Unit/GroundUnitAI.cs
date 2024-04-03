@@ -31,18 +31,21 @@ public class GroundUnitAI : UnitAIBase
 
         GameObject gfxobj = Instantiate(gfxInput, gfx.transform);
         GFXContainer gfxc = gfxobj.GetComponent<GFXContainer>();
-        foreach(GameObject obj in gfxc.coloredOBJs)
+        if (Application.isPlaying)
         {
-            if (alliance == GameManager.instance.playerAllianceInt)
+
+            foreach (GameObject obj in gfxc.coloredOBJs)
             {
-                obj.GetComponent<MeshRenderer>().material = GameManager.instance.playerMat;
-            }
-            else
-            {
-                obj.GetComponent<MeshRenderer>().material = GameManager.instance.enemyMat;
+                if (alliance == GameManager.instance.playerAllianceInt)
+                {
+                    obj.GetComponent<MeshRenderer>().material = GameManager.instance.playerMat;
+                }
+                else
+                {
+                    obj.GetComponent<MeshRenderer>().material = GameManager.instance.enemyMat;
+                }
             }
         }
-
         actionPips = 1;
         movementPips = 1;
     }

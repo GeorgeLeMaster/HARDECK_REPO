@@ -11,10 +11,10 @@ public class TileInfo : MonoBehaviour
 
     public enum Directions
     {
-        Forwards = 0,
-        Right = 90,
-        Backwards = 180,
-        Left = 270
+        PosZ = 0,
+        PosX = 90,
+        NegZ = 180,
+        NegX = 270
     }
 
     [Header("Memebers")]

@@ -8,9 +8,18 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+public enum TurnState
+{
+    Deployment,
+    Action,
+    Enemy
+}
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
+
+    public TurnState turnState;
 
     public int playerAllianceInt;
 
@@ -630,11 +639,13 @@ public class GameManager : MonoBehaviour
             unit.actionPips = 1;
             unit.movementPips = 1;
         }
-        //UpdatePlayerActionGFX();
         controllsLocked = false;
         enemyTurnIndicator.SetActive(false);
         endTurnButton.SetActive(true);
-
+        selectedUnit_Player = null;
+        selectedUnit_Enemy = null;
+        q_actionId = -1;
+        UpdatePlayerActionGFX();
     }
 
 

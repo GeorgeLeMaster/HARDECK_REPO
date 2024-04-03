@@ -198,19 +198,19 @@ public class MapBuilder : MonoBehaviour
                     // DETERMINES RAMP ORIENTATION
                     if (rampData[1] == "Forwards")
                     {
-                        newTileInfo.rampOrientation = TileInfo.Directions.Forwards;
+                        newTileInfo.rampOrientation = TileInfo.Directions.PosZ;
                     }
                     else if (rampData[1] == "Right")
                     {
-                        newTileInfo.rampOrientation = TileInfo.Directions.Right;
+                        newTileInfo.rampOrientation = TileInfo.Directions.NegX;
                     }
                     else if (rampData[1] == "Backwards")
                     {
-                        newTileInfo.rampOrientation = TileInfo.Directions.Backwards;
+                        newTileInfo.rampOrientation = TileInfo.Directions.NegZ;
                     }
                     else
                     {
-                        newTileInfo.rampOrientation = TileInfo.Directions.Left;
+                        newTileInfo.rampOrientation = TileInfo.Directions.PosX;
                     }
 
 
@@ -382,6 +382,8 @@ public class MapBuilder : MonoBehaviour
 
             ai.alliance = aInt;
             ai.name = uName;
+
+            ai.unitSO = Resources.Load("Units/SOs/Infantryman") as UnitSO;
 
             Vector3 pos = ParseStringToVector3(dataMembers[8]);
             ai.currentPos = new Vector3Int((int)pos.x, (int)pos.y, (int)pos.z);
@@ -854,19 +856,19 @@ public class MapBuilder : MonoBehaviour
         Vector3Int upPos = rampTile.tilemapPosition;
         Vector3Int downPos = rampTile.tilemapPosition;
 
-        if (rampTile.rampOrientation == TileInfo.Directions.Forwards)
+        if (rampTile.rampOrientation == TileInfo.Directions.PosZ)
         {
             upPos += new Vector3Int(0, 0, -1);
             downPos += new Vector3Int(0, -1, 1);
 
         }
-        else if (rampTile.rampOrientation == TileInfo.Directions.Right)
+        else if (rampTile.rampOrientation == TileInfo.Directions.PosX)
         {
             upPos += new Vector3Int(-1, 0, 0);
             downPos += new Vector3Int(1, -1, 0);
 
         }
-        else if (rampTile.rampOrientation == TileInfo.Directions.Backwards)
+        else if (rampTile.rampOrientation == TileInfo.Directions.NegZ)
         {
             upPos += new Vector3Int(0, 0, 1);
             downPos += new Vector3Int(0, -1, -1);
@@ -915,12 +917,13 @@ public class MapBuilder : MonoBehaviour
     {
         Vector3 result = Vector3.zero;
 
-        input = input.Substring(1, input.Length-2);
+        input = input.Substring(1, input.Length-3);
 
         string[] dataMembers = input.Split(',');
 
         result.x = float.Parse(dataMembers[0]);
         result.y = float.Parse(dataMembers[1]);
+
         result.z = float.Parse(dataMembers[2]);
 
         return result;
