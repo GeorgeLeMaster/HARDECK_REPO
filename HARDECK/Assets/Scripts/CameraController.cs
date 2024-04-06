@@ -39,7 +39,7 @@ public class CameraController : MonoBehaviour
     void LateUpdate()
     {
         sizeClamp -= Input.mouseScrollDelta.y;
-        sizeClamp = Mathf.Clamp(sizeClamp, 2, 8);
+        sizeClamp = Mathf.Clamp(sizeClamp, 2, 12);
 
         Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, sizeClamp, Time.deltaTime * 5);
 

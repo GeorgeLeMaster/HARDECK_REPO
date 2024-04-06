@@ -285,7 +285,7 @@ public class MapBuilder : MonoBehaviour
 
             Vector3 rot = new Vector3(xRot_gfx, yRot_gfx, zRot_gfx);
 
-            GameObject newObj =  Instantiate(tilesetObjs[int.Parse(dataMembers[1])], pos, new Quaternion(rot.x, rot.y, rot.z, 0));
+            GameObject newObj =  Instantiate(tilesetObjs[int.Parse(dataMembers[1])], pos, Quaternion.Euler(new Vector3(rot.x, rot.y, rot.z)));
             newObj.transform.SetParent(sceneryObj.transform);
          //   Debug.Log($"{dataMembers[0]},{dataMembers[1]},{dataMembers[2]},{dataMembers[3]},{dataMembers[4]}");
             currentLineInt++;
@@ -505,7 +505,7 @@ public class MapBuilder : MonoBehaviour
 
             if (obj != null && c != null)
             {
-                string newLine = $"{c.tilesetName}*{c.objId}*{t.position}*{t.rotation}*{t.localScale}\n";
+                string newLine = $"{c.tilesetName}*{c.objId}*{t.position}*{t.rotation.eulerAngles}*{t.localScale}\n";
                 dataToSave += newLine;
             }
         }
@@ -892,7 +892,7 @@ public class MapBuilder : MonoBehaviour
     {
         //Debug.Log("a");
 
-        Vector3 pos = input.currentPos + new Vector3(0,0.99f,0);
+        Vector3 pos = input.currentPos + new Vector3(0,0.25f,0);
         LayerMask mask = LayerMask.GetMask("FOW");
 
         Collider[] fowTiles = Physics.OverlapCapsule(new Vector3(pos.x, -10, pos.z), new Vector3(pos.x, 10, pos.z), input.visionRadius, mask);
@@ -904,7 +904,7 @@ public class MapBuilder : MonoBehaviour
         {
             
             // raycst from input pos to c pos, if hit something, nothing, if not, hit tile
-            Vector3 dir = c.transform.position - pos;
+            Vector3 dir = c.transform.position+new Vector3(0,0.25f,0) - pos;
             float dist = Vector3.Distance(pos, c.transform.position);
             if (!GameManager.instance.currentFOWTiles.Contains(c.gameObject.GetComponent<TileOverlayLogic>()) && !Physics.Raycast(pos, dir.normalized, dist, mask))
             {
