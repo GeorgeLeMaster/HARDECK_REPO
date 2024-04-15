@@ -146,7 +146,20 @@
         138,
         139,
         140,
-        141
+        141,
+        142,
+        143,
+        144,
+        145,
+        146,
+        147,
+        148,
+        149,
+        150,
+        151,
+        152,
+        153,
+        154
       ],
       "OverwriteOutputs": false,
       "DebugActionIndex": 0
@@ -324,7 +337,7 @@
       "DisplayName": "Writing boot.config_tyr4.info",
       "ActionType": "WriteFile",
       "PayloadOffset": 83,
-      "PayloadLength": 15549,
+      "PayloadLength": 16686,
       "PayloadDebugContentSnippet": "{\"System.Object\":null,\"Bee.Tun",
       "Inputs": [],
       "Outputs": [
@@ -422,13 +435,24 @@
         "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.XRModule.dll",
         "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.dll",
         "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Assembly-CSharp.dll",
-        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.Timeline.dll",
-        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/UnityEngine.UI.dll",
-        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.TextMeshPro.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.RenderPipelines.Core.Runtime.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.RenderPipelines.Universal.Runtime.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.Burst.dll",
         "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.VisualScripting.Core.dll",
-        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.VisualScripting.State.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/UnityEngine.UI.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.RenderPipelines.Universal.Config.Runtime.dll",
         "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.VisualScripting.Flow.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.RenderPipeline.Universal.ShaderLibrary.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.Timeline.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.RenderPipelines.Core.ShaderLibrary.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.Mathematics.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.TextMeshPro.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.RenderPipelines.Universal.Shaders.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.VisualScripting.State.dll",
         "C:/HARDECK_REPO/HARDECK/Library/PackageCache/com.unity.visualscripting@1.9.1/Runtime/VisualScripting.Flow/Dependencies/NCalc/Unity.VisualScripting.Antlr3.Runtime.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/PackageCache/com.unity.burst@1.8.10/Unity.Burst.Unsafe.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/Facades/System.Runtime.dll",
         "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/Facades/netstandard.dll",
         "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/Mono.Security.dll",
         "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/System.ComponentModel.Composition.dll",
@@ -1342,40 +1366,52 @@
       "DebugActionIndex": 86
     },
     {
-      "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.Timeline.dll",
-      "DisplayName": "Copying Unity.Timeline.dll",
+      "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll",
+      "DisplayName": "Copying Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll",
       "ActionType": "CopyFiles",
       "Inputs": [
-        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.Timeline.dll"
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll"
       ],
       "Outputs": [
-        "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.Timeline.dll"
+        "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll"
       ],
       "DebugActionIndex": 87
     },
     {
-      "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/UnityEngine.UI.dll",
-      "DisplayName": "Copying UnityEngine.UI.dll",
+      "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.RenderPipelines.Core.Runtime.dll",
+      "DisplayName": "Copying Unity.RenderPipelines.Core.Runtime.dll",
       "ActionType": "CopyFiles",
       "Inputs": [
-        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/UnityEngine.UI.dll"
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.RenderPipelines.Core.Runtime.dll"
       ],
       "Outputs": [
-        "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/UnityEngine.UI.dll"
+        "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.RenderPipelines.Core.Runtime.dll"
       ],
       "DebugActionIndex": 88
     },
     {
-      "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.TextMeshPro.dll",
-      "DisplayName": "Copying Unity.TextMeshPro.dll",
+      "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.RenderPipelines.Universal.Runtime.dll",
+      "DisplayName": "Copying Unity.RenderPipelines.Universal.Runtime.dll",
       "ActionType": "CopyFiles",
       "Inputs": [
-        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.TextMeshPro.dll"
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.RenderPipelines.Universal.Runtime.dll"
       ],
       "Outputs": [
-        "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.TextMeshPro.dll"
+        "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.RenderPipelines.Universal.Runtime.dll"
       ],
       "DebugActionIndex": 89
+    },
+    {
+      "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.Burst.dll",
+      "DisplayName": "Copying Unity.Burst.dll",
+      "ActionType": "CopyFiles",
+      "Inputs": [
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.Burst.dll"
+      ],
+      "Outputs": [
+        "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.Burst.dll"
+      ],
+      "DebugActionIndex": 90
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.VisualScripting.Core.dll",
@@ -1387,19 +1423,31 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.VisualScripting.Core.dll"
       ],
-      "DebugActionIndex": 90
+      "DebugActionIndex": 91
     },
     {
-      "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.VisualScripting.State.dll",
-      "DisplayName": "Copying Unity.VisualScripting.State.dll",
+      "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/UnityEngine.UI.dll",
+      "DisplayName": "Copying UnityEngine.UI.dll",
       "ActionType": "CopyFiles",
       "Inputs": [
-        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.VisualScripting.State.dll"
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/UnityEngine.UI.dll"
       ],
       "Outputs": [
-        "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.VisualScripting.State.dll"
+        "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/UnityEngine.UI.dll"
       ],
-      "DebugActionIndex": 91
+      "DebugActionIndex": 92
+    },
+    {
+      "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.RenderPipelines.Universal.Config.Runtime.dll",
+      "DisplayName": "Copying Unity.RenderPipelines.Universal.Config.Runtime.dll",
+      "ActionType": "CopyFiles",
+      "Inputs": [
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.RenderPipelines.Universal.Config.Runtime.dll"
+      ],
+      "Outputs": [
+        "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.RenderPipelines.Universal.Config.Runtime.dll"
+      ],
+      "DebugActionIndex": 93
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.VisualScripting.Flow.dll",
@@ -1411,7 +1459,91 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.VisualScripting.Flow.dll"
       ],
-      "DebugActionIndex": 92
+      "DebugActionIndex": 94
+    },
+    {
+      "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.RenderPipeline.Universal.ShaderLibrary.dll",
+      "DisplayName": "Copying Unity.RenderPipeline.Universal.ShaderLibrary.dll",
+      "ActionType": "CopyFiles",
+      "Inputs": [
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.RenderPipeline.Universal.ShaderLibrary.dll"
+      ],
+      "Outputs": [
+        "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.RenderPipeline.Universal.ShaderLibrary.dll"
+      ],
+      "DebugActionIndex": 95
+    },
+    {
+      "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.Timeline.dll",
+      "DisplayName": "Copying Unity.Timeline.dll",
+      "ActionType": "CopyFiles",
+      "Inputs": [
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.Timeline.dll"
+      ],
+      "Outputs": [
+        "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.Timeline.dll"
+      ],
+      "DebugActionIndex": 96
+    },
+    {
+      "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.RenderPipelines.Core.ShaderLibrary.dll",
+      "DisplayName": "Copying Unity.RenderPipelines.Core.ShaderLibrary.dll",
+      "ActionType": "CopyFiles",
+      "Inputs": [
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.RenderPipelines.Core.ShaderLibrary.dll"
+      ],
+      "Outputs": [
+        "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.RenderPipelines.Core.ShaderLibrary.dll"
+      ],
+      "DebugActionIndex": 97
+    },
+    {
+      "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.Mathematics.dll",
+      "DisplayName": "Copying Unity.Mathematics.dll",
+      "ActionType": "CopyFiles",
+      "Inputs": [
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.Mathematics.dll"
+      ],
+      "Outputs": [
+        "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.Mathematics.dll"
+      ],
+      "DebugActionIndex": 98
+    },
+    {
+      "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.TextMeshPro.dll",
+      "DisplayName": "Copying Unity.TextMeshPro.dll",
+      "ActionType": "CopyFiles",
+      "Inputs": [
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.TextMeshPro.dll"
+      ],
+      "Outputs": [
+        "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.TextMeshPro.dll"
+      ],
+      "DebugActionIndex": 99
+    },
+    {
+      "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.RenderPipelines.Universal.Shaders.dll",
+      "DisplayName": "Copying Unity.RenderPipelines.Universal.Shaders.dll",
+      "ActionType": "CopyFiles",
+      "Inputs": [
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.RenderPipelines.Universal.Shaders.dll"
+      ],
+      "Outputs": [
+        "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.RenderPipelines.Universal.Shaders.dll"
+      ],
+      "DebugActionIndex": 100
+    },
+    {
+      "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.VisualScripting.State.dll",
+      "DisplayName": "Copying Unity.VisualScripting.State.dll",
+      "ActionType": "CopyFiles",
+      "Inputs": [
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.VisualScripting.State.dll"
+      ],
+      "Outputs": [
+        "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.VisualScripting.State.dll"
+      ],
+      "DebugActionIndex": 101
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.VisualScripting.Antlr3.Runtime.dll",
@@ -1423,7 +1555,31 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.VisualScripting.Antlr3.Runtime.dll"
       ],
-      "DebugActionIndex": 93
+      "DebugActionIndex": 102
+    },
+    {
+      "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.Burst.Unsafe.dll",
+      "DisplayName": "Copying Unity.Burst.Unsafe.dll",
+      "ActionType": "CopyFiles",
+      "Inputs": [
+        "C:/HARDECK_REPO/HARDECK/Library/PackageCache/com.unity.burst@1.8.10/Unity.Burst.Unsafe.dll"
+      ],
+      "Outputs": [
+        "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Unity.Burst.Unsafe.dll"
+      ],
+      "DebugActionIndex": 103
+    },
+    {
+      "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Runtime.dll",
+      "DisplayName": "Copying System.Runtime.dll",
+      "ActionType": "CopyFiles",
+      "Inputs": [
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/Facades/System.Runtime.dll"
+      ],
+      "Outputs": [
+        "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Runtime.dll"
+      ],
+      "DebugActionIndex": 104
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/netstandard.dll",
@@ -1435,7 +1591,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/netstandard.dll"
       ],
-      "DebugActionIndex": 94
+      "DebugActionIndex": 105
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Mono.Security.dll",
@@ -1447,7 +1603,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/Mono.Security.dll"
       ],
-      "DebugActionIndex": 95
+      "DebugActionIndex": 106
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.ComponentModel.Composition.dll",
@@ -1459,7 +1615,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.ComponentModel.Composition.dll"
       ],
-      "DebugActionIndex": 96
+      "DebugActionIndex": 107
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Configuration.dll",
@@ -1471,7 +1627,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Configuration.dll"
       ],
-      "DebugActionIndex": 97
+      "DebugActionIndex": 108
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Core.dll",
@@ -1483,7 +1639,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Core.dll"
       ],
-      "DebugActionIndex": 98
+      "DebugActionIndex": 109
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Data.DataSetExtensions.dll",
@@ -1495,7 +1651,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Data.DataSetExtensions.dll"
       ],
-      "DebugActionIndex": 99
+      "DebugActionIndex": 110
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Data.dll",
@@ -1507,7 +1663,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Data.dll"
       ],
-      "DebugActionIndex": 100
+      "DebugActionIndex": 111
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Drawing.dll",
@@ -1519,7 +1675,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Drawing.dll"
       ],
-      "DebugActionIndex": 101
+      "DebugActionIndex": 112
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.EnterpriseServices.dll",
@@ -1531,7 +1687,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.EnterpriseServices.dll"
       ],
-      "DebugActionIndex": 102
+      "DebugActionIndex": 113
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.IO.Compression.FileSystem.dll",
@@ -1543,7 +1699,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.IO.Compression.FileSystem.dll"
       ],
-      "DebugActionIndex": 103
+      "DebugActionIndex": 114
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.IO.Compression.dll",
@@ -1555,7 +1711,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.IO.Compression.dll"
       ],
-      "DebugActionIndex": 104
+      "DebugActionIndex": 115
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Net.Http.dll",
@@ -1567,7 +1723,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Net.Http.dll"
       ],
-      "DebugActionIndex": 105
+      "DebugActionIndex": 116
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Numerics.dll",
@@ -1579,7 +1735,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Numerics.dll"
       ],
-      "DebugActionIndex": 106
+      "DebugActionIndex": 117
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Runtime.Serialization.dll",
@@ -1591,7 +1747,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Runtime.Serialization.dll"
       ],
-      "DebugActionIndex": 107
+      "DebugActionIndex": 118
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Security.dll",
@@ -1603,7 +1759,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Security.dll"
       ],
-      "DebugActionIndex": 108
+      "DebugActionIndex": 119
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.ServiceModel.Internals.dll",
@@ -1615,7 +1771,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.ServiceModel.Internals.dll"
       ],
-      "DebugActionIndex": 109
+      "DebugActionIndex": 120
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Transactions.dll",
@@ -1627,7 +1783,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Transactions.dll"
       ],
-      "DebugActionIndex": 110
+      "DebugActionIndex": 121
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Xml.Linq.dll",
@@ -1639,7 +1795,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Xml.Linq.dll"
       ],
-      "DebugActionIndex": 111
+      "DebugActionIndex": 122
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Xml.dll",
@@ -1651,7 +1807,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.Xml.dll"
       ],
-      "DebugActionIndex": 112
+      "DebugActionIndex": 123
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.dll",
@@ -1663,7 +1819,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/System.dll"
       ],
-      "DebugActionIndex": 113
+      "DebugActionIndex": 124
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/mscorlib.dll",
@@ -1675,20 +1831,188 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Managed/mscorlib.dll"
       ],
-      "DebugActionIndex": 114
+      "DebugActionIndex": 125
+    },
+    {
+      "Annotation": "GenerateNativePluginsForAssemblies Library/Bee/artifacts/WinPlayerBuildProgram/AsyncPluginsFromLinker",
+      "DisplayName": "Running Burst Compiler",
+      "ActionType": "RunRPCCommand",
+      "PayloadOffset": 16892,
+      "PayloadLength": 15571,
+      "PayloadDebugContentSnippet": "{\"PlayerBuildProgramLibrary.Da",
+      "Action": "GenerateNativePluginsForAssemblies",
+      "Inputs": [
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.AIModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.ARModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.AccessibilityModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.AndroidJNIModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.AnimationModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.AssetBundleModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.AudioModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.ClothModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.ClusterInputModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.ClusterRendererModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.ContentLoadModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.CoreModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.CrashReportingModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.DSPGraphModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.DirectorModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.GIModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.GameCenterModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.GridModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.HotReloadModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.IMGUIModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.ImageConversionModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.InputLegacyModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.InputModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.JSONSerializeModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.LocalizationModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.NVIDIAModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.ParticleSystemModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.PerformanceReportingModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.Physics2DModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.PhysicsModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.ProfilerModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.PropertiesModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.RuntimeInitializeOnLoadManagerInitializerModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.ScreenCaptureModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.SharedInternalsModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.SpriteMaskModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.SpriteShapeModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.StreamingModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.SubstanceModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.SubsystemsModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.TLSModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.TerrainModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.TerrainPhysicsModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.TextCoreFontEngineModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.TextCoreTextEngineModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.TextRenderingModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.TilemapModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.UIElementsModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.UIModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.UmbraModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.UnityAnalyticsCommonModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.UnityAnalyticsModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.UnityConnectModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.UnityCurlModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.UnityTestProtocolModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.UnityWebRequestAssetBundleModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.UnityWebRequestAudioModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.UnityWebRequestModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.UnityWebRequestTextureModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.UnityWebRequestWWWModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.VFXModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.VRModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.VehiclesModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.VideoModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.VirtualTexturingModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.WindModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.XRModule.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/Variations/mono/Managed/UnityEngine.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Assembly-CSharp.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.RenderPipelines.ShaderGraph.ShaderGraphLibrary.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.RenderPipelines.Core.Runtime.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.RenderPipelines.Universal.Runtime.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.Burst.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.VisualScripting.Core.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/UnityEngine.UI.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.RenderPipelines.Universal.Config.Runtime.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.VisualScripting.Flow.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.RenderPipeline.Universal.ShaderLibrary.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.Timeline.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.RenderPipelines.Core.ShaderLibrary.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.Mathematics.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.TextMeshPro.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.RenderPipelines.Universal.Shaders.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/Bee/PlayerScriptAssemblies/Unity.VisualScripting.State.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/PackageCache/com.unity.visualscripting@1.9.1/Runtime/VisualScripting.Flow/Dependencies/NCalc/Unity.VisualScripting.Antlr3.Runtime.dll",
+        "C:/HARDECK_REPO/HARDECK/Library/PackageCache/com.unity.burst@1.8.10/Unity.Burst.Unsafe.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/Facades/System.Runtime.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/Facades/netstandard.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/Mono.Security.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/System.ComponentModel.Composition.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/System.Configuration.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/System.Core.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/System.Data.DataSetExtensions.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/System.Data.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/System.Drawing.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/System.EnterpriseServices.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/System.IO.Compression.FileSystem.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/System.IO.Compression.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/System.Net.Http.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/System.Numerics.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/System.Runtime.Serialization.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/System.Security.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/System.ServiceModel.Internals.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/System.Transactions.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/System.Xml.Linq.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/System.Xml.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/System.dll",
+        "C:/Program Files/Unity/Hub/Editor/2022.3.14f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32/mscorlib.dll",
+        "ProjectSettings/BurstAotSettings_StandaloneWindows.json",
+        "Library/BurstCache/AotSettings_StandaloneWindows.hash",
+        "C:/HARDECK_REPO/HARDECK/Library/PackageCache/com.unity.burst@1.8.10/.Runtime/bcl.exe"
+      ],
+      "Outputs": [],
+      "TargetDirectories": [
+        "Library/Bee/artifacts/WinPlayerBuildProgram/AsyncPluginsFromLinker",
+        "Library/Bee/artifacts/WinPlayerBuildProgram/AsyncPluginsFromLinkerSymbols"
+      ],
+      "OverwriteOutputs": false,
+      "StatSignatures": [
+        {
+          "File": "Library/Bee/artifacts/WinPlayerBuildProgram/AsyncPluginsFromLinker"
+        },
+        {
+          "File": "Library/Bee/artifacts/WinPlayerBuildProgram/AsyncPluginsFromLinker/x86_64"
+        },
+        {
+          "File": "Library/Bee/artifacts/WinPlayerBuildProgram/AsyncPluginsFromLinkerSymbols"
+        }
+      ],
+      "GlobSignatures": [
+        {
+          "Path": "Library/Bee/artifacts/WinPlayerBuildProgram/AsyncPluginsFromLinker"
+        },
+        {
+          "Path": "Library/Bee/artifacts/WinPlayerBuildProgram/AsyncPluginsFromLinker/x86_64",
+          "Recurse": 1
+        },
+        {
+          "Path": "Library/Bee/artifacts/WinPlayerBuildProgram/AsyncPluginsFromLinkerSymbols",
+          "Recurse": 1
+        }
+      ],
+      "DebugActionIndex": 126
+    },
+    {
+      "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Plugins/x86_64/lib_burst_generated.dll",
+      "DisplayName": "Copying lib_burst_generated.dll",
+      "ActionType": "CopyFiles",
+      "Inputs": [
+        "Library/Bee/artifacts/WinPlayerBuildProgram/AsyncPluginsFromLinker/x86_64/lib_burst_generated.dll"
+      ],
+      "Outputs": [
+        "C:/HARDECK_REPO/Builds/HARDECK_Data/Plugins/x86_64/lib_burst_generated.dll"
+      ],
+      "ToBuildDependencies": [
+        126
+      ],
+      "DebugActionIndex": 127
     },
     {
       "Annotation": "WriteText Library/Bee/artifacts/WinPlayerBuildProgram/Data/app.info",
       "DisplayName": "Writing app.info",
       "ActionType": "WriteFile",
-      "PayloadOffset": 15721,
+      "PayloadOffset": 32552,
       "PayloadLength": 22,
       "PayloadDebugContentSnippet": "DefaultCompany\nHARDECK",
       "Inputs": [],
       "Outputs": [
         "Library/Bee/artifacts/WinPlayerBuildProgram/Data/app.info"
       ],
-      "DebugActionIndex": 115
+      "DebugActionIndex": 128
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/app.info",
@@ -1701,9 +2025,9 @@
         "C:/HARDECK_REPO/Builds/HARDECK_Data/app.info"
       ],
       "ToBuildDependencies": [
-        115
+        128
       ],
-      "DebugActionIndex": 116
+      "DebugActionIndex": 129
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK_Data/Resources/unity default resources",
@@ -1715,7 +2039,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK_Data/Resources/unity default resources"
       ],
-      "DebugActionIndex": 117
+      "DebugActionIndex": 130
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/HARDECK.exe",
@@ -1727,7 +2051,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/HARDECK.exe"
       ],
-      "DebugActionIndex": 118
+      "DebugActionIndex": 131
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/MonoBleedingEdge/EmbedRuntime/mono-2.0-bdwgc.dll",
@@ -1739,7 +2063,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/MonoBleedingEdge/EmbedRuntime/mono-2.0-bdwgc.dll"
       ],
-      "DebugActionIndex": 119
+      "DebugActionIndex": 132
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/MonoBleedingEdge/EmbedRuntime/MonoPosixHelper.dll",
@@ -1751,7 +2075,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/MonoBleedingEdge/EmbedRuntime/MonoPosixHelper.dll"
       ],
-      "DebugActionIndex": 120
+      "DebugActionIndex": 133
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/2.0/Browsers/Compat.browser",
@@ -1763,7 +2087,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/2.0/Browsers/Compat.browser"
       ],
-      "DebugActionIndex": 121
+      "DebugActionIndex": 134
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/2.0/DefaultWsdlHelpGenerator.aspx",
@@ -1775,7 +2099,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/2.0/DefaultWsdlHelpGenerator.aspx"
       ],
-      "DebugActionIndex": 122
+      "DebugActionIndex": 135
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/2.0/machine.config",
@@ -1787,7 +2111,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/2.0/machine.config"
       ],
-      "DebugActionIndex": 123
+      "DebugActionIndex": 136
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/2.0/settings.map",
@@ -1799,7 +2123,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/2.0/settings.map"
       ],
-      "DebugActionIndex": 124
+      "DebugActionIndex": 137
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/2.0/web.config",
@@ -1811,7 +2135,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/2.0/web.config"
       ],
-      "DebugActionIndex": 125
+      "DebugActionIndex": 138
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/4.0/Browsers/Compat.browser",
@@ -1823,7 +2147,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/4.0/Browsers/Compat.browser"
       ],
-      "DebugActionIndex": 126
+      "DebugActionIndex": 139
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/4.0/DefaultWsdlHelpGenerator.aspx",
@@ -1835,7 +2159,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/4.0/DefaultWsdlHelpGenerator.aspx"
       ],
-      "DebugActionIndex": 127
+      "DebugActionIndex": 140
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/4.0/machine.config",
@@ -1847,7 +2171,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/4.0/machine.config"
       ],
-      "DebugActionIndex": 128
+      "DebugActionIndex": 141
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/4.0/settings.map",
@@ -1859,7 +2183,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/4.0/settings.map"
       ],
-      "DebugActionIndex": 129
+      "DebugActionIndex": 142
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/4.0/web.config",
@@ -1871,7 +2195,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/4.0/web.config"
       ],
-      "DebugActionIndex": 130
+      "DebugActionIndex": 143
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/4.5/Browsers/Compat.browser",
@@ -1883,7 +2207,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/4.5/Browsers/Compat.browser"
       ],
-      "DebugActionIndex": 131
+      "DebugActionIndex": 144
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/4.5/DefaultWsdlHelpGenerator.aspx",
@@ -1895,7 +2219,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/4.5/DefaultWsdlHelpGenerator.aspx"
       ],
-      "DebugActionIndex": 132
+      "DebugActionIndex": 145
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/4.5/machine.config",
@@ -1907,7 +2231,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/4.5/machine.config"
       ],
-      "DebugActionIndex": 133
+      "DebugActionIndex": 146
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/4.5/settings.map",
@@ -1919,7 +2243,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/4.5/settings.map"
       ],
-      "DebugActionIndex": 134
+      "DebugActionIndex": 147
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/4.5/web.config",
@@ -1931,7 +2255,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/4.5/web.config"
       ],
-      "DebugActionIndex": 135
+      "DebugActionIndex": 148
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/browscap.ini",
@@ -1943,7 +2267,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/browscap.ini"
       ],
-      "DebugActionIndex": 136
+      "DebugActionIndex": 149
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/config",
@@ -1955,7 +2279,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/config"
       ],
-      "DebugActionIndex": 137
+      "DebugActionIndex": 150
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/mconfig/config.xml",
@@ -1967,7 +2291,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/MonoBleedingEdge/etc/mono/mconfig/config.xml"
       ],
-      "DebugActionIndex": 138
+      "DebugActionIndex": 151
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/UnityCrashHandler64.exe",
@@ -1979,7 +2303,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/UnityCrashHandler64.exe"
       ],
-      "DebugActionIndex": 139
+      "DebugActionIndex": 152
     },
     {
       "Annotation": "CopyFiles C:/HARDECK_REPO/Builds/UnityPlayer.dll",
@@ -1991,7 +2315,7 @@
       "Outputs": [
         "C:/HARDECK_REPO/Builds/UnityPlayer.dll"
       ],
-      "DebugActionIndex": 140
+      "DebugActionIndex": 153
     },
     {
       "Annotation": "Player",
@@ -2111,6 +2435,7 @@
         112,
         113,
         114,
+        115,
         116,
         117,
         118,
@@ -2121,9 +2446,7 @@
         123,
         124,
         125,
-        126,
         127,
-        128,
         129,
         130,
         131,
@@ -2135,10 +2458,23 @@
         137,
         138,
         139,
-        140
+        140,
+        141,
+        142,
+        143,
+        144,
+        145,
+        146,
+        147,
+        148,
+        149,
+        150,
+        151,
+        152,
+        153
       ],
       "OverwriteOutputs": false,
-      "DebugActionIndex": 141
+      "DebugActionIndex": 154
     }
   ],
   "FileSignatures": [
@@ -2337,9 +2673,13 @@
   "DigestCacheFileNameTmp": "Library/Bee/tundra.digestcache.tmp",
   "CachedNodeOutputDirectoryName": "Library/Bee/CachedNodeOutput",
   "EmitDataForBeeWhy": 0,
+  "DirectoriesCausingImplicitDependencies": [
+    "Library/Bee/artifacts/WinPlayerBuildProgram/AsyncPluginsFromLinker",
+    "Library/Bee/artifacts/WinPlayerBuildProgram/AsyncPluginsFromLinkerSymbols"
+  ],
         "NamedNodes": {
           "all_tundra_nodes": 0,
-          "Player": 141
+          "Player": 154
         }
 ,  "DefaultNodes": [
     0
