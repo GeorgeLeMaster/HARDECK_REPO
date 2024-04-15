@@ -267,7 +267,6 @@ public class MapBuilder : MonoBehaviour
             //4: scale
             dataMembers[2] = dataMembers[2].Substring(1, dataMembers[2].Length - 2);
             dataMembers[3] = dataMembers[3].Substring(1, dataMembers[3].Length - 2);
-            dataMembers[4] = dataMembers[4].Substring(1, dataMembers[4].Length - 2);
 
             GameObject[] tilesetObjs = Resources.LoadAll<GameObject>($"GFXOBJs/{dataMembers[0]}");
 
@@ -287,6 +286,7 @@ public class MapBuilder : MonoBehaviour
 
             GameObject newObj =  Instantiate(tilesetObjs[int.Parse(dataMembers[1])], pos, Quaternion.Euler(new Vector3(rot.x, rot.y, rot.z)));
             newObj.transform.SetParent(sceneryObj.transform);
+            newObj.transform.localScale = ParseStringToVector3(dataMembers[4]);
          //   Debug.Log($"{dataMembers[0]},{dataMembers[1]},{dataMembers[2]},{dataMembers[3]},{dataMembers[4]}");
             currentLineInt++;
             if (currentLineInt > 10000)
@@ -915,16 +915,18 @@ public class MapBuilder : MonoBehaviour
 
     private Vector3 ParseStringToVector3(string input)
     {
-        Vector3 result = Vector3.zero;
+      //  Debug.Log(input);
+        Vector3 result = Vector3.one;
 
-        input = input.Substring(1, input.Length-3);
+        input = input.Substring(1, input.Length - 3);
 
         string[] dataMembers = input.Split(',');
+        //Debug.Log(input);
+        float.TryParse(dataMembers[0], out result.x);
 
-        result.x = float.Parse(dataMembers[0]);
-        result.y = float.Parse(dataMembers[1]);
+        float.TryParse(dataMembers[1], out result.y);
 
-        result.z = float.Parse(dataMembers[2]);
+        float.TryParse(dataMembers[2], out result.z);
 
         return result;
     }

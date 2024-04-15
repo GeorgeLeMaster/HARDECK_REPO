@@ -6,4 +6,6 @@ public class GFXOBJContainter : MonoBehaviour
 {
     public string tilesetName;
     public int objId;
+
+
 }

@@ -10,13 +10,49 @@ using UnityEngine.UI;
 
 public enum TurnState
 {
+    Drawing,
     Deployment,
     Action,
     Enemy
 }
 
+public class Commander
+{
+    public int allianceInt;
+    public List<Structure> structures;
+    public List<UnitAIBase> units;
+
+}
+
+public class UnitData
+{
+    public UnitData(int mv, int vr, int d, int dm, int r, int h, string n)
+    {
+        moveSpeed = mv;
+        visionRadius = vr;
+        damage = d;
+        damageMod = dm;
+        range = r;
+        hp = h;
+        name = n;
+    }
+
+    public int moveSpeed;
+    public int visionRadius;
+    public int damage;
+    public int damageMod;
+    public int range;
+    public int hp;
+
+    public string name;
+}
+
 public class GameManager : MonoBehaviour
 {
+    public UnitData infintrymanUnitData = new UnitData(10, 12, 4, 2, 12, 6, "Infantryman");
+
+    public UnitData unitDataToSpawn;
+
     public static GameManager instance;
 
     public TurnState turnState;
@@ -43,6 +79,17 @@ public class GameManager : MonoBehaviour
     public GameObject worldTextPopupPrefab;
 
     public bool controllsLocked;
+
+    [Header("Decks")]
+    public GameObject phaseOne;
+    public GameObject phaseTwo;
+    public GameObject phaseThree;
+
+    public GameObject selectedDeckImage;
+
+    public Sprite groundDeckSprite;
+    public Sprite heavyDeckSprite;
+    public Sprite airDeckSprite;
 
     [HideInInspector]
     public List<TileOverlayLogic> lastFOWTiles;
@@ -81,7 +128,9 @@ public class GameManager : MonoBehaviour
 
     public List<Structure> structures;
 
-    private void Awake()  
+    public List<TileOverlayLogic> deployableTiles;
+
+    private void Awake()
     {
         instance = this;
     }
@@ -138,25 +187,54 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        RaycastHit conHit;
-        LayerMask conMask = LayerMask.GetMask("Tile", "Unit");
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out conHit, Mathf.Infinity, conMask))
+
+
+        // Deployment State logic
+        // Action state logic
+        if (Input.GetMouseButtonDown(0) && turnState == TurnState.Deployment && !EventSystem.current.IsPointerOverGameObject())
         {
-            if (conHit.transform.GetComponent<TileInfo>())
+
+            RaycastHit hit;
+            LayerMask mask = LayerMask.GetMask("FOW");
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, mask))
             {
-                selectedTileIndicator.transform.position = conHit.transform.GetComponent<TileInfo>().tilemapPosition;
+                if (hit.transform.GetComponent<TileOverlayLogic>())
+                {
+                    if (unitDataToSpawn != null && deployableTiles.Contains(hit.transform.GetComponent<TileOverlayLogic>()))
+                    {
+                        GameObject newUnit = Instantiate(Resources.Load("Units/OBJs/GroundUnitPrefab") as GameObject);
+                        UnitAIBase newAi = newUnit.GetComponent<UnitAIBase>();
+                        
+                        newAi.moveSpeed = unitDataToSpawn.moveSpeed;
+                        newAi.damage = unitDataToSpawn.damage;
+                        newAi.damageMod = unitDataToSpawn.damageMod;
+                        newAi.alliance = 0;
+                        newAi.range = unitDataToSpawn.range;
+                        newAi.visionRadius = unitDataToSpawn.visionRadius;
+                        newAi.maxHealth = unitDataToSpawn.hp;
+                        newAi.currentHealth = unitDataToSpawn.hp;
+
+                        Vector3Int pos = new Vector3Int( (int)hit.transform.GetComponent<TileOverlayLogic>().transform.position.x, (int)hit.transform.GetComponent<TileOverlayLogic>().transform.position.y, (int)hit.transform.GetComponent<TileOverlayLogic>().transform.position.z);
+
+                        newAi.Spawn(pos, Resources.Load("Units/GFX/GFX_Infantryman") as GameObject);
+
+                        AllUnits.Add(newAi);
+                        PlayerUnits.Add(newAi);
+
+
+                        turnState = TurnState.Action;
+                        controllsLocked = false;
+                        phaseThree.SetActive(false);
+                        phaseTwo.SetActive(false);
+                        APFOW();
+                    }
+                }
             }
-            else
-            {
-                selectedTileIndicator.transform.position = new Vector3(0, -10f, 0);
-            }
-        }
-        else
-        {
-            selectedTileIndicator.transform.position = new Vector3(0, -10f, 0);
+
         }
 
-        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+        // Action state logic
+        if (Input.GetMouseButtonDown(0) && turnState == TurnState.Action && !EventSystem.current.IsPointerOverGameObject())
         {
             if (!controllsLocked)
             {
@@ -269,6 +347,26 @@ public class GameManager : MonoBehaviour
                 }
             }
             UpdatePlayerActionGFX();
+        }
+
+        RaycastHit conHit;
+        LayerMask conMask = LayerMask.GetMask("Tile", "Unit");
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out conHit, Mathf.Infinity, conMask) && turnState == TurnState.Action)
+        {
+            if (conHit.transform.GetComponent<TileInfo>())
+            {
+                selectedTileIndicator.SetActive(true);
+
+                selectedTileIndicator.transform.position = conHit.transform.GetComponent<TileInfo>().tilemapPosition;
+            }
+            else
+            {
+                selectedTileIndicator.SetActive(false);
+            }
+        }
+        else
+        {
+            selectedTileIndicator.transform.position = new Vector3(0, -10f, 0);
         }
     }
 
@@ -626,8 +724,8 @@ public class GameManager : MonoBehaviour
 
     public void StartPlayerTurn()
     {
-
-        Debug.Log("start");
+        turnState = TurnState.Drawing;
+       // Debug.Log("start");
 
         foreach(Structure st in structures)
         {
@@ -646,6 +744,10 @@ public class GameManager : MonoBehaviour
         selectedUnit_Enemy = null;
         q_actionId = -1;
         UpdatePlayerActionGFX();
+
+        controllsLocked = true;
+
+        PromptDrawPhaseOne();
     }
 
 
@@ -675,5 +777,110 @@ public class GameManager : MonoBehaviour
         }
         yield return new WaitForEndOfFrame();
         APFOW();
+    }
+
+    public void HighlightDeployableTiles(int type)
+    {
+        foreach (Structure s in structures)
+        {
+            if (s.ownerId == playerAllianceInt && ((type == 0 && s.provideGround) || (type == 1 && s.provideHeavy) || (type == 2 && s.provideAir)))
+            {
+                for (int x = -s.WidthHeight.x; x <= s.WidthHeight.x; x++)
+                {
+                    for (int z = -s.WidthHeight.y; z <= s.WidthHeight.y; z++)
+                    {
+                        int newX = s.tilemapPos.x + x;
+                        int newY = s.tilemapPos.z + z;
+                        if (MapBuilder.instance.FOWtiles[newX,s.tilemapPos.y, newY] != null)
+                        {
+                            MapBuilder.instance.FOWtiles[newX, s.tilemapPos.y, newY].GetComponent<TileOverlayLogic>().SetOverlay("Deployable");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void PromptDrawPhaseOne()
+    {
+        phaseOne.SetActive(true);
+        phaseTwo.SetActive(true);
+        phaseThree.SetActive(true);
+        phaseOne.SetActive(true);
+        phaseTwo.SetActive(false);
+        phaseThree.SetActive(false);
+
+        phaseOne.GetComponent<Animator>().ResetTrigger("GT2");
+
+    }
+
+    public void GoBetweenPhaseTwo(int input)
+    {
+        StartCoroutine(PromptDrawPhaseTwo(input));
+    }
+
+    public void GoBetweenPhaseThree(int input)
+    {
+        StartCoroutine(PromptDrawPhaseThree(input));
+
+    }
+
+    public IEnumerator PromptDrawPhaseTwo(int input)
+    {
+        phaseOne.SetActive(true);
+        phaseTwo.SetActive(false);
+        phaseThree.SetActive(false);
+
+        switch(input)
+        {
+            case 1:
+                selectedDeckImage.GetComponent<Image>().sprite = groundDeckSprite;
+                break;
+            case 2:
+                selectedDeckImage.GetComponent<Image>().sprite = heavyDeckSprite;
+                break;
+            case 3:
+                selectedDeckImage.GetComponent<Image>().sprite = airDeckSprite;
+                break;
+        }
+
+        phaseOne.GetComponent<Animator>().SetTrigger("GT2");
+        yield return new WaitForSeconds(0.5f);
+
+        phaseOne.SetActive(false);
+        phaseTwo.SetActive(true);
+        phaseThree.SetActive(false);
+
+       // phaseTwo.
+
+    }
+
+    public IEnumerator PromptDrawPhaseThree(int input)
+    {
+        phaseOne.SetActive(false);
+        phaseTwo.SetActive(true);
+        phaseThree.SetActive(false);
+
+        if (input == 0)
+        {
+            phaseTwo.GetComponent<Animator>().SetTrigger("DrawDeck");
+            yield return new WaitForSeconds(0.5f);
+            phaseTwo.SetActive(false);
+
+            phaseThree.SetActive(true);
+
+
+        }
+        else
+        {
+            phaseTwo.GetComponent<Animator>().SetTrigger("DrawGeneric");
+            yield return new WaitForSeconds(0.5f);
+            unitDataToSpawn = infintrymanUnitData;
+            HighlightDeployableTiles(0);
+        }
+
+        yield return new WaitForSeconds(1f);
+
+        turnState = TurnState.Deployment;
     }
 }

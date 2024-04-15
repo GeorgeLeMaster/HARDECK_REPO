@@ -41,7 +41,9 @@ public class TileOverlayLogic : MonoBehaviour
                 break;
 
             case "Deployable":
-                overlay.sprite = deployable;
+                overlay.sprite = FOW;
+                overlay.color = new Color(0, 1, 0, 0.5f);
+                currentState = "Deployable";
                 break;
         }
     }
