@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7145683686724779054}
   - component: {fileID: 8098100319134265951}
   - component: {fileID: 1904802420066849050}
-  m_Layer: 8
+  m_Layer: 11
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -114,7 +114,7 @@ GameObject:
   - component: {fileID: 6276996356743139967}
   - component: {fileID: 3838905876906677648}
   - component: {fileID: 6183593194522286935}
-  m_Layer: 8
+  m_Layer: 11
   m_Name: OverlayTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -156,7 +156,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.1, y: 0.1, z: 0.1}
+  m_Size: {x: 1, y: 0.1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &3838905876906677648
 MonoBehaviour:
@@ -211,7 +211,7 @@ GameObject:
   - component: {fileID: 459382221093163178}
   - component: {fileID: 5594496158129458633}
   - component: {fileID: 7787727291187424157}
-  m_Layer: 8
+  m_Layer: 11
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}

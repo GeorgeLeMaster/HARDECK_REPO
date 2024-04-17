@@ -893,7 +893,7 @@ public class MapBuilder : MonoBehaviour
         //Debug.Log("a");
 
         Vector3 pos = input.currentPos + new Vector3(0,0.25f,0);
-        LayerMask mask = LayerMask.GetMask("FOW");
+        LayerMask mask = LayerMask.GetMask("Overlay");
 
         Collider[] fowTiles = Physics.OverlapCapsule(new Vector3(pos.x, -10, pos.z), new Vector3(pos.x, 10, pos.z), input.visionRadius, mask);
 

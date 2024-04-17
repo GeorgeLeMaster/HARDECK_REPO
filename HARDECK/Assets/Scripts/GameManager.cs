@@ -187,17 +187,16 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-
         // Deployment State logic
         // Action state logic
         if (Input.GetMouseButtonDown(0) && turnState == TurnState.Deployment && !EventSystem.current.IsPointerOverGameObject())
         {
 
             RaycastHit hit;
-            LayerMask mask = LayerMask.GetMask("FOW");
+            LayerMask mask = LayerMask.GetMask("Overlay");
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, mask))
             {
+                Debug.Log("hit");
                 if (hit.transform.GetComponent<TileOverlayLogic>())
                 {
                     if (unitDataToSpawn != null && deployableTiles.Contains(hit.transform.GetComponent<TileOverlayLogic>()))
@@ -220,7 +219,6 @@ public class GameManager : MonoBehaviour
 
                         AllUnits.Add(newAi);
                         PlayerUnits.Add(newAi);
-
 
                         turnState = TurnState.Action;
                         controllsLocked = false;
@@ -794,6 +792,7 @@ public class GameManager : MonoBehaviour
                         if (MapBuilder.instance.FOWtiles[newX,s.tilemapPos.y, newY] != null)
                         {
                             MapBuilder.instance.FOWtiles[newX, s.tilemapPos.y, newY].GetComponent<TileOverlayLogic>().SetOverlay("Deployable");
+                            deployableTiles.Add(MapBuilder.instance.FOWtiles[newX, s.tilemapPos.y, newY].GetComponent<TileOverlayLogic>());
                         }
                     }
                 }
@@ -877,10 +876,11 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
             unitDataToSpawn = infintrymanUnitData;
             HighlightDeployableTiles(0);
+            turnState = TurnState.Deployment;
         }
 
-        yield return new WaitForSeconds(1f);
+       // yield return new WaitForSeconds(1f);
 
-        turnState = TurnState.Deployment;
+
     }
 }
