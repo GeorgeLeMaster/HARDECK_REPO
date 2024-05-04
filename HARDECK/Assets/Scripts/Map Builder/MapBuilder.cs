@@ -419,7 +419,7 @@ public class MapBuilder : MonoBehaviour
                 }
             }
 
-            // Builds FOW
+            // Builds Overlay
             GameObject fowParent = GameObject.Find("FOW");
             //  Build FOW
             FOWtiles = new GameObject[mapX + 1, mapY + 1, mapZ + 1];
@@ -430,12 +430,12 @@ public class MapBuilder : MonoBehaviour
                     GameObject newFT = Instantiate(FOWPrefab, t.tilemapPosition, Quaternion.identity);
                     FOWtiles[t.tilemapPosition.x, t.tilemapPosition.y, t.tilemapPosition.z] = newFT;
                     newFT.transform.SetParent(fowParent.transform);
-                    newFT.gameObject.GetComponent<TileOverlayLogic>().SetOverlay("FOW_showfow");
+                    newFT.gameObject.GetComponent<TileOverlayLogic>().SetOverlay("FOW_hidefow");
                 }
             }
 
-            GameManager.instance.currentFOWTiles = new List<TileOverlayLogic>();
-            GameManager.instance.lastFOWTiles = new List<TileOverlayLogic>();
+            GameManager.instance.currentFOWTiles = new List<GFXOBJContainter>();
+            GameManager.instance.lastFOWTiles = new List<GFXOBJContainter>();
 
             GameManager.instance.StartCoroutine("firstFOWupdate");
             GameManager.instance.StartPlayerTurn();
@@ -555,6 +555,7 @@ public class MapBuilder : MonoBehaviour
         GameObject newTilesObj = new GameObject();
         newTilesObj.name = "Tiles";
         newTilesObj.transform.parent = GameObject.Find("Environment").transform;
+       // newTilesObj.hideFlags = HideFlags.HideInHierarchy;
 
         GameObject scenery = GameObject.Find("Scenery");
         DestroyImmediate(scenery);
@@ -893,22 +894,20 @@ public class MapBuilder : MonoBehaviour
         //Debug.Log("a");
 
         Vector3 pos = input.currentPos + new Vector3(0,0.25f,0);
-        LayerMask mask = LayerMask.GetMask("Overlay");
+        LayerMask mask = LayerMask.GetMask("OBJFinder");
 
         Collider[] fowTiles = Physics.OverlapCapsule(new Vector3(pos.x, -10, pos.z), new Vector3(pos.x, 10, pos.z), input.visionRadius, mask);
 
-        mask = LayerMask.GetMask("GFXEnvironment");
-
+        Debug.Log(fowTiles.Length);
         //Debug.Log()
         foreach (Collider c in fowTiles)
-        {
-            
+        { 
             // raycst from input pos to c pos, if hit something, nothing, if not, hit tile
             Vector3 dir = c.transform.position+new Vector3(0,0.25f,0) - pos;
             float dist = Vector3.Distance(pos, c.transform.position);
-            if (!GameManager.instance.currentFOWTiles.Contains(c.gameObject.GetComponent<TileOverlayLogic>()) && !Physics.Raycast(pos, dir.normalized, dist, mask))
+            if (!GameManager.instance.currentFOWTiles.Contains(c.gameObject.GetComponent<GFXOBJContainter>()) && !Physics.Raycast(pos, dir.normalized, dist, mask))
             {
-                GameManager.instance.currentFOWTiles.Add(c.gameObject.GetComponent<TileOverlayLogic>());
+                GameManager.instance.currentFOWTiles.Add(c.gameObject.GetComponent<GFXOBJContainter>());
             }
         }
     }

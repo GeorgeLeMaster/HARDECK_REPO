@@ -92,9 +92,9 @@ public class GameManager : MonoBehaviour
     public Sprite airDeckSprite;
 
     [HideInInspector]
-    public List<TileOverlayLogic> lastFOWTiles;
+    public List<GFXOBJContainter> lastFOWTiles;
     [HideInInspector]
-    public List<TileOverlayLogic> currentFOWTiles;
+    public List<GFXOBJContainter> currentFOWTiles;
 
     public GameObject selectedTileIndicator;
 
@@ -244,10 +244,12 @@ public class GameManager : MonoBehaviour
                     if (hit.transform.GetComponent<TileInfo>())
                     {
                         selectedTileIndicator.transform.position = hit.transform.GetComponent<TileInfo>().tilemapPosition;
+                        selectedTileIndicator.SetActive(true);
                     }
                     else
                     {
-                        selectedTileIndicator.transform.position = new Vector3(0, -10f, 0);
+                        selectedTileIndicator.SetActive(false);
+
                     }
 
                     if (hit.transform.GetComponent<TileInfo>() && selectedUnit_Player != null)
@@ -364,7 +366,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            selectedTileIndicator.transform.position = new Vector3(0, -10f, 0);
+            selectedTileIndicator.SetActive(false);
         }
     }
 
@@ -649,7 +651,7 @@ public class GameManager : MonoBehaviour
 
         // clear out last frame list, set = to current frame list
 
-        lastFOWTiles = new List<TileOverlayLogic>(currentFOWTiles);
+        lastFOWTiles = new List<GFXOBJContainter>(currentFOWTiles);
 
         currentFOWTiles.Clear();
 
@@ -661,38 +663,58 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        foreach (Structure st in structures)
+        //foreach (Structure st in structures)
+        //{
+        //    if (st.ownerId == playerAllianceInt)
+        //    {
+        //        for (int x = -st.WidthHeight.x; x <= st.WidthHeight.x; x++)
+        //        {
+        //            for (int z = -st.WidthHeight.y; z <= st.WidthHeight.y; z++)
+        //            {
+        //                //if (st.tilemapPos.x + x >= 0 && st.tilemapPos.x + x < MapBuilder.instance.mapX - 1 && st.tilemapPos.x + x >= 0 && st.tilemapPos.x + x < MapBuilder.instance.mapX - 1) 
+        //                //{
+        //                if (MapBuilder.instance.FOWtiles[st.tilemapPos.x + x, st.tilemapPos.y, st.tilemapPos.z + z] != null)
+        //                {
+        //                    currentFOWTiles.Add(MapBuilder.instance.FOWtiles[st.tilemapPos.x + x, st.tilemapPos.y, st.tilemapPos.z + z].GetComponent<GFXOBJContainter>());
+        //                }
+        //                // }
+        //            }
+        //        }
+        //    }
+        //}
+
+        if (lastFOWTiles.Count > 0)
         {
-            if (st.ownerId == playerAllianceInt)
+            foreach (GFXOBJContainter t in lastFOWTiles)
             {
-                for (int x = -st.WidthHeight.x; x <= st.WidthHeight.x; x++)
+                if (t != null)
                 {
-                    for (int z = -st.WidthHeight.y; z <= st.WidthHeight.y; z++)
-                    {
-                        //if (st.tilemapPos.x + x >= 0 && st.tilemapPos.x + x < MapBuilder.instance.mapX - 1 && st.tilemapPos.x + x >= 0 && st.tilemapPos.x + x < MapBuilder.instance.mapX - 1) 
-                        //{
-                        if (MapBuilder.instance.FOWtiles[st.tilemapPos.x + x, st.tilemapPos.y, st.tilemapPos.z + z] != null)
-                        {
-                            currentFOWTiles.Add(MapBuilder.instance.FOWtiles[st.tilemapPos.x + x, st.tilemapPos.y, st.tilemapPos.z + z].GetComponent<TileOverlayLogic>());
-                        }
-                        // }
-                    }
+                    t.SetState(2);
+                    //Debug.Log("!");
+                    hideSpots.Add(t.transform.position);
                 }
             }
         }
 
-
-        foreach (TileOverlayLogic t in lastFOWTiles)
+        if (currentFOWTiles.Count > 0)
         {
-            t.SetOverlay("FOW_rem");
-            hideSpots.Add(t.transform.position);
+            foreach (GFXOBJContainter t in currentFOWTiles)
+            {
+                if (t != null)
+                {
+                    t.SetState(1);
+                    showSpots.Add(t.transform.position);
+                }
+            }
         }
-        foreach (TileOverlayLogic t in currentFOWTiles)
+
+        foreach (GFXOBJContainter t in currentFOWTiles)
         {
-            t.SetOverlay("FOW_hidefow");
+
+           // t.SetState(1);
             showSpots.Add(t.transform.position);
-        }
 
+        }
 
         foreach (UnitAIBase u in EnemyUnits)
         {
@@ -774,6 +796,8 @@ public class GameManager : MonoBehaviour
             structures.Add(s);
         }
         yield return new WaitForEndOfFrame();
+        lastFOWTiles.Clear();
+        currentFOWTiles.Clear();
         APFOW();
     }
 

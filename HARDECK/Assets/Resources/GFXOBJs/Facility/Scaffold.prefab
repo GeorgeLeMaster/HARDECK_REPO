@@ -43,7 +43,8 @@ GameObject:
   - component: {fileID: 6724174924614208383}
   - component: {fileID: -3478290084172628632}
   - component: {fileID: 8426526634725124528}
-  m_Layer: 6
+  - component: {fileID: 2009111533830198161}
+  m_Layer: 12
   m_Name: Scaffold
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121,6 +122,27 @@ MonoBehaviour:
     m_DisabledTrigger: Disabled
   m_Interactable: 1
   m_TargetGraphic: {fileID: 0}
+--- !u!65 &2009111533830198161
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2208478419432550967}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 0.2, z: 1}
+  m_Center: {x: 0, y: -0.1, z: 0}
 --- !u!1 &3718591500776771764
 GameObject:
   m_ObjectHideFlags: 0
