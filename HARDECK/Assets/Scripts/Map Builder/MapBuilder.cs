@@ -905,10 +905,23 @@ public class MapBuilder : MonoBehaviour
             // raycst from input pos to c pos, if hit something, nothing, if not, hit tile
             Vector3 dir = c.transform.position+new Vector3(0,0.5f,0) - pos;
             float dist = Vector3.Distance(pos, c.transform.position);
-            if (!GameManager.instance.currentFOWTiles.Contains(c.gameObject.GetComponent<GFXOBJContainter>()) && !Physics.Raycast(pos, dir.normalized, dist, mask))
+            if (!GameManager.instance.currentFOWTiles.Contains(c.gameObject.GetComponent<GFXOBJContainter>()))
             {
-                GameManager.instance.currentFOWTiles.Add(c.gameObject.GetComponent<GFXOBJContainter>());
+                RaycastHit hit;
+                if (!Physics.Raycast(pos, dir.normalized, out hit, dist, mask))
+                {
+                    GameManager.instance.currentFOWTiles.Add(c.gameObject.GetComponent<GFXOBJContainter>());
+                }
+                else
+                {
+                    if (hit.transform.gameObject == c.gameObject)
+                    {
+                        GameManager.instance.currentFOWTiles.Add(c.gameObject.GetComponent<GFXOBJContainter>());
+
+                    }
+                }
             }
+
         }
     }
 
