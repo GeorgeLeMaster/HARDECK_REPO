@@ -229,6 +229,9 @@ ScriptsOnlyBuild:
     methodName: CommitAction
   - assembly: Assembly-CSharp
     fullTypeName: GameManager
+    methodName: SkipDeployment
+  - assembly: Assembly-CSharp
+    fullTypeName: GameManager
     methodName: QuitApplication
   - assembly: Assembly-CSharp
     fullTypeName: GameManager
@@ -831,7 +834,7 @@ ScriptsOnlyBuild:
     className: UnityOnBecameVisibleMessageListener
   - hash:
       serializedVersion: 2
-      Hash: c7e91a2cd7eb23d33a20dd17c455eefd
+      Hash: 3525f01eedec0d109895229de33cc54c
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: GameManager

@@ -79,6 +79,7 @@ public class GameManager : MonoBehaviour
     public GameObject worldTextPopupPrefab;
 
     public bool controllsLocked;
+    public bool skipDeployment;
 
     [Header("Decks")]
     public GameObject phaseOne;
@@ -744,6 +745,8 @@ public class GameManager : MonoBehaviour
 
     public void StartPlayerTurn()
     {
+
+
         turnState = TurnState.Drawing;
        // Debug.Log("start");
 
@@ -767,7 +770,17 @@ public class GameManager : MonoBehaviour
 
         controllsLocked = true;
 
-        PromptDrawPhaseOne();
+        if (skipDeployment == true)
+        {
+            turnState = TurnState.Action;
+            controllsLocked = false;
+            return;
+        }
+        else
+        {
+
+            PromptDrawPhaseOne();
+        }
     }
 
 
@@ -905,6 +918,16 @@ public class GameManager : MonoBehaviour
 
        // yield return new WaitForSeconds(1f);
 
+       
+    }
 
+    public void SkipDeployment()
+    {
+        phaseOne.SetActive(false);
+        phaseTwo.SetActive(false);
+        phaseThree.SetActive(false);
+
+        turnState = TurnState.Action;
+        controllsLocked = false;
     }
 }
