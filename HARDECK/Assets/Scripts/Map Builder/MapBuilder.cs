@@ -419,6 +419,9 @@ public class MapBuilder : MonoBehaviour
                 }
             }
 
+
+
+
             // Builds Overlay
             GameObject fowParent = GameObject.Find("FOW");
             //  Build FOW
@@ -892,19 +895,21 @@ public class MapBuilder : MonoBehaviour
     public void UpdateFOW(UnitAIBase input)
     {
         //Debug.Log("a");
-
+        float yOff = 0.0f;
         Vector3 pos = input.currentPos + new Vector3(0,0.5f,0);
         LayerMask mask = LayerMask.GetMask("OBJFinder");
 
         Collider[] fowTiles = Physics.OverlapCapsule(new Vector3(pos.x, -10, pos.z), new Vector3(pos.x, 10, pos.z), input.visionRadius, mask);
 
-        Debug.Log(fowTiles.Length);
+        //Debug.Log(fowTiles.Length);
         //Debug.Log()
         foreach (Collider c in fowTiles)
-        { 
+        {
+            Vector3 castPoint = c.transform.position + new Vector3(0, yOff, 0);
+            //c.transform.position+new Vector3(0, yOff, 0)
             // raycst from input pos to c pos, if hit something, nothing, if not, hit tile
-            Vector3 dir = c.transform.position+new Vector3(0,0.5f,0) - pos;
-            float dist = Vector3.Distance(pos, c.transform.position);
+            Vector3 dir = castPoint - pos;
+            float dist = Vector3.Distance(pos, castPoint);
             if (!GameManager.instance.currentFOWTiles.Contains(c.gameObject.GetComponent<GFXOBJContainter>()))
             {
                 RaycastHit hit;
@@ -915,6 +920,11 @@ public class MapBuilder : MonoBehaviour
                 else
                 {
                     if (hit.transform.gameObject == c.gameObject)
+                    {
+                        GameManager.instance.currentFOWTiles.Add(c.gameObject.GetComponent<GFXOBJContainter>());
+
+                    }
+                    else if (Vector3.Distance(hit.transform.position, c.transform.position) < 1f)
                     {
                         GameManager.instance.currentFOWTiles.Add(c.gameObject.GetComponent<GFXOBJContainter>());
 

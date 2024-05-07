@@ -49,7 +49,7 @@ public class UnitData
 
 public class GameManager : MonoBehaviour
 {
-    public UnitData infintrymanUnitData = new UnitData(10, 12, 4, 2, 12, 6, "Infantryman");
+    public UnitData infintrymanUnitData = new UnitData(8, 8, 4, 2, 12, 6, "Infantryman");
 
     public UnitData unitDataToSpawn;
 
@@ -197,7 +197,7 @@ public class GameManager : MonoBehaviour
             LayerMask mask = LayerMask.GetMask("Overlay");
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, mask))
             {
-                Debug.Log("hit");
+                //Debug.Log("hit");
                 if (hit.transform.GetComponent<TileOverlayLogic>())
                 {
                     if (unitDataToSpawn != null && deployableTiles.Contains(hit.transform.GetComponent<TileOverlayLogic>()))
@@ -664,25 +664,23 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        //foreach (Structure st in structures)
-        //{
-        //    if (st.ownerId == playerAllianceInt)
-        //    {
-        //        for (int x = -st.WidthHeight.x; x <= st.WidthHeight.x; x++)
-        //        {
-        //            for (int z = -st.WidthHeight.y; z <= st.WidthHeight.y; z++)
-        //            {
-        //                //if (st.tilemapPos.x + x >= 0 && st.tilemapPos.x + x < MapBuilder.instance.mapX - 1 && st.tilemapPos.x + x >= 0 && st.tilemapPos.x + x < MapBuilder.instance.mapX - 1) 
-        //                //{
-        //                if (MapBuilder.instance.FOWtiles[st.tilemapPos.x + x, st.tilemapPos.y, st.tilemapPos.z + z] != null)
-        //                {
-        //                    currentFOWTiles.Add(MapBuilder.instance.FOWtiles[st.tilemapPos.x + x, st.tilemapPos.y, st.tilemapPos.z + z].GetComponent<GFXOBJContainter>());
-        //                }
-        //                // }
-        //            }
-        //        }
-        //    }
-        //}
+        foreach (Structure st in structures)
+        {
+            if (st.ownerId == playerAllianceInt)
+            {
+                Collider[] structTiles = Physics.OverlapBox(st.tilemapPos, new Vector3(st.WidthHeight.x, 1, st.WidthHeight.y), Quaternion.identity, LayerMask.GetMask("OBJFinder"));
+                //if (st.tilemapPos.x + x >= 0 && st.tilemapPos.x + x < MapBuilder.instance.mapX - 1 && st.tilemapPos.x + x >= 0 && st.tilemapPos.x + x < MapBuilder.instance.mapX - 1) 
+                //{
+                foreach (Collider obj in structTiles)
+                {
+                    currentFOWTiles.Add(obj.GetComponent<GFXOBJContainter>());
+                }
+
+                // }
+
+
+            }
+        }
 
         if (lastFOWTiles.Count > 0)
         {
