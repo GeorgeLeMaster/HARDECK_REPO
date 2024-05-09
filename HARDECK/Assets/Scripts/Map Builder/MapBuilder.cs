@@ -909,6 +909,7 @@ public class MapBuilder : MonoBehaviour
             //c.transform.position+new Vector3(0, yOff, 0)
             // raycst from input pos to c pos, if hit something, nothing, if not, hit tile
             Vector3 dir = castPoint - pos;
+         //  dir.Normalize();
             float dist = Vector3.Distance(pos, castPoint);
             if (!GameManager.instance.currentFOWTiles.Contains(c.gameObject.GetComponent<GFXOBJContainter>()))
             {
