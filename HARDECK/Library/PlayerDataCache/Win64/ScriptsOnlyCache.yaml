@@ -181,6 +181,21 @@ ScriptsOnlyBuild:
   - assembly: Assembly-CSharp
     fullTypeName: AlphaMapSelector
     methodName: LoadGameScene
+  - assembly: Assembly-CSharp
+    fullTypeName: AlphaMapSelector
+    methodName: LoadGameScene
+  - assembly: Assembly-CSharp
+    fullTypeName: AlphaMapSelector
+    methodName: LoadGameScene
+  - assembly: Assembly-CSharp
+    fullTypeName: AlphaMapSelector
+    methodName: LoadGameScene
+  - assembly: Assembly-CSharp
+    fullTypeName: AlphaMapSelector
+    methodName: LoadGameScene
+  - assembly: Assembly-CSharp
+    fullTypeName: AlphaMapSelector
+    methodName: LoadGameScene
   - assembly: Unity.RenderPipelines.Core.Runtime
     fullTypeName: UnityEngine.Rendering.UI.DebugUIHandlerPanel
     methodName: OnScrollbarClicked
@@ -465,6 +480,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 3622}
     - Class: 114
       Script: {instanceID: 3782}
+    - Class: 114
+      Script: {instanceID: 4370}
     - Class: 114
       Script: {instanceID: 4480}
     - Class: 114
