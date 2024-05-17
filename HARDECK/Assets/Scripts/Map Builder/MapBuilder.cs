@@ -381,13 +381,14 @@ public class MapBuilder : MonoBehaviour
             ai.visionRadius = ms;
 
             ai.alliance = aInt;
-            ai.name = uName;
+            ai.unitName = uName;
 
             ai.unitSO = Resources.Load("Units/SOs/Infantryman") as UnitSO;
 
             Vector3 pos = ParseStringToVector3(dataMembers[8]);
             ai.currentPos = new Vector3Int((int)pos.x, (int)pos.y, (int)pos.z);
-            ai.Spawn(ai.currentPos, Resources.Load("Units/GFX/GFX_Infantryman") as GameObject);
+
+            ai.Spawn(ai.currentPos, Resources.Load("Units/GFX/GFX_InfantryMan") as GameObject);
 
             currentLineInt++;
             if (currentLineInt > 10000)

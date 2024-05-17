@@ -29,6 +29,8 @@ public class UnitAIBase : MonoBehaviour
 
     public GameObject fireGFX_prefab;
 
+    public Animator animator;
+
 
     // Start is called before the first frame update
     void Start()

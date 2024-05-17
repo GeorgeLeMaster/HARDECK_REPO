@@ -29,23 +29,27 @@ public class GroundUnitAI : UnitAIBase
         currentPos = input;
         transform.position = currentPos;
 
+
+
         GameObject gfxobj = Instantiate(gfxInput, gfx.transform);
-        GFXContainer gfxc = gfxobj.GetComponent<GFXContainer>();
+        UnitGFXContainer gfxc = gfxobj.GetComponent<UnitGFXContainer>();
         if (Application.isPlaying)
         {
-
-            foreach (GameObject obj in gfxc.coloredOBJs)
+            if (alliance == GameManager.instance.playerAllianceInt)
             {
-                if (alliance == GameManager.instance.playerAllianceInt)
-                {
-                    obj.GetComponent<MeshRenderer>().material = GameManager.instance.playerMat;
-                }
-                else
-                {
-                    obj.GetComponent<MeshRenderer>().material = GameManager.instance.enemyMat;
-                }
+                gfxc.gfx.GetComponent<Renderer>().material.SetColor("_AllianceColor", GameManager.instance.playerColor);
+            }
+            else
+            {
+                gfxc.gfx.GetComponent<Renderer>().material.SetColor("_AllianceColor", GameManager.instance.enemyColor);
             }
         }
+
+        animator = gfxc.animator;
+
+        //Material mat = gfxobj.GetComponentInChildren<MeshRenderer>().material;
+        //mat.SetColor("AllianceColor", new Color(0,0,0,1));
+
         actionPips = 1;
         movementPips = 1;
     }
@@ -84,6 +88,7 @@ public class GroundUnitAI : UnitAIBase
 
         //Debug.Log(checkPos.pathCost);
 
+
         if (checkPos.pathCost <= moveSpeed)
         {
             movementPips -= 1;
@@ -105,7 +110,7 @@ public class GroundUnitAI : UnitAIBase
     override public void Attack(UnitAIBase defender)
     {
         actionPips -= 1;
-
+        animator.SetTrigger("Attack");
         int roll = Random.Range(1, 21);
         //Debug.Log(roll + ", " + CalculateHitChance(this, defender));
 
@@ -170,16 +175,20 @@ public class GroundUnitAI : UnitAIBase
 
     IEnumerator Move_Coroutine(List<Vector3Int> pathPositions)
     {
+        float gfxMoveSpeed = 2f;
         GameManager.instance.controllsLocked = true;
         Vector3Int nextPos = pathPositions.First();
         pathPositions.Remove(nextPos);
         currentPos = nextPos;
 
+        animator.SetTrigger("Move");
+
+
         while (nextPos != null)
         {
             Vector3 moveVec = nextPos - transform.position;
             moveVec.Normalize();
-            transform.position += (moveVec*Time.deltaTime*3);
+            transform.position += (moveVec*Time.deltaTime* gfxMoveSpeed);
 
             if (Vector3.Distance(transform.position, nextPos) < 0.1f)
             {
@@ -201,6 +210,7 @@ public class GroundUnitAI : UnitAIBase
 
         }
         GameManager.instance.controllsLocked = false;
+        animator.SetTrigger("Idle");
 
     }
 

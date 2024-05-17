@@ -213,6 +213,7 @@ public class GameManager : MonoBehaviour
                         newAi.visionRadius = unitDataToSpawn.visionRadius;
                         newAi.maxHealth = unitDataToSpawn.hp;
                         newAi.currentHealth = unitDataToSpawn.hp;
+                        newAi.unitName = unitDataToSpawn.name;
 
                         Vector3Int pos = new Vector3Int( (int)hit.transform.GetComponent<TileOverlayLogic>().transform.position.x, (int)hit.transform.GetComponent<TileOverlayLogic>().transform.position.y, (int)hit.transform.GetComponent<TileOverlayLogic>().transform.position.z);
 
@@ -401,7 +402,7 @@ public class GameManager : MonoBehaviour
 
             selectedUnit_Indicator.SetActive(true);
             selectedUnit_Indicator.transform.SetParent(selectedUnit_Player.gfx.gameObject.transform);
-            selectedUnit_Indicator.transform.localPosition = Vector3.zero + new Vector3(0, 0.25f, 0);
+            selectedUnit_Indicator.transform.localPosition = Vector3.zero + new Vector3(0, 0.025f, 0);
 
             selectedUnitName_Text.text = selectedUnit_Player.unitName;
 

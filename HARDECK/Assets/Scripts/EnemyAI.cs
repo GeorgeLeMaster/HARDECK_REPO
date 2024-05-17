@@ -88,14 +88,14 @@ public class EnemyAI : MonoBehaviour
         // find all in range enemy(player) units
         foreach (UnitAIBase playerUnit in GameManager.instance.PlayerUnits)
         {
-            if (Vector3.Distance(unit.currentPos, playerUnit.currentPos) < unit.range)
+            if (Vector3.Distance(unit.currentPos, playerUnit.currentPos) < unit.visionRadius)
             {
                 playerUnitsInRange.Add(playerUnit);
             }
         }
 
         // find closest in range unit
-        float closestRange = unit.range;
+        float closestRange = unit.visionRadius;
         UnitAIBase closestUnit = null;
         foreach (UnitAIBase playerUnit in playerUnitsInRange)
         {
