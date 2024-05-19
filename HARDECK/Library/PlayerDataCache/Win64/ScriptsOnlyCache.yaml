@@ -11,7 +11,6 @@ ScriptsOnlyBuild:
     - AlphaMapSelector
     - CameraController
     - CardUIOBJ
-    - Catalouge
     - EnemyAI
     - GFXAnchor
     - GFXOBJContainter
@@ -127,6 +126,7 @@ ScriptsOnlyBuild:
     - UnityEngine.UI.ScrollRect
     - UnityEngine.UI.Scrollbar
     - UnityEngine.UI.Selectable
+    - UnityEngine.UI.Text
     - UnityEngine.UI.Toggle
   serializedClasses:
     Unity.RenderPipelines.Core.Runtime:
@@ -229,6 +229,9 @@ ScriptsOnlyBuild:
     methodName: CancelAction
   - assembly: Assembly-CSharp
     fullTypeName: GameManager
+    methodName: ToggleSkipDeployment
+  - assembly: Assembly-CSharp
+    fullTypeName: GameManager
     methodName: EndPlayerTurn
   - assembly: Assembly-CSharp
     fullTypeName: GameManager
@@ -305,6 +308,8 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
+      Script: {instanceID: 1774}
+    - Class: 114
       Script: {instanceID: 1776}
     - Class: 114
       Script: {instanceID: 1778}
@@ -316,8 +321,6 @@ ScriptsOnlyBuild:
       Script: {instanceID: 1998}
     - Class: 114
       Script: {instanceID: 2412}
-    - Class: 114
-      Script: {instanceID: 2674}
     - Class: 114
       Script: {instanceID: 2966}
     - Class: 114
@@ -340,6 +343,8 @@ ScriptsOnlyBuild:
       Script: {instanceID: 6248}
     - Class: 114
       Script: {instanceID: 6682}
+    - Class: 114
+      Script: {instanceID: 7114}
     - Class: 114
       Script: {instanceID: 7188}
     - Class: 114
@@ -373,6 +378,8 @@ ScriptsOnlyBuild:
     - Class: 136
       Script: {instanceID: 0}
     - Class: 137
+      Script: {instanceID: 0}
+    - Class: 144
       Script: {instanceID: 0}
     - Class: 157
       Script: {instanceID: 0}
@@ -412,6 +419,8 @@ ScriptsOnlyBuild:
     - Class: 48
       Script: {instanceID: 0}
     - Class: 49
+      Script: {instanceID: 0}
+    - Class: 54
       Script: {instanceID: 0}
     - Class: 64
       Script: {instanceID: 0}
@@ -572,6 +581,8 @@ ScriptsOnlyBuild:
     - Class: 136
       Script: {instanceID: 0}
     - Class: 137
+      Script: {instanceID: 0}
+    - Class: 144
       Script: {instanceID: 0}
     - Class: 157
       Script: {instanceID: 0}

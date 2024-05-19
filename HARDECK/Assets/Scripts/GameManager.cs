@@ -929,4 +929,9 @@ public class GameManager : MonoBehaviour
         turnState = TurnState.Action;
         controllsLocked = false;
     }
+
+    public void ToggleSkipDeployment()
+    {
+        skipDeployment = !skipDeployment;
+    }
 }

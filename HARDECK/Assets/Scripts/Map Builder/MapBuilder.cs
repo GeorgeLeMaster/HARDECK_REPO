@@ -896,7 +896,7 @@ public class MapBuilder : MonoBehaviour
     public void UpdateFOW(UnitAIBase input)
     {
         //Debug.Log("a");
-        float yOff = 0.0f;
+        float yOff = 0.1f;
         Vector3 pos = input.currentPos + new Vector3(0,0.5f,0);
         LayerMask mask = LayerMask.GetMask("OBJFinder");
 
@@ -906,7 +906,8 @@ public class MapBuilder : MonoBehaviour
         //Debug.Log()
         foreach (Collider c in fowTiles)
         {
-            Vector3 castPoint = c.transform.position + new Vector3(0, yOff, 0);
+            //c.transform.position
+            Vector3 castPoint = c.ClosestPoint(pos) + new Vector3(0, yOff, 0);
             //c.transform.position+new Vector3(0, yOff, 0)
             // raycst from input pos to c pos, if hit something, nothing, if not, hit tile
             Vector3 dir = castPoint - pos;
@@ -926,12 +927,25 @@ public class MapBuilder : MonoBehaviour
                         GameManager.instance.currentFOWTiles.Add(c.gameObject.GetComponent<GFXOBJContainter>());
 
                     }
-                    else if (Vector3.Distance(hit.transform.position, c.transform.position) < 1f)
+                    else if (Vector3.Distance(hit.transform.position, castPoint) < 0.5f)
                     {
                         GameManager.instance.currentFOWTiles.Add(c.gameObject.GetComponent<GFXOBJContainter>());
 
                     }
+                    else
+                    {
+                        if (Physics.Raycast(castPoint, -dir.normalized, out hit, dist, mask))
+                        {
+                            if (Vector3.Distance(hit.transform.position, pos) < 0.5f)
+                            GameManager.instance.currentFOWTiles.Add(c.gameObject.GetComponent<GFXOBJContainter>());
+
+                        }
+                    }
                 }
+                
+
+
+
             }
 
         }
