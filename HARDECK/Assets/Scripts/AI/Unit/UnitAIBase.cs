@@ -27,6 +27,16 @@ public class UnitAIBase : MonoBehaviour
     public float damageMod;
     public float visionRadius;
 
+
+    // ABILITY FLAGS
+    [HideInInspector]
+    public bool f_dugIn;  
+
+    [HideInInspector]
+    public List<AbilityObj> activeAbilities;
+
+
+
     public GameObject fireGFX_prefab;
 
     public Animator animator;

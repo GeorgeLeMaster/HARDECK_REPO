@@ -188,6 +188,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         // Deployment State logic
         // Action state logic
         if (Input.GetMouseButtonDown(0) && turnState == TurnState.Deployment && !EventSystem.current.IsPointerOverGameObject())
@@ -353,7 +354,7 @@ public class GameManager : MonoBehaviour
 
         RaycastHit conHit;
         LayerMask conMask = LayerMask.GetMask("Tile", "Unit");
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out conHit, Mathf.Infinity, conMask) && turnState == TurnState.Action)
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out conHit, Mathf.Infinity, conMask) && turnState == TurnState.Action && !EventSystem.current.IsPointerOverGameObject())
         {
             if (conHit.transform.GetComponent<TileInfo>())
             {
@@ -382,18 +383,7 @@ public class GameManager : MonoBehaviour
     public void UpdatePlayerActionGFX()
     {
         hitChanceText.gameObject.SetActive(false);
-        // Sets unit displays positions
-        if (selectedUnit_Enemy != null && selectedUnit_Player != null)
-        {
-            selectedUnitDisplay_Obj.GetComponent<RectTransform>().anchoredPosition = new Vector3(-255, 50, 0);
-            enemyUnitDisplay_Obj.GetComponent<RectTransform>().anchoredPosition = new Vector3(255, 50, 0);
 
-        }
-        else
-        {
-            selectedUnitDisplay_Obj.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 50, 0);
-            enemyUnitDisplay_Obj.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 50, 0);
-        }
 
         // Toggles on and off selected and enemy displays (and selection indicator)
         if (selectedUnit_Player != null)
