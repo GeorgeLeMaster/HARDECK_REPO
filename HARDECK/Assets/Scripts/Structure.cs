@@ -27,7 +27,7 @@ public class Structure : MonoBehaviour
     private void Start()
     {
         LineRenderer lr = GetComponent<LineRenderer>();
-        float yOff = 0.2f;
+        float yOff = 0.05f;
         lr.SetPosition(0, new Vector3( WidthHeight.x + 0.5f, yOff,  WidthHeight.y + 0.5f));
         lr.SetPosition(1, new Vector3(-WidthHeight.x - 0.5f, yOff,  WidthHeight.y + 0.5f));
         lr.SetPosition(2, new Vector3(-WidthHeight.x - 0.5f, yOff, -WidthHeight.y - 0.5f));

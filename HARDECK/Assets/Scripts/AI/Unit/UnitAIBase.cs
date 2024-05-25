@@ -35,7 +35,7 @@ public class UnitAIBase : MonoBehaviour
     [HideInInspector]
     public List<AbilityObj> activeAbilities;
 
-
+    public List<int> abilityInts;
 
     public GameObject fireGFX_prefab;
 

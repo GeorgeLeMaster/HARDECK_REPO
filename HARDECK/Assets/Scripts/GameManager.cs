@@ -26,7 +26,7 @@ public class Commander
 
 public class UnitData
 {
-    public UnitData(int mv, int vr, int d, int dm, int r, int h, string n)
+    public UnitData(int mv, int vr, int d, int dm, int r, int h, string n, List<int> abilityInts)
     {
         moveSpeed = mv;
         visionRadius = vr;
@@ -35,6 +35,7 @@ public class UnitData
         range = r;
         hp = h;
         name = n;
+        this.abilityInts = abilityInts;
     }
 
     public int moveSpeed;
@@ -45,11 +46,13 @@ public class UnitData
     public int hp;
 
     public string name;
+
+    public List<int> abilityInts;
 }
 
 public class GameManager : MonoBehaviour
 {
-    public UnitData infintrymanUnitData = new UnitData(8, 8, 4, 2, 12, 6, "Infantryman");
+    public UnitData infintrymanUnitData = new UnitData(8, 8, 4, 2, 12, 6, "Infantryman", new List<int>{0,1});
 
     public UnitData unitDataToSpawn;
 
