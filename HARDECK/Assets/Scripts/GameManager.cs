@@ -19,9 +19,14 @@ public enum TurnState
 public class Commander
 {
     public int allianceInt;
-    public List<Structure> structures;
-    public List<UnitAIBase> units;
+    public Color allianceColor;
 
+    public List<Structure> currentStructures;
+    public List<UnitAIBase> currentUnits;
+
+    public List<UnitAIBase> visableEnemyUnits;
+
+    public List<UnitAIBase> deck;
 }
 
 public class UnitData
@@ -80,6 +85,10 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI commitActionText;
     public TextMeshProUGUI hitChanceText;
     public GameObject worldTextPopupPrefab;
+
+    public Image abilityIcon;
+    public TextMeshProUGUI abilityName;
+    public TextMeshProUGUI abilityDesc;
 
     public bool controllsLocked;
     public bool skipDeployment;
@@ -159,6 +168,7 @@ public class GameManager : MonoBehaviour
 
         playerMat.color = playerColor;
         enemyMat.color = enemyColor;
+
 
 
         foreach (UnitAIBase unit in GameObject.FindObjectsOfType<UnitAIBase>())
@@ -926,5 +936,13 @@ public class GameManager : MonoBehaviour
     public void ToggleSkipDeployment()
     {
         skipDeployment = !skipDeployment;
+    }
+
+    public void UpdateSelectedUnitAbilityDisplay(int input)
+    {
+        abilityName.text = Abilities.abilities[input].abName;
+        abilityDesc.text = Abilities.abilities[input].abName;
+
+
     }
 }
