@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
@@ -89,6 +90,7 @@ public class GameManager : MonoBehaviour
     public Image abilityIcon;
     public TextMeshProUGUI abilityName;
     public TextMeshProUGUI abilityDesc;
+    public Sprite[] abilityIconFiles;
 
     public bool controllsLocked;
     public bool skipDeployment;
@@ -115,6 +117,7 @@ public class GameManager : MonoBehaviour
     public GameObject menuButtons;
 
     [Header("Selected Unit Display")]
+    public GameObject abilityDisplay;
     public GameObject selectedUnitDisplay_Obj;
     public GameObject selectedUnit_Indicator;
     public GameObject selectedUnit_ActionPipIndicator;
@@ -123,6 +126,7 @@ public class GameManager : MonoBehaviour
     public Image selectedUnit_PortraitColor;
     public Image selectedUnit_hpBarFillImage;
     public GameObject queuedPipIndicator;
+    public int selectedAbilityInt;
 
     [Header("Enemy Unit Display")]
     public GameObject enemyUnitDisplay_Obj;
@@ -169,7 +173,8 @@ public class GameManager : MonoBehaviour
         playerMat.color = playerColor;
         enemyMat.color = enemyColor;
 
-
+        abilityIconFiles = Resources.LoadAll<Sprite>("Sprites/AbilityIcons");
+        Debug.Log("ABIF Lenght: " +abilityIconFiles.Length);
 
         foreach (UnitAIBase unit in GameObject.FindObjectsOfType<UnitAIBase>())
         {
@@ -228,6 +233,7 @@ public class GameManager : MonoBehaviour
                         newAi.maxHealth = unitDataToSpawn.hp;
                         newAi.currentHealth = unitDataToSpawn.hp;
                         newAi.unitName = unitDataToSpawn.name;
+                        newAi.abilityInts = unitDataToSpawn.abilityInts;
 
                         Vector3Int pos = new Vector3Int( (int)hit.transform.GetComponent<TileOverlayLogic>().transform.position.x, (int)hit.transform.GetComponent<TileOverlayLogic>().transform.position.y, (int)hit.transform.GetComponent<TileOverlayLogic>().transform.position.z);
 
@@ -302,6 +308,7 @@ public class GameManager : MonoBehaviour
                         // Determine alliance of clicked unit and fill appropriate stats
                         if (hitUnit.alliance == playerAllianceInt)
                         {
+                            selectedAbilityInt = 0;
                             selectedUnit_Enemy = null;
 
                             if (selectedUnit_Player != null)
@@ -401,6 +408,11 @@ public class GameManager : MonoBehaviour
         // Toggles on and off selected and enemy displays (and selection indicator)
         if (selectedUnit_Player != null)
         {
+            abilityDisplay.SetActive(true );
+            abilityName.text = Abilities.abilityDescs[selectedAbilityInt].abName;
+            abilityDesc.text = Abilities.abilityDescs[selectedAbilityInt].abDescription;
+            abilityIcon.sprite = abilityIconFiles[selectedAbilityInt];
+
             selectedUnitDisplay_Obj.SetActive(true);
 
             selectedUnit_Indicator.SetActive(true);
@@ -428,8 +440,8 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    selectedUnit_MovementPipIndicator.transform.localScale = Vector3.one;
 
+                    selectedUnit_MovementPipIndicator.transform.localScale = Vector3.one;
 
                 }
 
@@ -484,6 +496,7 @@ public class GameManager : MonoBehaviour
         else
         {
             selectedUnitDisplay_Obj.SetActive(false);
+            abilityDisplay.SetActive(false);
 
             selectedUnit_Indicator.SetActive(false);
             selectedUnit_Indicator.transform.SetParent(null);
@@ -748,7 +761,6 @@ public class GameManager : MonoBehaviour
     public void StartPlayerTurn()
     {
 
-
         turnState = TurnState.Drawing;
        // Debug.Log("start");
 
@@ -757,8 +769,31 @@ public class GameManager : MonoBehaviour
             st.CheckOwnership();
         }
 
+        selectedAbilityInt = 0;
+
         foreach(UnitAIBase unit in PlayerUnits)
         {
+            if (unit.activeAbilities != null)
+            {
+                if (unit.activeAbilities.Count > 0)
+                {
+                    foreach (AbilityObj obj in unit.activeAbilities)
+                    {
+                        obj.turnsRemaining--;
+
+                        if (obj.turnsRemaining <= 0)
+                        {
+                            Abilities.EndAbility(obj.referencedAbility, unit);
+                        }
+                        else
+                        {
+                            Abilities.TickAbility(obj.referencedAbility, unit);
+                        }
+
+                    }
+                }
+            }
+
             unit.actionPips = 1;
             unit.movementPips = 1;
         }
@@ -938,11 +973,34 @@ public class GameManager : MonoBehaviour
         skipDeployment = !skipDeployment;
     }
 
-    public void UpdateSelectedUnitAbilityDisplay(int input)
+    public void ChangeSelectedAbilityInt(bool positive)
     {
-        abilityName.text = Abilities.abilities[input].abName;
-        abilityDesc.text = Abilities.abilities[input].abName;
+        if (selectedUnit_Player != null)
+        {
+            int desieredValue = selectedAbilityInt;
 
+            if (positive)
+            {
+                desieredValue++;
+            }
+            else
+            {
+                desieredValue--;
+            }
 
+            if (desieredValue > selectedUnit_Player.abilityInts.Count - 1)
+            {
+                desieredValue = 0;
+            }
+            else if (desieredValue < 0)
+            {
+                desieredValue = selectedUnit_Player.abilityInts.Count - 1;
+            }
+
+            selectedAbilityInt = desieredValue;
+
+            //AttackAbilityIcon
+            UpdatePlayerActionGFX();
+        }
     }
 }

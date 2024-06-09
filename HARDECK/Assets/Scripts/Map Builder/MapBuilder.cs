@@ -250,7 +250,7 @@ public class MapBuilder : MonoBehaviour
             currentLineInt++;
         }
 
-        // Scenery objs--------------------------------------------------------------------------------------------
+        // Scenery objs-------------------------------------------------------------------------------------------- LOAD
         currentLineInt++;
 
         GameObject sceneryObj = GameObject.Find("Scenery");
@@ -286,6 +286,7 @@ public class MapBuilder : MonoBehaviour
 
             GameObject newObj =  Instantiate(tilesetObjs[int.Parse(dataMembers[1])], pos, Quaternion.Euler(new Vector3(rot.x, rot.y, rot.z)));
             newObj.transform.SetParent(sceneryObj.transform);
+            dataMembers[4] = dataMembers[4].Substring(0, dataMembers[4].Length-1);
             newObj.transform.localScale = ParseStringToVector3(dataMembers[4]);
          //   Debug.Log($"{dataMembers[0]},{dataMembers[1]},{dataMembers[2]},{dataMembers[3]},{dataMembers[4]}");
             currentLineInt++;
@@ -297,7 +298,7 @@ public class MapBuilder : MonoBehaviour
         }
 
 
-        //Structures-----------------------------------------------------------------------------------------------
+        //Structures----------------------------------------------------------------------------------------------- LOAD
         currentLineInt++;
 
         GameObject sObj = GameObject.Find("Structures");
@@ -334,6 +335,8 @@ public class MapBuilder : MonoBehaviour
             sLogic.provideHeavy = bool.Parse(dataMembers[4]);
             sLogic.provideAir = bool.Parse(dataMembers[5]);
 
+            sLogic.playerHq = bool.Parse(dataMembers[6]);
+
             obj.transform.position = sLogic.tilemapPos;
             obj.transform.SetParent(sObj.transform);
             //GameManager.instance.structures.Add(sLogic);
@@ -346,7 +349,7 @@ public class MapBuilder : MonoBehaviour
             }
         }
 
-        //Units------------------------------------------------------------------------------------------------------
+        //Units------------------------------------------------------------------------------------------------------ LOAD
         currentLineInt++;
 
         GameObject uObj = GameObject.Find("Units");
@@ -366,6 +369,9 @@ public class MapBuilder : MonoBehaviour
             float.TryParse(dataMembers[6], out float dm);
             float.TryParse(dataMembers[7], out float mh);
 
+            string abilityInts = dataMembers[9];
+            string[] abilityIntStrings = abilityInts.Split(",");
+
             GameObject newUnit = Instantiate(guPrefab);
             newUnit.transform.parent = uObj.transform;
 
@@ -382,10 +388,21 @@ public class MapBuilder : MonoBehaviour
 
             ai.alliance = aInt;
             ai.unitName = uName;
+            ai.gameObject.name = "Unit: " + uName;
+
+            foreach(string s in abilityIntStrings)
+            {
+ 
+                if (s != null)
+                {
+                    ai.abilityInts.Add(int.Parse(s));
+                }
+            }
 
             ai.unitSO = Resources.Load("Units/SOs/Infantryman") as UnitSO;
 
             Vector3 pos = ParseStringToVector3(dataMembers[8]);
+            Debug.Log(pos);
             ai.currentPos = new Vector3Int((int)pos.x, (int)pos.y, (int)pos.z);
 
             ai.Spawn(ai.currentPos, Resources.Load("Units/GFX/GFX_InfantryMan") as GameObject);
@@ -523,10 +540,11 @@ public class MapBuilder : MonoBehaviour
         foreach (Structure st in structObj.GetComponentsInChildren<Structure>())
         {
             if (st != null)
-                dataToSave += $"{st.tilemapPos}*{st.WidthHeight}*{st.ownerId}*{st.provideGround}*{st.provideHeavy}*{st.provideAir}\n";
+                dataToSave += $"{st.tilemapPos}*{st.WidthHeight}*{st.ownerId}*{st.provideGround}*{st.provideHeavy}*{st.provideAir}*{st.playerHq}\n";
         }
 
         dataToSave += "structEnd\n";
+        // Units-------------------------------------------------------------------------------------------------------------- SAVE
         // Save unit data for later spawning
         // Order of data:
         // unit SO id
@@ -537,7 +555,18 @@ public class MapBuilder : MonoBehaviour
         {
             if (t != null)
             {
-                dataToSave += $"{t.unitSO.name}*{t.alliance.ToString()}*{t.unitName}*{t.moveSpeed}*{t.range}*{t.damage}*{t.damageMod}*{t.maxHealth}*{t.currentPos}\n";
+                dataToSave += $"{t.unitSO.name}*{t.alliance.ToString()}*{t.unitName}*{t.moveSpeed}*{t.range}*{t.damage}*{t.damageMod}*{t.maxHealth}*{t.currentPos}*";
+
+                if (t.abilityInts.Count > 0)
+                {
+                    foreach(int i in t.abilityInts)
+                    {
+                        dataToSave += $"{i},";
+                    }
+                }
+                dataToSave = dataToSave.Substring(0,dataToSave.Length-1);
+                dataToSave += "\n";
+
             }
         }
 
@@ -956,7 +985,7 @@ public class MapBuilder : MonoBehaviour
       //  Debug.Log(input);
         Vector3 result = Vector3.one;
 
-        input = input.Substring(1, input.Length - 3);
+        input = input.Substring(1, input.Length - 2);
 
         string[] dataMembers = input.Split(',');
         //Debug.Log(input);

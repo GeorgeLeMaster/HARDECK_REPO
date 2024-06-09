@@ -10,15 +10,18 @@ public class AbilityObj
 
 public class AbilityDescriptor
 {
-    public AbilityDescriptor(string abNameInput, string abDescriptionInput)
+    public AbilityDescriptor(string abNameInput, string abDescriptionInput, int abMaxTurnsRemaining)
     {
         abName = abNameInput;
         abDescription = abDescriptionInput;
+
+        maxTurnsRemaining = abMaxTurnsRemaining;
     }
 
     public string abName;
     public string abDescription;
 
+    public int maxTurnsRemaining;
 }
 
 public static class Abilities
@@ -28,12 +31,13 @@ public static class Abilities
      * CASE DICTIONARY
      * 0: ATTACK
      * 1: DIG IN
-     * 
+     * 2: BUILD STRUCTURE
     */
-    public static AbilityDescriptor[] abilities = new AbilityDescriptor[]
+    public static AbilityDescriptor[] abilityDescs = new AbilityDescriptor[]
     {
-        new AbilityDescriptor("Attack", "Fire the unit's primary weapon. Consumes an Action Pip"),
-        new AbilityDescriptor("Dig In", "Unit braces at it's current position, confering a defense and accuracy boost for this turn. Consumes a Movement Pip"),
+        new AbilityDescriptor("Attack", "Fire the unit's primary weapon. Consumes an Action Pip", 1),
+        new AbilityDescriptor("Dig In", "Unit braces at it's current position, confering a defense and accuracy boost for this turn. Consumes a Movement Pip", 1),
+        new AbilityDescriptor("Build Structure", "Unit Is Stunned for two full turns, if Unit is alive at the end of the second turn, a structure is created at this location. Consumes an Action Pip", 3),
 
     };
 
@@ -62,7 +66,7 @@ public static class Abilities
         castingUnit.activeAbilities.Add(newAbility);
     }
 
-    public static void TickAbility(int input, UnitAIBase affectedUnit, Vector3? affectedPosition)
+    public static void TickAbility(int input, UnitAIBase affectedUnit)
     {
         switch (input)
         {

@@ -41,16 +41,26 @@ public class UnitAIBase : MonoBehaviour
 
     public Animator animator;
 
+    public GameObject minimapPip;
 
     // Start is called before the first frame update
     void Start()
     {
+        activeAbilities = new List<AbilityObj>();
     }
 
     // Update is called once per frame
     void Update()
     {
 
+    }
+
+    public void UseAbility(int input, UnitAIBase castingUnit = null, UnitAIBase targetedUnit = null)
+    {
+        AbilityObj newAbilityObj = new AbilityObj();
+        newAbilityObj.turnsRemaining = Abilities.abilityDescs[input].maxTurnsRemaining;
+        activeAbilities.Add(newAbilityObj);
+        Abilities.UseAbility(input, castingUnit, targetedUnit);
     }
 
     virtual public void Spawn(Vector3Int input, GameObject gfxInput) { }
@@ -74,7 +84,7 @@ public class UnitAIBase : MonoBehaviour
         }
     }
 
-    public void TakeDamage(float input)
+    public void TakeDamage(float input, Vector3 damageSourcePos)
     {
 
 
@@ -100,6 +110,21 @@ public class UnitAIBase : MonoBehaviour
         //Debug.Log(gameObject.name + $" took {input} damage");
         if (currentHealth <= 0)
         {
+            minimapPip.SetActive(false);
+
+            Rigidbody[] childRbs = gfx.GetComponentsInChildren<Rigidbody>();
+            foreach(Rigidbody rb in childRbs)
+            {
+                rb.isKinematic = false;
+            }
+
+            int limb =  Random.Range(0, 1);
+            Vector3 dir = childRbs[limb].transform.position - damageSourcePos;
+            childRbs[limb].AddForce(dir.normalized * Random.Range(250, 700) * childRbs[limb].mass);
+            childRbs[limb].AddForce(Vector3.up * Random.Range(-200,250) * childRbs[limb].mass);
+            childRbs[limb].AddTorque(Vector3.up * Random.Range(-2500, 2500));
+
+
             if (GameManager.instance.EnemyUnits.Contains(this))
             {
                 GameManager.instance.EnemyUnits.Remove(this);

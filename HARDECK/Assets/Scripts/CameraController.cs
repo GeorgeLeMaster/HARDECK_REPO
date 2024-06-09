@@ -25,14 +25,14 @@ public class CameraController : MonoBehaviour
         xPivotPos = transform.position.x;
         zPivotPos = transform.position.z;
 
-        //foreach(Structure str in GameManager.instance.structures)
-        //{
-        //    if (str.playerHq)
-        //    {
-        //        transform.position = new Vector3(str.transform.position.x, 0, str.transform.position.z);
-        //        break;
-        //    }
-        //}
+        foreach (Structure str in GameManager.instance.structures)
+        {
+            if (str.playerHq)
+            {
+                transform.position = new Vector3(str.transform.position.x, 0, str.transform.position.z);
+                break;
+            }
+        }
     }
 
     // Update is called once per frame

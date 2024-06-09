@@ -52,6 +52,12 @@ public class GroundUnitAI : UnitAIBase
 
         actionPips = 1;
         movementPips = 1;
+
+        Rigidbody[] childRbs = gfx.GetComponentsInChildren<Rigidbody>();
+        foreach (Rigidbody rb in childRbs)
+        {
+            rb.isKinematic = true;
+        }
     }
 
     override public void Order(int orderID, Vector3Int desiredPos)
@@ -219,11 +225,11 @@ public class GroundUnitAI : UnitAIBase
         {
             if (hits)
             {
-                attackedUnit.TakeDamage(damage + (int)Mathf.Floor(Random.Range(-damageMod, damageMod + 0.99f)));
+                attackedUnit.TakeDamage(damage + (int)Mathf.Floor(Random.Range(-damageMod, damageMod + 0.99f)), this.transform.position);
             }
             else
             {
-                attackedUnit.TakeDamage(-1);
+                attackedUnit.TakeDamage(-1, this.transform.position);
             }
         }
 
