@@ -55,15 +55,15 @@ public class CameraController : MonoBehaviour
             transform.Rotate(Vector3.up * Input.GetAxis("Mouse X") * 100 * Time.deltaTime);
         }
 
-        if (Input.GetMouseButton(1) || Input.GetMouseButton(2))
-        {
-            Cursor.visible = false;
-        }
-        else
-        {
-            Cursor.visible = true;
+        //if (Input.GetMouseButton(1) || Input.GetMouseButton(2))
+        //{
+        //    Cursor.visible = false;
+        //}
+        //else
+        //{
+        //    Cursor.visible = true;
 
-        }
+        //}
 
     }
 }

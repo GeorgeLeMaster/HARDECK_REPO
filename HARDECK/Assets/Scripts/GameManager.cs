@@ -22,6 +22,9 @@ public class Commander
     public int allianceInt;
     public Color allianceColor;
 
+    public int ccCap;
+    public int ccCurrent;
+
     public List<Structure> currentStructures;
     public List<UnitAIBase> currentUnits;
 
@@ -95,6 +98,10 @@ public class GameManager : MonoBehaviour
     public bool controllsLocked;
     public bool skipDeployment;
 
+    public GameObject cursor;
+
+    private Canvas gameUI_Canvas;
+
     [Header("Decks")]
     public GameObject phaseOne;
     public GameObject phaseTwo;
@@ -166,6 +173,10 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        gameUI_Canvas = GameObject.Find("GameUI").GetComponent<Canvas>();
+        Cursor.visible = false;
+        GameObject.Find("CursorColor").GetComponent<Image>().color = playerColor;
+
         MapBuilder.instance.LoadMapV2();
         //ResetActionQueue();
         //UpdatePlayerActionGFX();
@@ -374,13 +385,22 @@ public class GameManager : MonoBehaviour
 
         RaycastHit conHit;
         LayerMask conMask = LayerMask.GetMask("Tile", "Unit");
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out conHit, Mathf.Infinity, conMask) && turnState == TurnState.Action && !EventSystem.current.IsPointerOverGameObject())
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out conHit, Mathf.Infinity, conMask) && turnState == TurnState.Action && !EventSystem.current.IsPointerOverGameObject() && selectedUnit_Player != null)
         {
-            if (conHit.transform.GetComponent<TileInfo>())
+            if (conHit.transform.GetComponent<TileInfo>() && selectedUnit_Player.movementPips > 0)
             {
-                selectedTileIndicator.SetActive(true);
+                Vector3Int pos = conHit.transform.GetComponent<TileInfo>().tilemapPosition;
+                Vector3Int uPos = selectedUnit_Player.currentPos;
+                if (MapBuilder.instance.Flowfields[uPos.x, uPos.y, uPos.z].tiles[pos.x, pos.y, pos.z].pathCost <= selectedUnit_Player.moveSpeed)
+                {
+                    selectedTileIndicator.SetActive(true);
 
-                selectedTileIndicator.transform.position = conHit.transform.GetComponent<TileInfo>().tilemapPosition;
+                    selectedTileIndicator.transform.position = conHit.transform.GetComponent<TileInfo>().tilemapPosition;
+                }
+                else
+                {
+                    selectedTileIndicator.SetActive(false);
+                }
             }
             else
             {
@@ -773,6 +793,9 @@ public class GameManager : MonoBehaviour
 
         foreach(UnitAIBase unit in PlayerUnits)
         {
+            unit.actionPips = 1;
+            unit.movementPips = 1;
+
             if (unit.activeAbilities != null)
             {
                 if (unit.activeAbilities.Count > 0)
@@ -793,9 +816,7 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
-
-            unit.actionPips = 1;
-            unit.movementPips = 1;
+            
         }
         controllsLocked = false;
         enemyTurnIndicator.SetActive(false);
@@ -1002,5 +1023,18 @@ public class GameManager : MonoBehaviour
             //AttackAbilityIcon
             UpdatePlayerActionGFX();
         }
+    }
+
+    private void LateUpdate()
+    {
+        ManageCursor();
+    }
+
+    private void ManageCursor()
+    {
+        Vector2 pos;
+        RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)gameUI_Canvas.transform, Input.mousePosition, gameUI_Canvas.worldCamera, out pos);
+
+        cursor.transform.position = gameUI_Canvas.transform.TransformPoint(pos);
     }
 }
