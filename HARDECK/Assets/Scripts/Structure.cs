@@ -13,7 +13,7 @@ public class Structure : MonoBehaviour
     public bool provideHeavy;
     public bool provideAir;
 
-    public int ownerId;
+    public int ownerAlliance;
 
     public bool playerHq;
 
@@ -34,7 +34,7 @@ public class Structure : MonoBehaviour
         lr.SetPosition(3, new Vector3( WidthHeight.x + 0.5f, yOff, -WidthHeight.y - 0.5f));
         lr.SetPosition(4, new Vector3( WidthHeight.x + 0.5f, yOff,  WidthHeight.y + 0.5f));
 
-        switch (ownerId)
+        switch (ownerAlliance)
         {
             case 0:
                 lr.startColor = GameManager.instance.commanderColor_0;
@@ -53,63 +53,45 @@ public class Structure : MonoBehaviour
 
     public void CheckOwnership()
     {
-        LayerMask mask = LayerMask.GetMask("Unit");
+        List<int> capAlliances = new List<int>();
 
-        Collider[] c = Physics.OverlapBox(transform.position, new Vector3(WidthHeight.x, 1, WidthHeight.y), Quaternion.identity, mask); 
-        bool playerUnit = false;
-        bool enemyUnit = false;
-        
-        foreach(Collider u in c)
+        foreach (Commander c in GameManager.instance.commanders)
         {
-            UnitAIBase unit = u.GetComponent<UnitAIBase>();
-
-            if (unit.alliance == 0)
+            foreach (UnitAIBase u in c.currentUnits)
             {
-                playerUnit = true;
-            }
-            else
-            {
-                enemyUnit = true;
-            }
-
-            if (playerUnit && enemyUnit)
-            {
-                break;
+                if (CheckInBorder(u) == true && !capAlliances.Contains(u.alliance))
+                {
+                    capAlliances.Add(u.alliance);
+                }
             }
         }
 
-        if (ownerId == -1)
+        // Check Alliances
+        // Must be one lone alliance for something to change
+        if (capAlliances.Count == 1)
         {
-            // if neutral
-            if (playerUnit && !enemyUnit)
+            if (ownerAlliance != capAlliances[0])
             {
-                ownerId = 0;
-            }
-            else if (enemyUnit && !playerUnit)
-            {
-                ownerId = 1;
+                if (ownerAlliance == 10)
+                {
+                    // give to cap alliance
+                    GameManager.instance.commanders[capAlliances[0]].currentStructures.Add(this);
+                    ownerAlliance = capAlliances[0];
+                }
+                else
+                {
+                    // take from enemy
+                    GameManager.instance.commanders[ownerAlliance].currentStructures.Remove(this);
+                    ownerAlliance = 10;
+                }
             }
         }
-        else if (ownerId == 0)
-        {
-            // owned by player
-            if (enemyUnit && !playerUnit)
-            {
-                ownerId = -1;
-            }
-        }
-        else if (ownerId == 1)
-        {
-            // owned by enemy
-            if (!enemyUnit && playerUnit)
-            {
-                ownerId = -1;
-            }
-        }
+
+
 
         LineRenderer lr = GetComponent<LineRenderer>();
 
-        switch (ownerId)
+        switch (ownerAlliance)
         {
             case 0:
                 lr.startColor = GameManager.instance.commanderColor_0;
@@ -151,5 +133,17 @@ public class Structure : MonoBehaviour
 
         }
 
+    }
+
+    private bool CheckInBorder(UnitAIBase uInput)
+    {
+        bool result = false;
+
+        if (Mathf.Abs(uInput.currentPos.x - tilemapPos.x) <= WidthHeight.x && Mathf.Abs(uInput.currentPos.z - tilemapPos.z) <= WidthHeight.y && uInput.currentPos.y == tilemapPos.y)
+        {
+            result = true;
+        }
+
+        return result;
     }
 }

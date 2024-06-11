@@ -94,6 +94,8 @@ public class MapBuilder : MonoBehaviour
 
     public GameObject[] GFXOBJ_TileSets;
 
+    public GFXOBJContainter[] GFXOBJs;
+
     private void Awake()
     {
         // Singleton Logic
@@ -287,13 +289,19 @@ public class MapBuilder : MonoBehaviour
             newObj.transform.SetParent(sceneryObj.transform);
             dataMembers[4] = dataMembers[4].Substring(0, dataMembers[4].Length-1);
             newObj.transform.localScale = ParseStringToVector3(dataMembers[4]);
-            newObj.GetComponent<GFXOBJContainter>().SetState(0);
+
+            if (Application.isPlaying)
+            {
+                newObj.GetComponent<GFXOBJContainter>().SetState(0);
+            }
             // Failsafe
             currentLineInt++;
             if (currentLineInt > 10000)
             {
                 break;
             }
+
+            GFXOBJs = sceneryObj.GetComponentsInChildren<GFXOBJContainter>();
         }
 
         //Structures----------------------------------------------------------------------------------------------- LOAD
@@ -306,7 +314,7 @@ public class MapBuilder : MonoBehaviour
         {
             //Debug.Log(currentLine);
             string[] dataMembers = currentLine.Split("*");
-            dataMembers[0] = dataMembers[0].Substring(1, dataMembers[0].Length-2);
+            dataMembers[0] = dataMembers[0].Substring(1, dataMembers[0].Length - 2);
             dataMembers[1] = dataMembers[1].Substring(1, dataMembers[1].Length - 2);
 
             string[] posValues = dataMembers[0].Split(",");
@@ -326,10 +334,10 @@ public class MapBuilder : MonoBehaviour
             posValues = dataMembers[1].Split(",");
             int.TryParse(posValues[0], out int w);
             int.TryParse(posValues[1], out int h);
-            sLogic.WidthHeight = new Vector2Int(w,h);
+            sLogic.WidthHeight = new Vector2Int(w, h);
 
             // Owner UD
-            sLogic.ownerId = int.Parse(dataMembers[2]);
+            sLogic.ownerAlliance = int.Parse(dataMembers[2]);
 
             // Provides
             sLogic.provideGround = bool.Parse(dataMembers[3]);
@@ -344,8 +352,8 @@ public class MapBuilder : MonoBehaviour
             obj.transform.SetParent(sObj.transform);
 
             // Give structure to owning commander
-            if (Application.isPlaying)
-                GameManager.instance.commanders[sLogic.ownerId].currentStructures.Add(sLogic);
+            if (Application.isPlaying && sLogic.ownerAlliance != 10)
+                GameManager.instance.commanders[sLogic.ownerAlliance].currentStructures.Add(sLogic);
 
             // FailSafe
             currentLineInt++;
@@ -472,9 +480,6 @@ public class MapBuilder : MonoBehaviour
             GameManager.instance.currentGFXOBJs = new List<GFXOBJContainter>();
             GameManager.instance.lastGFXOBJs = new List<GFXOBJContainter>();
 
-          //  GameManager.instance.StartCoroutine("firstFOWupdate");
-            GameManager.instance.StartPlayerTurn();
-
         }
     }
 
@@ -554,7 +559,7 @@ public class MapBuilder : MonoBehaviour
         foreach (Structure st in structObj.GetComponentsInChildren<Structure>())
         {
             if (st != null)
-                dataToSave += $"{st.tilemapPos}*{st.WidthHeight}*{st.ownerId}*{st.provideGround}*{st.provideHeavy}*{st.provideAir}*{st.playerHq}\n";
+                dataToSave += $"{st.tilemapPos}*{st.WidthHeight}*{st.ownerAlliance}*{st.provideGround}*{st.provideHeavy}*{st.provideAir}*{st.playerHq}\n";
         }
 
         dataToSave += "structEnd\n";
@@ -994,6 +999,7 @@ public class MapBuilder : MonoBehaviour
         // Tiles
         mask = LayerMask.GetMask("Tile");
         Collider[] SurroundingTiles = Physics.OverlapCapsule(new Vector3(unitPos.x, -10, unitPos.z), new Vector3(unitPos.x, 10, unitPos.z), input.visionRadius, mask);
+        mask = LayerMask.GetMask("Tile", "OBJFinder");
 
         foreach (Collider c in SurroundingTiles)
         {

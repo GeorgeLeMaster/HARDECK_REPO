@@ -68,7 +68,7 @@ public class EnemyAI : MonoBehaviour
     private void EndTurn()
     {
         myTurn = false;
-        GameManager.instance.StartPlayerTurn();
+        GameManager.instance.StartNewRound();
     }
 
     private void NextAction()

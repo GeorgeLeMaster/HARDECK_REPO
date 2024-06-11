@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -46,6 +47,8 @@ public class Commander
     public List<UnitAIBase> visableEnemyUnits;
     public List<GFXOBJContainter> visableGFXOBJs;
     public List<Vector3Int> visableTiles;
+
+    public int[] GFXOBJ_StateIds;
 }
 
 public class UnitData
@@ -72,6 +75,7 @@ public class UnitData
     public string name;
 
     public List<int> abilityInts;
+
 }
 
 public class GameManager : MonoBehaviour
@@ -197,8 +201,16 @@ public class GameManager : MonoBehaviour
 
         playerMat.color = commanderColor_0;
 
+        foreach(Commander c in commanders)
+        {
+            c.GFXOBJs = new int[MapBuilder.instance.GFXOBJs.Length];
+            c.GFXOBJs = MapBuilder.instance.GFXOBJs(int);
+        }
+
         // Load icon files
         abilityIconFiles = Resources.LoadAll<Sprite>("Sprites/AbilityIcons");
+
+        StartNewRound();
 
     }
 
@@ -209,7 +221,6 @@ public class GameManager : MonoBehaviour
     {
 
         // Deployment State logic
-        // Action state logic
         if (Input.GetMouseButtonDown(0) && turnState == TurnState.Deployment && !EventSystem.current.IsPointerOverGameObject())
         {
 
@@ -242,6 +253,7 @@ public class GameManager : MonoBehaviour
 
                         commanders[newAi.alliance].currentUnits.Add(newAi);
 
+                        ClearOverlay("Structures");
                         turnState = TurnState.Action;
                         controllsLocked = false;
                         phaseThree.SetActive(false);
@@ -265,15 +277,6 @@ public class GameManager : MonoBehaviour
                 // Raycast out, returns true if a tile or unit is selected
                 if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, mask))
                 {
-                    //if (hit.transform.GetComponent<TileInfo>())
-                    //{
-                    //    selectedTileIndicator.transform.position = hit.transform.GetComponent<TileInfo>().tilemapPosition;
-                    //    selectedTileIndicator.SetActive(true);
-                    //}
-                    //else
-                    //{
-                    //    selectedTileIndicator.SetActive(false);
-                    //}
 
                     // If an empty tile is clicked and a player unit is selected
                     if (hit.transform.GetComponent<TileInfo>() && selectedUnit_Player != null)
@@ -591,6 +594,8 @@ public class GameManager : MonoBehaviour
     // Trun state logic
     public void EndPlayerTurn()
     {
+
+        commanders[playerAllianceInt].GFXOBJs = MapBuilder.instance.GFXOBJs;
         selectedAbilityInt = -1;
         selectedPosition = new Vector3Int(-1, -1, -1);
         selectedUnit_Player = null;
@@ -598,20 +603,29 @@ public class GameManager : MonoBehaviour
         UpdatePlayerActionGFX();
 
         //[CHANGE: DO NOT HARD CODE FOR ALLIENCE INTS]
-        if(playerAllianceInt == 0)
-        {
-            enemyAI.BeginTurn(1);
+        //if(playerAllianceInt == 0)
+        //{
+        //    enemyAI.BeginTurn(1);
 
-        }else
-        {
-            enemyAI.BeginTurn(0);
+        //}else
+        //{
+        //    enemyAI.BeginTurn(0);
 
+        //}
+
+        if (playerAllianceInt < commanders.Count-1)
+        {
+            playerAllianceInt++;
+        }
+        else
+        {
+            playerAllianceInt = 0;
         }
 
         controllsLocked = true;
         enemyTurnIndicator.SetActive(true);
         endTurnButton.SetActive(false);
-
+        StartNewRound();
         
     }
 
@@ -629,6 +643,8 @@ public class GameManager : MonoBehaviour
 
         foreach (UnitAIBase u in cInput.currentUnits)
         {
+            u.gfx.SetActive(true);
+
             if (u != null && u.currentHealth > 0)
             {
                 MapBuilder.instance.UpdateFOW(u);
@@ -637,6 +653,7 @@ public class GameManager : MonoBehaviour
 
         foreach (Structure st in cInput.currentStructures)
         {
+            st.ShowGFX();
 
             Collider[] structTiles = Physics.OverlapBox(st.tilemapPos, new Vector3(st.WidthHeight.x, 1, st.WidthHeight.y), Quaternion.identity, LayerMask.GetMask("OBJFinder"));
 
@@ -686,43 +703,47 @@ public class GameManager : MonoBehaviour
                     }
                 }
 
-                foreach (Structure s in c.currentStructures)
-                {
-                    if (cInput.visableTiles.Contains(s.tilemapPos) && s.ownerId != playerAllianceInt)
-                    {
-                        s.ShowGFX();
-                    }
-                    else if (s.ownerId != playerAllianceInt)
-                    {
-                        s.HideGFX();
-                    }
-                }
             }
         }
+
+        foreach (Structure s in GameObject.Find("Structures").GetComponentsInChildren<Structure>())
+        {
+            if (cInput.visableTiles.Contains(s.tilemapPos) && s.ownerAlliance != playerAllianceInt)
+            {
+                s.ShowGFX();
+            }
+            else if (s.ownerAlliance != playerAllianceInt)
+            {
+                s.HideGFX();
+            }
+        }
+
 
     }
 
     public void RefreshFOW()
     {
-        commanders[playerAllianceInt].visableTiles.Clear();
-        foreach (UnitAIBase u in commanders[playerAllianceInt].currentUnits)
+
+        //MapBuilder.instance.GFXOBJs = commanders[playerAllianceInt].GFXOBJs;
+
+
+        for(int i = 0; i < MapBuilder.instance.GFXOBJs.Length; i++)
         {
-            MapBuilder.instance.UpdateFOW(u);
+            MapBuilder.instance.GFXOBJs[i].SetState(commanders[playerAllianceInt].GFXOBJ_StateIds[i]);
         }
-        GameManager.instance.UpdateVisableFOW();
+
+        //commanders[playerAllianceInt].visableTiles.Clear();
+        //foreach (UnitAIBase u in commanders[playerAllianceInt].currentUnits)
+        //{
+        //    MapBuilder.instance.UpdateFOW(u);
+        //}
 
     }
 
-    public void StartPlayerTurn()
+    public void StartNewRound()
     {
 
         turnState = TurnState.Drawing;
-       // Debug.Log("start");
-
-        foreach(Structure st in commanders[playerAllianceInt].currentStructures)
-        {
-            st.CheckOwnership();
-        }
 
         selectedAbilityInt = -1;
 
@@ -754,10 +775,16 @@ public class GameManager : MonoBehaviour
             
         }
 
+        foreach (Structure s in GameObject.Find("Structures").GetComponentsInChildren<Structure>())
+        {
+            s.CheckOwnership();
+        }
+
         lastGFXOBJs.Clear();
         currentGFXOBJs.Clear();
 
         RefreshFOW();
+        GameManager.instance.UpdateVisableFOW();
 
         controllsLocked = false;
         enemyTurnIndicator.SetActive(false);
@@ -804,7 +831,7 @@ public class GameManager : MonoBehaviour
     {
         foreach (Structure s in commanders[playerAllianceInt].currentStructures)
         {
-            if (s.ownerId == playerAllianceInt && ((type == 0 && s.provideGround) || (type == 1 && s.provideHeavy) || (type == 2 && s.provideAir)))
+            if (((type == 0 && s.provideGround) || (type == 1 && s.provideHeavy) || (type == 2 && s.provideAir)))
             {
                 for (int x = -s.WidthHeight.x; x <= s.WidthHeight.x; x++)
                 {
@@ -820,6 +847,39 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
+        }
+    }
+
+    public void ClearOverlay(string input)
+    {
+        switch (input)
+        {
+            case "Structures":
+
+                foreach (Structure s in commanders[playerAllianceInt].currentStructures)
+                {
+
+                    for (int x = -s.WidthHeight.x; x <= s.WidthHeight.x; x++)
+                    {
+                        for (int z = -s.WidthHeight.y; z <= s.WidthHeight.y; z++)
+                        {
+                            int newX = s.tilemapPos.x + x;
+                            int newY = s.tilemapPos.z + z;
+                            if (MapBuilder.instance.FOWtiles[newX, s.tilemapPos.y, newY] != null)
+                            {
+                                MapBuilder.instance.FOWtiles[newX, s.tilemapPos.y, newY].GetComponent<TileOverlayLogic>().SetOverlay("FOW_hidefow");
+                                deployableTiles.Clear();
+                            }
+                        }
+                    }
+
+                }
+
+                break;
+
+            default:
+
+                break;
         }
     }
 
@@ -914,6 +974,7 @@ public class GameManager : MonoBehaviour
         phaseThree.SetActive(false);
 
         turnState = TurnState.Action;
+
         controllsLocked = false;
     }
 

@@ -13,6 +13,8 @@ public class GFXOBJContainter : MonoBehaviour
 
     private Material fowmat;
 
+    public int state = 0;
+
     private void Awake()
     {
         fowmat = Resources.Load("FOWMAT") as Material;
@@ -34,13 +36,14 @@ public class GFXOBJContainter : MonoBehaviour
 
     public void SetState(int input)
     {
-
+        state = input;
         if (input == 0)
         {
             foreach (MeshRenderer m in gfxMeshes)
             {
                 m.material = fowmat;
             }
+            
         }
         else if (input == 1)
         {
