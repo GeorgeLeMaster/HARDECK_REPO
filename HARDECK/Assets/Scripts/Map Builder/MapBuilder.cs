@@ -132,7 +132,6 @@ public class MapBuilder : MonoBehaviour
         Debug.Log("Loading map from " + MapFiles[selectedMapID].name + ".txt");
         // Get Text Asset from Database
         TextAsset mapTextAsset = MapFiles[selectedMapID];
-        //Debug.Log(mapTextAsset);
 
         // Declares Vars
         Vector3 newPos_gfx = Vector3.zero;
@@ -262,7 +261,7 @@ public class MapBuilder : MonoBehaviour
 
             //0: string
             //1: id
-            //2: pos
+            //2: unitPos
             //3: rot
             //4: scale
             dataMembers[2] = dataMembers[2].Substring(1, dataMembers[2].Length - 2);
@@ -288,15 +287,14 @@ public class MapBuilder : MonoBehaviour
             newObj.transform.SetParent(sceneryObj.transform);
             dataMembers[4] = dataMembers[4].Substring(0, dataMembers[4].Length-1);
             newObj.transform.localScale = ParseStringToVector3(dataMembers[4]);
-         //   Debug.Log($"{dataMembers[0]},{dataMembers[1]},{dataMembers[2]},{dataMembers[3]},{dataMembers[4]}");
+            newObj.GetComponent<GFXOBJContainter>().SetState(0);
+            // Failsafe
             currentLineInt++;
             if (currentLineInt > 10000)
             {
-
                 break;
             }
         }
-
 
         //Structures----------------------------------------------------------------------------------------------- LOAD
         currentLineInt++;
@@ -319,32 +317,40 @@ public class MapBuilder : MonoBehaviour
 
             GameObject obj = Instantiate(structurePrefab, new Vector3(xPos_s, yPos_s, zPos_s), Quaternion.identity);
 
-
             Structure sLogic = obj.GetComponent<Structure>();
 
+            // Position
             sLogic.tilemapPos = new Vector3Int(xPos_s, yPos_s, zPos_s);
+
+            // WidthHeight
             posValues = dataMembers[1].Split(",");
             int.TryParse(posValues[0], out int w);
             int.TryParse(posValues[1], out int h);
-
             sLogic.WidthHeight = new Vector2Int(w,h);
 
-            //Debug.Log(dataMembers[2]+dataMembers[3]+dataMembers[4]);
+            // Owner UD
             sLogic.ownerId = int.Parse(dataMembers[2]);
+
+            // Provides
             sLogic.provideGround = bool.Parse(dataMembers[3]);
             sLogic.provideHeavy = bool.Parse(dataMembers[4]);
             sLogic.provideAir = bool.Parse(dataMembers[5]);
 
+            // Is Player HQ
             sLogic.playerHq = bool.Parse(dataMembers[6]);
 
+            // Set In-World position and proper parenting
             obj.transform.position = sLogic.tilemapPos;
             obj.transform.SetParent(sObj.transform);
-            //GameManager.instance.structures.Add(sLogic);
 
+            // Give structure to owning commander
+            if (Application.isPlaying)
+                GameManager.instance.commanders[sLogic.ownerId].currentStructures.Add(sLogic);
+
+            // FailSafe
             currentLineInt++;
             if (currentLineInt > 10000)
             {
-
                 break;
             }
         }
@@ -352,29 +358,31 @@ public class MapBuilder : MonoBehaviour
         //Units------------------------------------------------------------------------------------------------------ LOAD
         currentLineInt++;
 
+        // Find Parent Object
         GameObject uObj = GameObject.Find("Units");
+
+        // Load Ground Unit Prefab
         GameObject guPrefab = Resources.Load("Units/OBJs/GroundUnitPrefab") as GameObject;
-        // unit SO data (name, moveSpeed, range, damage, damageMod, maxHealth)
 
         while (!(currentLine = lines[currentLineInt]).Contains("unitEnd") && currentLine != "")
         {
+            // Split data line into array of strings
             string[] dataMembers = currentLine.Split("*");
 
+            // Parse Datamembers
             int aInt = int.Parse(dataMembers[1]);
             string uName = dataMembers[2];
-
             int.TryParse(dataMembers[3], out int ms);
             float.TryParse(dataMembers[4], out float r);
             float.TryParse(dataMembers[5], out float d);
             float.TryParse(dataMembers[6], out float dm);
             float.TryParse(dataMembers[7], out float mh);
 
-            string abilityInts = dataMembers[9];
-            string[] abilityIntStrings = abilityInts.Split(",");
-
+            // Instantiate Object and Parent
             GameObject newUnit = Instantiate(guPrefab);
             newUnit.transform.parent = uObj.transform;
 
+            // Create newAI
             UnitAIBase ai = newUnit.GetComponent<UnitAIBase>();
 
             ai.moveSpeed = ms;
@@ -383,16 +391,16 @@ public class MapBuilder : MonoBehaviour
             ai.damageMod = dm;
             ai.maxHealth = mh;
             ai.currentHealth = mh;
-
             ai.visionRadius = ms;
-
             ai.alliance = aInt;
             ai.unitName = uName;
             ai.gameObject.name = "Unit: " + uName;
 
+            // Ability Logic
+            string abilityInts = dataMembers[9];
+            string[] abilityIntStrings = abilityInts.Split(",");
             foreach(string s in abilityIntStrings)
             {
- 
                 if (s != null)
                 {
                     ai.abilityInts.Add(int.Parse(s));
@@ -402,15 +410,21 @@ public class MapBuilder : MonoBehaviour
             ai.unitSO = Resources.Load("Units/SOs/Infantryman") as UnitSO;
 
             Vector3 pos = ParseStringToVector3(dataMembers[8]);
-            Debug.Log(pos);
             ai.currentPos = new Vector3Int((int)pos.x, (int)pos.y, (int)pos.z);
 
             ai.Spawn(ai.currentPos, Resources.Load("Units/GFX/GFX_InfantryMan") as GameObject);
 
+            if (Application.isPlaying)
+                ai.minimapPip.GetComponent<MeshRenderer>().material.color = GameManager.instance.commanders[aInt].allianceColor;
+
+            // Give to owning commander
+            if (Application.isPlaying)
+                GameManager.instance.commanders[aInt].currentUnits.Add(ai);
+
+            // FailsSafe
             currentLineInt++;
             if (currentLineInt > 10000)
             {
-
                 break;
             }
         }
@@ -455,10 +469,10 @@ public class MapBuilder : MonoBehaviour
                 }
             }
 
-            GameManager.instance.currentFOWTiles = new List<GFXOBJContainter>();
-            GameManager.instance.lastFOWTiles = new List<GFXOBJContainter>();
+            GameManager.instance.currentGFXOBJs = new List<GFXOBJContainter>();
+            GameManager.instance.lastGFXOBJs = new List<GFXOBJContainter>();
 
-            GameManager.instance.StartCoroutine("firstFOWupdate");
+          //  GameManager.instance.StartCoroutine("firstFOWupdate");
             GameManager.instance.StartPlayerTurn();
 
         }
@@ -534,7 +548,7 @@ public class MapBuilder : MonoBehaviour
         dataToSave += "sceneEnd\n";
 
         // Save structure data
-        // needs to save: structure pos, widthHeight, ownerInt, grantsBools
+        // needs to save: structure unitPos, widthHeight, ownerInt, grantsBools
         GameObject structObj = GameObject.Find("Structures");
 
         foreach (Structure st in structObj.GetComponentsInChildren<Structure>())
@@ -922,59 +936,107 @@ public class MapBuilder : MonoBehaviour
         return false;
     }
 
+    // Updates the FOW for a specific unit, reports data back to Commander
     public void UpdateFOW(UnitAIBase input)
     {
-        //Debug.Log("a");
-        float yOff = 0.1f;
-        Vector3 pos = input.currentPos + new Vector3(0,0.5f,0);
+        // GFXOBJs
+        float cYOff = 0.1f;
+        Vector3 unitPos = input.currentPos + new Vector3(0,0.5f,0);
         LayerMask mask = LayerMask.GetMask("OBJFinder");
+        Collider[] GFXOBJs = Physics.OverlapCapsule(new Vector3(unitPos.x, -10, unitPos.z), new Vector3(unitPos.x, 10, unitPos.z), input.visionRadius, mask);
 
-        Collider[] fowTiles = Physics.OverlapCapsule(new Vector3(pos.x, -10, pos.z), new Vector3(pos.x, 10, pos.z), input.visionRadius, mask);
-
-        //Debug.Log(fowTiles.Length);
-        //Debug.Log()
-        foreach (Collider c in fowTiles)
+        foreach (Collider c in GFXOBJs)
         {
-            //c.transform.position
-            Vector3 castPoint = c.ClosestPoint(pos) + new Vector3(0, yOff, 0);
-            //c.transform.position+new Vector3(0, yOff, 0)
-            // raycst from input pos to c pos, if hit something, nothing, if not, hit tile
-            Vector3 dir = castPoint - pos;
-         //  dir.Normalize();
-            float dist = Vector3.Distance(pos, castPoint);
-            if (!GameManager.instance.currentFOWTiles.Contains(c.gameObject.GetComponent<GFXOBJContainter>()))
+            Vector3 cPosition = c.ClosestPoint(unitPos) + new Vector3(0, cYOff, 0);
+
+            // raycst from input unitPos to c unitPos, if hit something, nothing, if not, hit tile
+            Vector3 dir = cPosition - unitPos;
+
+            float dist = Vector3.Distance(unitPos, cPosition) + 0.1f;
+            bool add = false;
+            RaycastHit hit;
+
+            // If raycast hits nothing, i.e. empty space between tile and unit
+            if (!Physics.Raycast(unitPos, dir.normalized, out hit, dist, mask))
             {
-                RaycastHit hit;
-                if (!Physics.Raycast(pos, dir.normalized, out hit, dist, mask))
+                add = true;
+            }
+            else
+            {
+                // if the raycast hits the object
+                if (hit.transform.gameObject == c.gameObject)
                 {
-                    GameManager.instance.currentFOWTiles.Add(c.gameObject.GetComponent<GFXOBJContainter>());
+                    add = true;
+                }
+                // if the raycast hits something within 0.5 units of the object
+                else if (Vector3.Distance(hit.transform.position, cPosition) < 0.5f)
+                {
+                    add = true;
                 }
                 else
                 {
-                    if (hit.transform.gameObject == c.gameObject)
+                    // if a backwards cast hits something within 0.5f units of the unitPos
+                    if (Physics.Raycast(cPosition, -dir.normalized, out hit, dist, mask))
                     {
-                        GameManager.instance.currentFOWTiles.Add(c.gameObject.GetComponent<GFXOBJContainter>());
-
-                    }
-                    else if (Vector3.Distance(hit.transform.position, castPoint) < 0.5f)
-                    {
-                        GameManager.instance.currentFOWTiles.Add(c.gameObject.GetComponent<GFXOBJContainter>());
-
-                    }
-                    else
-                    {
-                        if (Physics.Raycast(castPoint, -dir.normalized, out hit, dist, mask))
-                        {
-                            if (Vector3.Distance(hit.transform.position, pos) < 0.5f)
-                            GameManager.instance.currentFOWTiles.Add(c.gameObject.GetComponent<GFXOBJContainter>());
-
-                        }
+                        if (Vector3.Distance(hit.transform.position, unitPos) < 0.5f)
+                            add = true;
                     }
                 }
-                
+            }
 
+            if (add == true && !GameManager.instance.commanders[input.alliance].visableGFXOBJs.Contains(c.gameObject.GetComponent<GFXOBJContainter>()))
+            {
+                GameManager.instance.commanders[input.alliance].visableGFXOBJs.Add(c.gameObject.GetComponent<GFXOBJContainter>());
+            }
 
+        }
 
+        // Tiles
+        mask = LayerMask.GetMask("Tile");
+        Collider[] SurroundingTiles = Physics.OverlapCapsule(new Vector3(unitPos.x, -10, unitPos.z), new Vector3(unitPos.x, 10, unitPos.z), input.visionRadius, mask);
+
+        foreach (Collider c in SurroundingTiles)
+        {
+            Vector3 cPosition = c.ClosestPoint(unitPos) + new Vector3(0, cYOff, 0);
+
+            // raycst from input unitPos to c unitPos, if hit something, nothing, if not, hit tile
+            Vector3 dir = cPosition - unitPos;
+
+            float dist = Vector3.Distance(unitPos, cPosition) + 0.1f;
+            bool add = false;
+            RaycastHit hit;
+
+            // If raycast hits nothing, i.e. empty space between tile and unit
+            if (!Physics.Raycast(unitPos, dir.normalized, out hit, dist, mask))
+            {
+                add = true;
+            }
+            else
+            {
+                // if the raycast hits the object
+                if (hit.transform.gameObject == c.gameObject)
+                {
+                    add = true;
+                }
+                // if the raycast hits something within 0.5 units of the object
+                else if (Vector3.Distance(hit.transform.position, cPosition) < 0.5f)
+                {
+                    add = true;
+                }
+                else
+                {
+                    // if a backwards cast hits something within 0.5f units of the unitPos
+                    if (Physics.Raycast(cPosition, -dir.normalized, out hit, dist, mask))
+                    {
+                        if (Vector3.Distance(hit.transform.position, unitPos) < 0.5f)
+                            add = true;
+                    }
+                }
+            }
+
+            if (add == true && !GameManager.instance.commanders[input.alliance].visableTiles.Contains(c.gameObject.GetComponent<TileInfo>().tilemapPosition))
+            {
+                GameManager.instance.commanders[input.alliance].visableTiles.Add(c.gameObject.GetComponent<TileInfo>().tilemapPosition);
             }
 
         }

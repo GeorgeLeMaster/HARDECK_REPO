@@ -25,7 +25,7 @@ public class CameraController : MonoBehaviour
         xPivotPos = transform.position.x;
         zPivotPos = transform.position.z;
 
-        foreach (Structure str in GameManager.instance.structures)
+        foreach (Structure str in GameManager.instance.commanders[GameManager.instance.playerAllianceInt].currentStructures)
         {
             if (str.playerHq)
             {
@@ -46,7 +46,7 @@ public class CameraController : MonoBehaviour
         if (Input.GetMouseButton(2))
         {
             
-            transform.position += new Vector3(transform.forward.x * 15, 0, transform.forward.z * 15) * -Input.GetAxis("Mouse Y") * Time.deltaTime;
+            transform.position += new Vector3(transform.forward.x * 15, 0, transform.forward.z * 15) * -Input.GetAxis("Mouse Y") * Time.deltaTime * 1.4f;
             transform.position += new Vector3(transform.right.x * 15, 0, transform.right.z * 15) * -Input.GetAxis("Mouse X") * Time.deltaTime;
 
         }
@@ -54,16 +54,6 @@ public class CameraController : MonoBehaviour
         {
             transform.Rotate(Vector3.up * Input.GetAxis("Mouse X") * 100 * Time.deltaTime);
         }
-
-        //if (Input.GetMouseButton(1) || Input.GetMouseButton(2))
-        //{
-        //    Cursor.visible = false;
-        //}
-        //else
-        //{
-        //    Cursor.visible = true;
-
-        //}
 
     }
 }

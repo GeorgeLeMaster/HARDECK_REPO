@@ -20,12 +20,13 @@ public class FloatingWindow : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        ColorBar.color = GameManager.instance.commanderColor_0;
     }
 
     // Update is called once per frame
     void Update()
     {
-        ColorBar.color = GameManager.instance.playerColor;
+
     }
 
     public void DragHandler(BaseEventData data)

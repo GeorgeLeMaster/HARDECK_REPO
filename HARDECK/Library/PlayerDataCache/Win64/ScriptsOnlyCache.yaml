@@ -26,7 +26,6 @@ ScriptsOnlyBuild:
     - TileInfo
     - TileOverlayLogic
     - UIManager
-    - UI_Pulsate
     - UnitGFXContainer
     - UnitSO
     Unity.RenderPipelines.Core.Runtime:
@@ -438,8 +437,6 @@ ScriptsOnlyBuild:
       Script: {instanceID: 10836}
     - Class: 114
       Script: {instanceID: 11634}
-    - Class: 114
-      Script: {instanceID: 11722}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 120
@@ -818,7 +815,7 @@ ScriptsOnlyBuild:
     className: WhiteBalance
   - hash:
       serializedVersion: 2
-      Hash: ccee49cff7ab34bf00b6fa38ac758497
+      Hash: 5639bb36ff1f4155627a69b59e493dda
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: EnemyAI
@@ -944,7 +941,7 @@ ScriptsOnlyBuild:
     className: UnityOnBecameVisibleMessageListener
   - hash:
       serializedVersion: 2
-      Hash: 8b3aac4964adf1403bac5c4f4446bdbc
+      Hash: 2e096ce6758b9596ae7d2528ef30eca7
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: GameManager

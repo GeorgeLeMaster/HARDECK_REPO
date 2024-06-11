@@ -35,13 +35,13 @@ public class GroundUnitAI : UnitAIBase
         UnitGFXContainer gfxc = gfxobj.GetComponent<UnitGFXContainer>();
         if (Application.isPlaying)
         {
-            if (alliance == GameManager.instance.playerAllianceInt)
+            if (alliance == 0)
             {
-                gfxc.gfx.GetComponent<Renderer>().material.SetColor("_AllianceColor", GameManager.instance.playerColor);
+                gfxc.gfx.GetComponent<Renderer>().material.SetColor("_AllianceColor", GameManager.instance.commanderColor_0);
             }
             else
             {
-                gfxc.gfx.GetComponent<Renderer>().material.SetColor("_AllianceColor", GameManager.instance.enemyColor);
+                gfxc.gfx.GetComponent<Renderer>().material.SetColor("_AllianceColor", GameManager.instance.commanderColor_1);
             }
         }
 
@@ -57,28 +57,6 @@ public class GroundUnitAI : UnitAIBase
         foreach (Rigidbody rb in childRbs)
         {
             rb.isKinematic = true;
-        }
-    }
-
-    override public void Order(int orderID, Vector3Int desiredPos)
-    {
-        UnitAIBase defender = null ;
-        foreach(UnitAIBase unit in GameManager.instance.AllUnits)
-        {
-            if (unit.currentPos == desiredPos) defender = unit;
-        }
-
-        switch (orderID)
-        {
-            case 0:
-                Move(desiredPos);
-                break;
-            case 1:
-                if (defender != null)
-                {
-                    Attack(defender);
-                }
-                break;
         }
     }
 
@@ -145,9 +123,9 @@ public class GroundUnitAI : UnitAIBase
                     currentPos = nextPos;
                     gfx.transform.LookAt(new Vector3(nextPos.x, gfx.transform.position.y, nextPos.z));
                     MapBuilder.instance.UpdateFOW(this);
-                    GameManager.instance.APFOW();
+                    GameManager.instance.UpdateVisableFOW();
 
-                    
+
                 }
                 else
                 {
@@ -179,25 +157,25 @@ public class GroundUnitAI : UnitAIBase
         if (roll == 20)
         {
             hits = true;
-            //Debug.Log("Hit");
+            Debug.Log("Hit");
 
         }
         else if (roll == 1)
         {
             hits = false;
-            //Debug.Log("Miss");
+            Debug.Log("Miss");
 
         }
         else if (roll >= CalculateHitChance(this, defender))
         {
             hits = true;
-            //Debug.Log("Hit");
+            Debug.Log("Hit");
 
         }
         else
         {
             hits = false;
-            //Debug.Log("Miss");
+            Debug.Log("Miss");
 
         }
 
@@ -240,6 +218,8 @@ public class GroundUnitAI : UnitAIBase
         int result = 5;
 
         // DnD style roll, 20 always succseeding, 1 always missing
+
+
 
         if (attacker.currentPos.y > defender.currentPos.y)
         {

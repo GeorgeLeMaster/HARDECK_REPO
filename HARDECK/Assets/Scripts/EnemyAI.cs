@@ -17,6 +17,9 @@ public class EnemyAI : MonoBehaviour
     private bool myTurn;
 
     private int currentUnitID;
+
+    public Vector3Int assaultPosition;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -48,13 +51,13 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    public void BeginTurn()
+    public void BeginTurn(int commanderToUse)
     {
         cooldown = 2f;
 
         currentUnitID = 0;
 
-        units = GameManager.instance.EnemyUnits;
+        units = GameManager.instance.commanders[commanderToUse].currentUnits;
         unusedUnits = units;
 
         myTurn = true;
@@ -81,12 +84,14 @@ public class EnemyAI : MonoBehaviour
         {
             currentUnitID++;
         }
+        // Grab new unit
         UnitAIBase unit = unusedUnits[currentUnitID];
 
+        // Attack Logic
         List<UnitAIBase> playerUnitsInRange = new List<UnitAIBase>();
 
         // find all in range enemy(player) units
-        foreach (UnitAIBase playerUnit in GameManager.instance.PlayerUnits)
+        foreach (UnitAIBase playerUnit in GameManager.instance.commanders[GameManager.instance.playerAllianceInt].currentUnits)
         {
             if (Vector3.Distance(unit.currentPos, playerUnit.currentPos) < unit.visionRadius)
             {
@@ -110,6 +115,29 @@ public class EnemyAI : MonoBehaviour
         {
             unit.Attack(closestUnit);
         }
+
+        // Movement Logic
+
+
+        //// get path to unit position
+        //List<Vector3> path = MapBuilder.instance.GetPath(assaultPosition, unit.currentPos);
+
+        //Vector3 destination = assaultPosition;
+
+        //float cost = 0;
+        //// iterate through path until max move is found
+        //for (int i = 0; i < path.Count; i++)
+        //{
+        //    cost += 2;
+        //    if (cost >= unit.moveSpeed)
+        //    {
+        //        destination = path[i];
+        //        break;
+        //    }
+        //}
+
+        //unit.Move(new Vector3Int((int)destination.x, (int)destination.y, (int)destination.z));
+        //unit.movementPips -= 1;
 
         currentUnitID++;
 

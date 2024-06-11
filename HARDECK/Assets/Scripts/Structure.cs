@@ -37,12 +37,12 @@ public class Structure : MonoBehaviour
         switch (ownerId)
         {
             case 0:
-                lr.startColor = GameManager.instance.playerColor;
-                lr.endColor = GameManager.instance.playerColor;
+                lr.startColor = GameManager.instance.commanderColor_0;
+                lr.endColor = GameManager.instance.commanderColor_0;
                 break;
             case 1:
-                lr.startColor = GameManager.instance.enemyColor;
-                lr.endColor = GameManager.instance.enemyColor;
+                lr.startColor = GameManager.instance.commanderColor_1;
+                lr.endColor = GameManager.instance.commanderColor_1;
                 break;
             default:
                 lr.startColor = Color.white;
@@ -112,12 +112,12 @@ public class Structure : MonoBehaviour
         switch (ownerId)
         {
             case 0:
-                lr.startColor = GameManager.instance.playerColor;
-                lr.endColor = GameManager.instance.playerColor;
+                lr.startColor = GameManager.instance.commanderColor_0;
+                lr.endColor = GameManager.instance.commanderColor_0;
                 break;
             case 1:
-                lr.startColor = GameManager.instance.enemyColor;
-                lr.endColor = GameManager.instance.enemyColor;
+                lr.startColor = GameManager.instance.commanderColor_1;
+                lr.endColor = GameManager.instance.commanderColor_1;
                 break;
             default:
                 lr.startColor = Color.white;

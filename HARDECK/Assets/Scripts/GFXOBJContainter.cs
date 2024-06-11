@@ -13,7 +13,7 @@ public class GFXOBJContainter : MonoBehaviour
 
     private Material fowmat;
 
-    private void Start()
+    private void Awake()
     {
         fowmat = Resources.Load("FOWMAT") as Material;
 
@@ -25,26 +25,16 @@ public class GFXOBJContainter : MonoBehaviour
         {
             gfxMaterials[i] = gfxMeshes[i].material;
         }
-
-        SetState(0);
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            SetState(0);
 
-        }
-        if (Input.GetKeyDown(KeyCode.O))
-        {
-            SetState(1);
-
-        }
     }
 
     public void SetState(int input)
     {
+
         if (input == 0)
         {
             foreach (MeshRenderer m in gfxMeshes)
@@ -63,11 +53,13 @@ public class GFXOBJContainter : MonoBehaviour
         }
         else if (input == 2)
         {
+
             for (int i = 0; i < gfxMeshes.Length; i++)
             {
                 gfxMeshes[i].material = gfxMaterials[i];
-                gfxMeshes[i].material.color = new Color(0.5f,0.5f,0.5f,1f);
+                gfxMeshes[i].material.color = new Color(0.5f, 0.5f, 0.5f, 1f);
             }
+
         }
 
 

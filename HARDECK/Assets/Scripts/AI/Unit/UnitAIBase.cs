@@ -46,7 +46,6 @@ public class UnitAIBase : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        activeAbilities = new List<AbilityObj>();
     }
 
     // Update is called once per frame
@@ -55,17 +54,22 @@ public class UnitAIBase : MonoBehaviour
 
     }
 
-    public void UseAbility(int input, UnitAIBase castingUnit = null, UnitAIBase targetedUnit = null)
+    public void UseAbility(int input, UnitAIBase castingUnit = null, UnitAIBase targetedUnit = null, Vector3Int targetedPosition = default(Vector3Int))
     {
+
+        if (activeAbilities == null)
+        {
+            activeAbilities = new List<AbilityObj>();
+        }
+
         AbilityObj newAbilityObj = new AbilityObj();
         newAbilityObj.turnsRemaining = Abilities.abilityDescs[input].maxTurnsRemaining;
+       // Debug.Log(activeAbilities);
         activeAbilities.Add(newAbilityObj);
-        Abilities.UseAbility(input, castingUnit, targetedUnit);
+        Abilities.UseAbility(input, castingUnit, targetedUnit, targetedPosition);
     }
 
     virtual public void Spawn(Vector3Int input, GameObject gfxInput) { }
-
-    virtual public void Order(int orderID, Vector3Int desiredPos) { }
 
     virtual public void Move(Vector3Int desiredPos) { }
 
@@ -87,7 +91,6 @@ public class UnitAIBase : MonoBehaviour
     public void TakeDamage(float input, Vector3 damageSourcePos)
     {
 
-
         GameObject obj = Instantiate(GameManager.instance.worldTextPopupPrefab, transform.position + new Vector3(0, 0.5f, 0), Quaternion.identity);
         TextMeshProUGUI txt = obj.GetComponentsInChildren<TextMeshProUGUI>()[0];
         if (input <= 0)
@@ -95,11 +98,9 @@ public class UnitAIBase : MonoBehaviour
             txt.text = "MISS";
             txt.color = Color.white;
             return;
-
         }
         else
         {
-
             animator.SetTrigger("TakeDamage");
             txt.text = input.ToString();
             txt.color = Color.red;
@@ -110,6 +111,7 @@ public class UnitAIBase : MonoBehaviour
         //Debug.Log(gameObject.name + $" took {input} damage");
         if (currentHealth <= 0)
         {
+            // Disable Minimap Pip
             minimapPip.SetActive(false);
 
             Rigidbody[] childRbs = gfx.GetComponentsInChildren<Rigidbody>();
@@ -118,39 +120,32 @@ public class UnitAIBase : MonoBehaviour
                 rb.isKinematic = false;
             }
 
+            // Add death force [CHANGE: MAKE DEATH SPECIFIC]
             int limb =  Random.Range(0, 1);
             Vector3 dir = childRbs[limb].transform.position - damageSourcePos;
             childRbs[limb].AddForce(dir.normalized * Random.Range(250, 700) * childRbs[limb].mass);
             childRbs[limb].AddForce(Vector3.up * Random.Range(-200,250) * childRbs[limb].mass);
             childRbs[limb].AddTorque(Vector3.up * Random.Range(-2500, 2500));
 
+            // Remove from commanders unit list and update FOW
 
-            if (GameManager.instance.EnemyUnits.Contains(this))
+            this.GetComponent<GFXAnchor>().enabled = false;
+
+            GameManager.instance.commanders[alliance].currentUnits.Remove(this);
+            if (alliance == GameManager.instance.playerAllianceInt)
             {
-                GameManager.instance.EnemyUnits.Remove(this);
+                GameManager.instance.RefreshFOW();
             }
-            else if (GameManager.instance.PlayerUnits.Contains(this))
-            {
-                GameManager.instance.PlayerUnits.Remove(this);
-            }
-
-            GameManager.instance.selectedUnit_Player = null;
-
-            GameManager.instance.selectedUnit_Enemy = null;
-
-            GameManager.instance.AllUnits.Remove(this);
-            GameManager.instance.APFOW();
+            // Turn off animator, logic, and colliders
             animator.enabled = false;
-            this.enabled = false;
-
             foreach (Collider c in this.GetComponents<Collider>())
             {
                 c.enabled = false;
             }
-            this.GetComponent<GFXAnchor>().enabled = false;
+            this.enabled = false;
         }
-        GameManager.instance.UpdatePlayerActionGFX();
 
+        GameManager.instance.UpdatePlayerActionGFX();
 
     }
 
