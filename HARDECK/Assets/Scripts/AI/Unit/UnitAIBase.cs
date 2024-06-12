@@ -131,7 +131,7 @@ public class UnitAIBase : MonoBehaviour
 
             this.GetComponent<GFXAnchor>().enabled = false;
 
-            GameManager.instance.commanders[alliance].currentUnits.Remove(this);
+            GameManager.instance.commanders[alliance].activeUnits.Remove(this);
             if (alliance == GameManager.instance.playerAllianceInt)
             {
                 GameManager.instance.RefreshFOW();

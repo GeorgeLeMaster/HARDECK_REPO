@@ -374,7 +374,7 @@ ScriptsOnlyBuild:
     - Class: 108
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1780}
+      Script: {instanceID: 1778}
     - Class: 114
       Script: {instanceID: 1782}
     - Class: 114
@@ -689,6 +689,12 @@ ScriptsOnlyBuild:
     className: ContentSizeFitter
   - hash:
       serializedVersion: 2
+      Hash: 00bbd9db8634496d079d17711b2ff7c4
+    assemblyName: UnityEngine.UI
+    namespaceName: UnityEngine.UI
+    className: Selectable
+  - hash:
+      serializedVersion: 2
       Hash: b5007673bbbdb9d12597a1d8201370f5
     assemblyName: UnityEngine.UI
     namespaceName: UnityEngine.UI
@@ -705,12 +711,6 @@ ScriptsOnlyBuild:
     assemblyName: UnityEngine.UI
     namespaceName: UnityEngine.UI
     className: Button
-  - hash:
-      serializedVersion: 2
-      Hash: 00bbd9db8634496d079d17711b2ff7c4
-    assemblyName: UnityEngine.UI
-    namespaceName: UnityEngine.UI
-    className: Selectable
   - hash:
       serializedVersion: 2
       Hash: d5cd7f207e91ca8336c65a577a6fb2a0
@@ -941,7 +941,7 @@ ScriptsOnlyBuild:
     className: UnityOnBecameVisibleMessageListener
   - hash:
       serializedVersion: 2
-      Hash: 2e096ce6758b9596ae7d2528ef30eca7
+      Hash: c9f31fb00292f9b33da4b560490177c2
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: GameManager
@@ -1739,7 +1739,7 @@ ScriptsOnlyBuild:
     className: DebugUIHandlerIntField
   - hash:
       serializedVersion: 2
-      Hash: 18c03510632eb37b853e43d913c11b08
+      Hash: 9a51eb74d32ff9a3fe44dea523539581
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: GFXOBJContainter
@@ -1751,7 +1751,7 @@ ScriptsOnlyBuild:
     className: LiftGammaGain
   - hash:
       serializedVersion: 2
-      Hash: 5338c4006d3a8ed79b7335d0274a14ba
+      Hash: 7c26330287aecd1bea4be9ebcc43101d
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: MapBuilder
@@ -1763,7 +1763,7 @@ ScriptsOnlyBuild:
     className: DebugUIHandlerVector4
   - hash:
       serializedVersion: 2
-      Hash: 71f72fc3ff0b3757d1cc2c591e06cee9
+      Hash: f45ef8b3c246243d760eb2a0b15755bb
     assemblyName: Assembly-CSharp
     namespaceName: 
     className: Structure

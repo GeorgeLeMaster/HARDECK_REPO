@@ -57,7 +57,7 @@ public class EnemyAI : MonoBehaviour
 
         currentUnitID = 0;
 
-        units = GameManager.instance.commanders[commanderToUse].currentUnits;
+        units = GameManager.instance.commanders[commanderToUse].activeUnits;
         unusedUnits = units;
 
         myTurn = true;
@@ -68,7 +68,7 @@ public class EnemyAI : MonoBehaviour
     private void EndTurn()
     {
         myTurn = false;
-        GameManager.instance.StartNewRound();
+        GameManager.instance.StartNewTurn();
     }
 
     private void NextAction()
@@ -91,7 +91,7 @@ public class EnemyAI : MonoBehaviour
         List<UnitAIBase> playerUnitsInRange = new List<UnitAIBase>();
 
         // find all in range enemy(player) units
-        foreach (UnitAIBase playerUnit in GameManager.instance.commanders[GameManager.instance.playerAllianceInt].currentUnits)
+        foreach (UnitAIBase playerUnit in GameManager.instance.commanders[GameManager.instance.playerAllianceInt].activeUnits)
         {
             if (Vector3.Distance(unit.currentPos, playerUnit.currentPos) < unit.visionRadius)
             {

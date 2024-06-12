@@ -75,7 +75,6 @@ public class GroundUnitAI : UnitAIBase
 
         if (checkPos.pathCost <= moveSpeed)
         {
-            movementPips -= 1;
 
             while (checkPos.tilemapPosition != desiredPos)
             {
@@ -122,6 +121,7 @@ public class GroundUnitAI : UnitAIBase
                     pathPositions.Remove(nextPos);
                     currentPos = nextPos;
                     gfx.transform.LookAt(new Vector3(nextPos.x, gfx.transform.position.y, nextPos.z));
+                    GameManager.instance.commanders[this.alliance].visableTiles.Clear();
                     MapBuilder.instance.UpdateFOW(this);
                     GameManager.instance.UpdateVisableFOW();
 
@@ -143,7 +143,6 @@ public class GroundUnitAI : UnitAIBase
 
     IEnumerator Attack_Coroutine(UnitAIBase defender)
     {
-        actionPips -= 1;
         UnitAIBase attackedUnit = defender;
 
         gfx.transform.LookAt(new Vector3(attackedUnit.currentPos.x, gfx.transform.position.y, attackedUnit.currentPos.z));
@@ -157,25 +156,21 @@ public class GroundUnitAI : UnitAIBase
         if (roll == 20)
         {
             hits = true;
-            Debug.Log("Hit");
 
         }
         else if (roll == 1)
         {
             hits = false;
-            Debug.Log("Miss");
 
         }
         else if (roll >= CalculateHitChance(this, defender))
         {
             hits = true;
-            Debug.Log("Hit");
 
         }
         else
         {
             hits = false;
-            Debug.Log("Miss");
 
         }
 

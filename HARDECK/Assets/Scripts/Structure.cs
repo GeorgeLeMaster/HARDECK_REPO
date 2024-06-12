@@ -57,7 +57,7 @@ public class Structure : MonoBehaviour
 
         foreach (Commander c in GameManager.instance.commanders)
         {
-            foreach (UnitAIBase u in c.currentUnits)
+            foreach (UnitAIBase u in c.activeUnits)
             {
                 if (CheckInBorder(u) == true && !capAlliances.Contains(u.alliance))
                 {
@@ -75,13 +75,13 @@ public class Structure : MonoBehaviour
                 if (ownerAlliance == 10)
                 {
                     // give to cap alliance
-                    GameManager.instance.commanders[capAlliances[0]].currentStructures.Add(this);
+                    GameManager.instance.commanders[capAlliances[0]].ownedStructures.Add(this);
                     ownerAlliance = capAlliances[0];
                 }
                 else
                 {
                     // take from enemy
-                    GameManager.instance.commanders[ownerAlliance].currentStructures.Remove(this);
+                    GameManager.instance.commanders[ownerAlliance].ownedStructures.Remove(this);
                     ownerAlliance = 10;
                 }
             }
@@ -122,16 +122,15 @@ public class Structure : MonoBehaviour
     public void HideGFX()
     {
 
-        if (!discovered)
-        {
-            LineRenderer lr = GetComponent<LineRenderer>();
-            lr.enabled = false;
 
-            buildingGfx.SetActive(false);
+        LineRenderer lr = GetComponent<LineRenderer>();
+        lr.enabled = false;
 
-            hideGFX_h.SetActive(true);
+        buildingGfx.SetActive(false);
 
-        }
+        hideGFX_h.SetActive(true);
+
+
 
     }
 

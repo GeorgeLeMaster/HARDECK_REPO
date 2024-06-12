@@ -197,15 +197,15 @@ public class MapBuilder : MonoBehaviour
                     newTileInfo.isRamp = true;
 
                     // DETERMINES RAMP ORIENTATION
-                    if (rampData[1] == "Forwards")
+                    if (rampData[1] == "PosZ")
                     {
                         newTileInfo.rampOrientation = TileInfo.Directions.PosZ;
                     }
-                    else if (rampData[1] == "Right")
+                    else if (rampData[1] == "NegX")
                     {
                         newTileInfo.rampOrientation = TileInfo.Directions.NegX;
                     }
-                    else if (rampData[1] == "Backwards")
+                    else if (rampData[1] == "NegZ")
                     {
                         newTileInfo.rampOrientation = TileInfo.Directions.NegZ;
                     }
@@ -233,10 +233,6 @@ public class MapBuilder : MonoBehaviour
                 // Debug.Log(newPos_tile);
 
                 newTileInfo.tilemapPosition = newPos_tile;
-
-                if (newPos_tile.x < mapX && newPos_tile.y < mapY && newPos_tile.z < mapZ)
-                {
-                }
 
                 // ASSIGN NAME
                 string rampString = "Tile";
@@ -353,7 +349,7 @@ public class MapBuilder : MonoBehaviour
 
             // Give structure to owning commander
             if (Application.isPlaying && sLogic.ownerAlliance != 10)
-                GameManager.instance.commanders[sLogic.ownerAlliance].currentStructures.Add(sLogic);
+                GameManager.instance.commanders[sLogic.ownerAlliance].ownedStructures.Add(sLogic);
 
             // FailSafe
             currentLineInt++;
@@ -427,7 +423,7 @@ public class MapBuilder : MonoBehaviour
 
             // Give to owning commander
             if (Application.isPlaying)
-                GameManager.instance.commanders[aInt].currentUnits.Add(ai);
+                GameManager.instance.commanders[aInt].activeUnits.Add(ai);
 
             // FailsSafe
             currentLineInt++;

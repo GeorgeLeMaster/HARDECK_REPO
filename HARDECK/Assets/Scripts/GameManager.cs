@@ -23,14 +23,16 @@ public class Commander
 {
     public Commander()
     {
-        currentStructures = new List<Structure>();
-        currentUnits = new List<UnitAIBase>();
+        ownedStructures = new List<Structure>();
+        activeUnits = new List<UnitAIBase>();
 
         visableEnemyUnits = new List<UnitAIBase>();
         visableGFXOBJs = new List<GFXOBJContainter>();
         visableTiles = new List<Vector3Int>();
 
         deck = new List<UnitAIBase>();
+
+        knownStructures = new List<Structure>();
     }
 
     public int allianceInt;
@@ -39,8 +41,8 @@ public class Commander
     public int ccCap;
     public int ccCurrent;
 
-    public List<Structure> currentStructures;
-    public List<UnitAIBase> currentUnits;
+    public List<Structure> ownedStructures;
+    public List<UnitAIBase> activeUnits;
 
     public List<UnitAIBase> deck;
 
@@ -48,7 +50,8 @@ public class Commander
     public List<GFXOBJContainter> visableGFXOBJs;
     public List<Vector3Int> visableTiles;
 
-    public int[] GFXOBJ_StateIds;
+    public GFXOBJContainter[] GFXOBJs;
+    public List<Structure> knownStructures;
 }
 
 public class UnitData
@@ -102,10 +105,8 @@ public class GameManager : MonoBehaviour
     public GameObject commitActionButton;
     public GameObject cancelActionButton;
     public GameObject endTurnButton;
-    public GameObject movementTooFarText;
-    public GameObject outOfRangeText;
     public TextMeshProUGUI commitActionText;
-    public TextMeshProUGUI hitChanceText;
+    public TextMeshProUGUI actionInfoText;
     public GameObject worldTextPopupPrefab;
 
     public Image abilityIcon;
@@ -203,14 +204,20 @@ public class GameManager : MonoBehaviour
 
         foreach(Commander c in commanders)
         {
-            c.GFXOBJs = new int[MapBuilder.instance.GFXOBJs.Length];
-            c.GFXOBJs = MapBuilder.instance.GFXOBJs(int);
+            c.GFXOBJs = new GFXOBJContainter[MapBuilder.instance.GFXOBJs.Length];
+
+            for(int i = 0; i < c.GFXOBJs.Length; i++)
+            {
+                c.GFXOBJs[i] = new GFXOBJContainter();
+            }
+
+            CopyStates(c.GFXOBJs, MapBuilder.instance.GFXOBJs);
         }
 
         // Load icon files
         abilityIconFiles = Resources.LoadAll<Sprite>("Sprites/AbilityIcons");
 
-        StartNewRound();
+        StartNewTurn();
 
     }
 
@@ -251,7 +258,7 @@ public class GameManager : MonoBehaviour
 
                         newAi.Spawn(pos, Resources.Load("Units/GFX/GFX_Infantryman") as GameObject);
 
-                        commanders[newAi.alliance].currentUnits.Add(newAi);
+                        commanders[newAi.alliance].activeUnits.Add(newAi);
 
                         ClearOverlay("Structures");
                         turnState = TurnState.Action;
@@ -404,9 +411,7 @@ public class GameManager : MonoBehaviour
     public void UpdatePlayerActionGFX()
     {
         // Disable Everything
-        hitChanceText.gameObject.SetActive(false);
-        movementTooFarText.SetActive(false);
-        outOfRangeText.SetActive(false);
+        actionInfoText.gameObject.SetActive(false);
         commitActionButton.SetActive(false);
         cancelActionButton.SetActive(false);
 
@@ -494,71 +499,29 @@ public class GameManager : MonoBehaviour
         // In world UIs
         if (selectedAbilityInt != -1) 
         {
-            switch (selectedAbilityInt)
+            AbilityDescriptor ab = Abilities.abilityDescs[selectedAbilityInt];
+
+            if (Abilities.CheckAbilityCost(selectedUnit_Player, selectedAbilityInt) && Abilities.CheckAbilityParameters(selectedUnit_Player, selectedAbilityInt))
             {
-                case 0: // ATTACK
-                    if (Vector3.Distance(selectedUnit_Enemy.currentPos, selectedUnit_Player.currentPos) <= selectedUnit_Player.range)
-                    {
-                        moveLine.gameObject.SetActive(false);
-                        commitActionButton.SetActive(true);
-                        cancelActionButton.SetActive(true);
-                        outOfRangeText.SetActive(false);
-                        commitActionText.text = "ATTACK";
-                        commitActionButton.GetComponent<Image>().color = new Color(1, 0, 0);
-                    }
-                    else
-                    {
-                        outOfRangeText.SetActive(true);
-                    }
-                    break;
-
-                case 1: // MOVE
-                    // Move line logic
-                    if (selectedPosition != new Vector3Int(-1, -1, -1))
-                    {
-                        moveLine.gameObject.SetActive(true);
-                        List<Vector3> path = new List<Vector3>();
-
-                        path = MapBuilder.instance.GetPath(selectedPosition, selectedUnit_Player.currentPos);
-                        moveLine.positionCount = path.Count;
-                        //Debug.Log(path.Count);
-                        for (int i = 0; i < path.Count; i++)
-                        {
-                            moveLine.SetPosition(i, path[i] + new Vector3(0, 0.025f, 0));
-
-                        }
-
-                        Flowfield ff = MapBuilder.instance.Flowfields[selectedUnit_Player.currentPos.x, selectedUnit_Player.currentPos.y, selectedUnit_Player.currentPos.z];
-                        float cost = ff.tiles[selectedPosition.x, selectedPosition.y, selectedPosition.z].pathCost;
-
-                        Color goodColor = new Color(0, 1, 0, 1);
-                        Color badColor = new Color(0, 1, 0, 0.2f);
-
-
-                        if (cost <= selectedUnit_Player.moveSpeed && cost != -1)
-                        {
-                            commitActionText.text = "MOVE";
-                            commitActionButton.GetComponent<Image>().color = new Color(1, 0.86f, 0.36f);
-                            moveLine.startColor = goodColor;
-                            moveLine.endColor = goodColor;
-                            commitActionButton.SetActive(true);
-                            cancelActionButton.SetActive(true);
-                            movementTooFarText.SetActive(false);
-                        }
-                        else
-                        {
-
-                            movementTooFarText.SetActive(true);
-                            commitActionButton.GetComponent<Image>().color = new Color(0.8f, 0.86f, 0.16f);
-                            moveLine.startColor = badColor;
-                            moveLine.endColor = badColor;
-                        }
-                    }
-                    break;
-
-                default:
-                    break;
+                commitActionButton.SetActive(true);
+                commitActionButton.GetComponent<Image>().color = ab.color;
+                actionInfoText.gameObject.SetActive(false);
+                commitActionText.text = ab.abName;
             }
+            else
+            {
+                commitActionButton.SetActive(false);
+                actionInfoText.gameObject.SetActive(true);
+                if (!Abilities.CheckAbilityCost(selectedUnit_Player, selectedAbilityInt))
+                {
+                    actionInfoText.text = ab.costMessage;
+                }
+                else
+                {
+                    actionInfoText.text = ab.parametersMessage;
+                }
+            }
+
 
             // Move line check
             if (selectedAbilityInt != 1 || selectedPosition == new Vector3Int(-1, -1, -1))
@@ -591,11 +554,97 @@ public class GameManager : MonoBehaviour
         UpdatePlayerActionGFX();
     }
 
+    public void StartNewTurn()
+    {
+
+        turnState = TurnState.Drawing;
+
+        selectedAbilityInt = -1;
+
+        foreach (UnitAIBase unit in commanders[playerAllianceInt].activeUnits)
+        {
+            unit.actionPips = 1;
+            unit.movementPips = 1;
+
+            if (unit.activeAbilities != null)
+            {
+                if (unit.activeAbilities.Count > 0)
+                {
+                    int count = unit.activeAbilities.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        AbilityObj obj = unit.activeAbilities[i];
+                        obj.turnsRemaining--;
+
+                        if (obj.turnsRemaining <= 0)
+                        {
+                            Abilities.EndAbility(obj.referencedAbility, unit);
+                            unit.activeAbilities.Remove(obj);
+                            i--;
+                            count--;
+                        }
+                        else
+                        {
+                            Abilities.TickAbility(obj.referencedAbility, unit);
+                            obj.turnsRemaining--;
+                        }
+
+                    }
+                }
+            }
+
+        }
+
+        foreach (Structure s in GameObject.Find("Structures").GetComponentsInChildren<Structure>())
+        {
+            s.CheckOwnership();
+            s.HideGFX();
+        }
+
+        lastGFXOBJs.Clear();
+        //currentGFXOBJs.Clear();
+        RefreshFOW();
+        GameManager.instance.UpdateVisableFOW();
+
+        controllsLocked = false;
+        enemyTurnIndicator.SetActive(false);
+        endTurnButton.SetActive(true);
+        selectedUnit_Player = null;
+        selectedUnit_Enemy = null;
+        selectedAbilityInt = -1;
+        UpdatePlayerActionGFX();
+
+        controllsLocked = true;
+
+        if (skipDeployment == true)
+        {
+            turnState = TurnState.Action;
+            controllsLocked = false;
+            return;
+        }
+        else
+        {
+
+            PromptDrawPhaseOne();
+        }
+    }
+
     // Trun state logic
     public void EndPlayerTurn()
     {
 
-        commanders[playerAllianceInt].GFXOBJs = MapBuilder.instance.GFXOBJs;
+        CopyStates(commanders[playerAllianceInt].GFXOBJs, MapBuilder.instance.GFXOBJs);
+
+        foreach(Structure s in commanders[playerAllianceInt].ownedStructures)
+        {
+            s.HideGFX();
+        }
+
+        foreach (UnitAIBase u in commanders[playerAllianceInt].activeUnits)
+        {
+            u.gfx.SetActive(false);
+        }
+
         selectedAbilityInt = -1;
         selectedPosition = new Vector3Int(-1, -1, -1);
         selectedUnit_Player = null;
@@ -613,6 +662,14 @@ public class GameManager : MonoBehaviour
 
         //}
 
+
+
+        controllsLocked = true;
+        enemyTurnIndicator.SetActive(true);
+        endTurnButton.SetActive(false);
+
+
+        // Cycles through commanders
         if (playerAllianceInt < commanders.Count-1)
         {
             playerAllianceInt++;
@@ -622,10 +679,7 @@ public class GameManager : MonoBehaviour
             playerAllianceInt = 0;
         }
 
-        controllsLocked = true;
-        enemyTurnIndicator.SetActive(true);
-        endTurnButton.SetActive(false);
-        StartNewRound();
+        StartNewTurn();
         
     }
 
@@ -641,7 +695,7 @@ public class GameManager : MonoBehaviour
 
         currentGFXOBJs.Clear();
 
-        foreach (UnitAIBase u in cInput.currentUnits)
+        foreach (UnitAIBase u in cInput.activeUnits)
         {
             u.gfx.SetActive(true);
 
@@ -651,9 +705,13 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        foreach (Structure st in cInput.currentStructures)
+        foreach (Structure st in cInput.ownedStructures)
         {
             st.ShowGFX();
+            if (!commanders[playerAllianceInt].knownStructures.Contains(st))
+            {
+                commanders[playerAllianceInt].knownStructures.Add(st);
+            }
 
             Collider[] structTiles = Physics.OverlapBox(st.tilemapPos, new Vector3(st.WidthHeight.x, 1, st.WidthHeight.y), Quaternion.identity, LayerMask.GetMask("OBJFinder"));
 
@@ -690,7 +748,7 @@ public class GameManager : MonoBehaviour
         {
             if (c.allianceInt != playerAllianceInt)
             {
-                foreach (UnitAIBase u in c.currentUnits)
+                foreach (UnitAIBase u in c.activeUnits)
                 {
                     if (cInput.visableTiles.Contains(u.currentPos))
                     {
@@ -711,8 +769,13 @@ public class GameManager : MonoBehaviour
             if (cInput.visableTiles.Contains(s.tilemapPos) && s.ownerAlliance != playerAllianceInt)
             {
                 s.ShowGFX();
+                if (!commanders[playerAllianceInt].knownStructures.Contains(s))
+                {
+                    Debug.Log("Adding");
+                    commanders[playerAllianceInt].knownStructures.Add(s);
+                }
             }
-            else if (s.ownerAlliance != playerAllianceInt)
+            else if (s.ownerAlliance != playerAllianceInt && !commanders[playerAllianceInt].knownStructures.Contains(s))
             {
                 s.HideGFX();
             }
@@ -724,90 +787,27 @@ public class GameManager : MonoBehaviour
     public void RefreshFOW()
     {
 
-        //MapBuilder.instance.GFXOBJs = commanders[playerAllianceInt].GFXOBJs;
+        //foreach (GFXOBJContainter c in MapBuilder.instance.GFXOBJs)
+        //{
+        //    c.SetState(0);
+        //}
 
+        //CopyStates(MapBuilder.instance.GFXOBJs, commanders[playerAllianceInt].GFXOBJs);
 
-        for(int i = 0; i < MapBuilder.instance.GFXOBJs.Length; i++)
+        for (int i = 0; i < MapBuilder.instance.GFXOBJs.Length; i++)
         {
-            MapBuilder.instance.GFXOBJs[i].SetState(commanders[playerAllianceInt].GFXOBJ_StateIds[i]);
+            MapBuilder.instance.GFXOBJs[i].SetState(commanders[playerAllianceInt].GFXOBJs[i].state);
         }
 
         //commanders[playerAllianceInt].visableTiles.Clear();
-        //foreach (UnitAIBase u in commanders[playerAllianceInt].currentUnits)
+        //foreach (UnitAIBase u in commanders[playerAllianceInt].activeUnits)
         //{
         //    MapBuilder.instance.UpdateFOW(u);
         //}
 
     }
 
-    public void StartNewRound()
-    {
 
-        turnState = TurnState.Drawing;
-
-        selectedAbilityInt = -1;
-
-        foreach(UnitAIBase unit in commanders[playerAllianceInt].currentUnits)
-        {
-            unit.actionPips = 1;
-            unit.movementPips = 1;
-
-            if (unit.activeAbilities != null)
-            {
-                if (unit.activeAbilities.Count > 0)
-                {
-                    foreach (AbilityObj obj in unit.activeAbilities)
-                    {
-                        obj.turnsRemaining--;
-
-                        if (obj.turnsRemaining <= 0)
-                        {
-                            Abilities.EndAbility(obj.referencedAbility, unit);
-                        }
-                        else
-                        {
-                            Abilities.TickAbility(obj.referencedAbility, unit);
-                        }
-
-                    }
-                }
-            }
-            
-        }
-
-        foreach (Structure s in GameObject.Find("Structures").GetComponentsInChildren<Structure>())
-        {
-            s.CheckOwnership();
-        }
-
-        lastGFXOBJs.Clear();
-        currentGFXOBJs.Clear();
-
-        RefreshFOW();
-        GameManager.instance.UpdateVisableFOW();
-
-        controllsLocked = false;
-        enemyTurnIndicator.SetActive(false);
-        endTurnButton.SetActive(true);
-        selectedUnit_Player = null;
-        selectedUnit_Enemy = null;
-        selectedAbilityInt = -1;
-        UpdatePlayerActionGFX();
-
-        controllsLocked = true;
-
-        if (skipDeployment == true)
-        {
-            turnState = TurnState.Action;
-            controllsLocked = false;
-            return;
-        }
-        else
-        {
-
-            PromptDrawPhaseOne();
-        }
-    }
 
 
     // Menu UI logic
@@ -829,7 +829,7 @@ public class GameManager : MonoBehaviour
 
     public void HighlightDeployableTiles(int type)
     {
-        foreach (Structure s in commanders[playerAllianceInt].currentStructures)
+        foreach (Structure s in commanders[playerAllianceInt].ownedStructures)
         {
             if (((type == 0 && s.provideGround) || (type == 1 && s.provideHeavy) || (type == 2 && s.provideAir)))
             {
@@ -856,7 +856,7 @@ public class GameManager : MonoBehaviour
         {
             case "Structures":
 
-                foreach (Structure s in commanders[playerAllianceInt].currentStructures)
+                foreach (Structure s in commanders[playerAllianceInt].ownedStructures)
                 {
 
                     for (int x = -s.WidthHeight.x; x <= s.WidthHeight.x; x++)
@@ -1025,5 +1025,14 @@ public class GameManager : MonoBehaviour
         RectTransformUtility.ScreenPointToLocalPointInRectangle((RectTransform)gameUI_Canvas.transform, Input.mousePosition, gameUI_Canvas.worldCamera, out pos);
 
         cursor.transform.position = gameUI_Canvas.transform.TransformPoint(pos);
+    }
+
+    private void CopyStates(GFXOBJContainter[] to, GFXOBJContainter[] from)
+    {
+
+        for (int i = 0; i < to.Length; i++)
+        {
+            to[i].state = from[i].state;
+        }
     }
 }

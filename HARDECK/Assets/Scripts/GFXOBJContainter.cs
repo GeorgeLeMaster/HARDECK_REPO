@@ -15,6 +15,10 @@ public class GFXOBJContainter : MonoBehaviour
 
     public int state = 0;
 
+    public GFXOBJContainter()
+    {
+    }
+
     private void Awake()
     {
         fowmat = Resources.Load("FOWMAT") as Material;

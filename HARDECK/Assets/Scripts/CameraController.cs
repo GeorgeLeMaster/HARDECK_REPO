@@ -25,7 +25,7 @@ public class CameraController : MonoBehaviour
         xPivotPos = transform.position.x;
         zPivotPos = transform.position.z;
 
-        foreach (Structure str in GameManager.instance.commanders[GameManager.instance.playerAllianceInt].currentStructures)
+        foreach (Structure str in GameManager.instance.commanders[GameManager.instance.playerAllianceInt].ownedStructures)
         {
             if (str.playerHq)
             {
