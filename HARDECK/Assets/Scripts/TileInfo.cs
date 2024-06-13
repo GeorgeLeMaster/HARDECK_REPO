@@ -76,6 +76,7 @@ public class TileInfo : MonoBehaviour
 
         }
 
+
         if (invalidGFX != null)
         {
             if (transform.position.x < 0 || transform.position.y < 0 || transform.position.z < 0)

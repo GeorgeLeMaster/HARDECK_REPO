@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+
 public class UnitAIBase : MonoBehaviour
 {
 
@@ -131,7 +132,9 @@ public class UnitAIBase : MonoBehaviour
 
             this.GetComponent<GFXAnchor>().enabled = false;
 
+            GameManager.instance.allUnits.Remove(this);
             GameManager.instance.commanders[alliance].activeUnits.Remove(this);
+            GameManager.instance.commanders[alliance].visableTiles.Clear();
             if (alliance == GameManager.instance.playerAllianceInt)
             {
                 GameManager.instance.RefreshFOW();

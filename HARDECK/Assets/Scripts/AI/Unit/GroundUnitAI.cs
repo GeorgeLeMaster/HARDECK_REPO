@@ -137,7 +137,9 @@ public class GroundUnitAI : UnitAIBase
         }
         GameManager.instance.controllsLocked = false;
         animator.SetTrigger("Idle");
-
+        GameManager.instance.selectedPosition = Vector3Int.zero;
+        GameManager.instance.selectedAbilityWorldIndicator.SetActive(false);
+        GameManager.instance.UpdatePlayerActionGFX();
 
     }
 

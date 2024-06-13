@@ -5,7 +5,7 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     
-    private float sizeClamp = 3;
+    private float sizeClamp = 10;
 
     private float xPivotPos;
     private float zPivotPos;
@@ -39,9 +39,9 @@ public class CameraController : MonoBehaviour
     void LateUpdate()
     {
         sizeClamp -= Input.mouseScrollDelta.y;
-        sizeClamp = Mathf.Clamp(sizeClamp, 2, 12);
+        sizeClamp = Mathf.Clamp(sizeClamp, 5, 25);
 
-        Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, sizeClamp, Time.deltaTime * 5);
+        Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, sizeClamp, Time.deltaTime * 5);
 
         if (Input.GetMouseButton(2))
         {

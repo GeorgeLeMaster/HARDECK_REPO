@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -51,13 +52,15 @@ public static class Abilities
      * 1: MOVE
      * 2: DIG IN
      * 3: BUILD STRUCTURE
+     * 4: FIRE MISSILE
     */
     public static AbilityDescriptor[] abilityDescs = new AbilityDescriptor[]
     {
-        new AbilityDescriptor("Attack", "Fire the unit's primary weapon. Consumes an Action Pip", 1, new Color(1,0,0), "Requires an Action Pip", "Select an enemy Unit"),
-        new AbilityDescriptor("Move", "Attempt to manuver to the selected position. Consumes a Movement Pip", 1, new Color(1,0.75f,0), "Requires a Movement Pip", "Select a location to move to, within the units range"),
-        new AbilityDescriptor("Dig In", "Unit braces at it's current position, confering a defense and accuracy boost for this turn. Consumes a Movement Pip", 1, new Color(0.2f, 0.2f, 0.2f), "Requires a Movement Pip", "Huh?"),
-        new AbilityDescriptor("Build Structure", "Unit Is Stunned for two full turns, if Unit is alive at the end of the second turn, a structure is created at this location. Consumes an Action Pip", 3, new Color(0, 0.25f, 1), "Requires an Action Pip and a Movement Pip", "Location Must be clear"),
+        new AbilityDescriptor("Attack", "Fire the unit's primary weapon", 1, new Color(1,0,0), "Requires an Action Pip", "Select an enemy Unit"),
+        new AbilityDescriptor("Move", "Attempt to manuver to the selected position", 1, new Color(1,0.75f,0), "Requires a Movement Pip", "Select a location to move to, within the units range"),
+        new AbilityDescriptor("Dig In", "Unit braces at it's current position, confering a defense and accuracy boost for this turn", 1, new Color(0.25f, 0.25f, 0.25f), "Requires a Movement Pip", "Huh?"),
+        new AbilityDescriptor("Build Structure", "Unit Is Stunned for two full turns, if Unit is alive at the end of the second turn, a structure is created at this location", 3, new Color(0, 0.25f, 1), "Requires an Action Pip and a Movement Pip", "Location Invalid"),
+        new AbilityDescriptor("Fire Missile", "Fire 3x3 Splash damage Missile, dealing 5 damage to effected units", 1, new Color(1, 0.25f, 0.25f), "Requires an Action Pip", "Select a location or enemy within range"),
 
     };
 
@@ -91,11 +94,39 @@ public static class Abilities
                 castingUnit.movementPips--;
                 break;
 
+            case 4: // FIRE MISSILE
+                castingUnit.actionPips--;
+
+                Vector3Int landPos;
+                if (targetedUnit != null)
+                {
+                    landPos = targetedUnit.currentPos;
+                }
+                else
+                {
+                    landPos = targetedPosition;
+                }
+
+                LayerMask mask = LayerMask.GetMask("Unit");
+                Collider[] nearbyUnits = Physics.OverlapBox(landPos, new Vector3(1,1,1));
+
+                foreach(Collider c in nearbyUnits)
+                {
+                    if (c.GetComponent<UnitAIBase>())
+                    {
+                        c.GetComponent<UnitAIBase>().TakeDamage(6, landPos);
+                    }
+                }
+
+                break;
+
             default:
                 break;
         }
 
         castingUnit.activeAbilities.Add(newAbility);
+        GameManager.instance.UpdateVisableFOW();
+
     }
 
     public static void TickAbility(int input, UnitAIBase affectedUnit, Vector3Int affectedPosition = default(Vector3Int))
@@ -118,6 +149,10 @@ public static class Abilities
             case 3: // BUILD STRUCTURE
                 affectedUnit.actionPips = 0;
                 affectedUnit.movementPips = 0;
+                break;
+
+            case 4: // FIRE MISSILE
+
                 break;
 
             default:
@@ -179,6 +214,10 @@ public static class Abilities
                 GameManager.instance.UpdateVisableFOW();
                 break;
 
+            case 4: // FIRE MISSILE
+
+                break;
+
             default:
                 break;
         }
@@ -188,44 +227,54 @@ public static class Abilities
     {
         bool result = false;
 
-        switch (input)
+        if (uInput != null)
         {
-            case 0: //ATTACK
+            switch (input)
+            {
+                case 0: //ATTACK
 
-                if (uInput.actionPips > 0)
-                {
-                    result = true;
-                }
-                break;
+                    if (uInput.actionPips > 0)
+                    {
+                        result = true;
+                    }
+                    break;
 
-            case 1: //MOVE
+                case 1: //MOVE
 
-                if (uInput.movementPips > 0)
-                {
-                    result = true;
-                }
-                break;
+                    if (uInput.movementPips > 0)
+                    {
+                        result = true;
+                    }
+                    break;
 
-            case 2: //DIG IN
+                case 2: //DIG IN
 
-                if (uInput.movementPips > 0)
-                {
-                    result = true;
-                }
-                break;
+                    if (uInput.movementPips > 0)
+                    {
+                        result = true;
+                    }
+                    break;
 
-            case 3: // BUILD STRUCTURE
+                case 3: // BUILD STRUCTURE
 
-                if (uInput.actionPips > 0 && uInput.movementPips > 0)
-                {
-                    result = true;
-                }
-                break;
+                    if (uInput.actionPips > 0 && uInput.movementPips > 0)
+                    {
+                        result = true;
+                    }
+                    break;
 
-            default:
-                break;
+                case 4: // FIRE MISSILE
+
+                    if (uInput.actionPips > 0)
+                    {
+                        result = true;
+                    }
+                    break;
+
+                default:
+                    break;
+            }
         }
-
         return result;
     }
 
@@ -245,13 +294,17 @@ public static class Abilities
 
             case 1: //MOVE
 
-                if (GameManager.instance.selectedPosition != new Vector3Int(-1, -1, -1) && MapBuilder.instance.Flowfields[uInput.currentPos.x, uInput.currentPos.y, uInput.currentPos.z].tiles[GameManager.instance.selectedPosition.x, GameManager.instance.selectedPosition.y, GameManager.instance.selectedPosition.z].pathCost <= uInput.moveSpeed)
+                Vector3Int p = GameManager.instance.selectedPosition;
+                if (MapBuilder.instance.Tiles[p.x, p.y, p.z] != null)
                 {
-                    result = true;
+                    if (GameManager.instance.selectedPosition != new Vector3Int(-1, -1, -1) && MapBuilder.instance.Flowfields[uInput.currentPos.x, uInput.currentPos.y, uInput.currentPos.z].tiles[p.x, p.y, p.z].pathCost <= uInput.moveSpeed)
+                    {
+                        result = true;
+                    }
                 }
                 break;
 
-            case 2: 
+            case 2:
 
                 result = true;
 
@@ -259,9 +312,34 @@ public static class Abilities
 
             case 3: // BUILD STRUCTURE
 
-
+                for (int x = -1; x < 2; x++)
+                {
+                    for (int y = -1; y < 2; y++)
+                    {
+                        if (MapBuilder.instance.Tiles[uInput.currentPos.x + x, uInput.currentPos.y, uInput.currentPos.z + y] == null || MapBuilder.instance.Tiles[uInput.currentPos.x + x, uInput.currentPos.y, uInput.currentPos.z + y].isRamp)
+                        {
+                            return false;
+                        }
+                    }
+                }
                 result = true;
-                
+
+                break;
+
+            case 4: // FIRE MISSILE
+
+                if (GameManager.instance.selectedPosition == null && GameManager.instance.selectedUnit_Enemy == null)
+                {
+                    return false;
+                }
+                if (GameManager.instance.selectedPosition != null)
+                {
+                    if (Vector3.Distance(GameManager.instance.selectedPosition, uInput.currentPos) > uInput.range)
+                    {
+                        return false;
+                    }
+                }
+                return true;
                 break;
 
             default:

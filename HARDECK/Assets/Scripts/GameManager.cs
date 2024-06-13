@@ -99,6 +99,7 @@ public class GameManager : MonoBehaviour
     public EnemyAI enemyAI;
 
     public List<Commander> commanders;
+    public List<UnitAIBase> allUnits;
 
     [Header("UI")]
     [Header("Player Interface")]
@@ -118,6 +119,8 @@ public class GameManager : MonoBehaviour
     public bool skipDeployment;
 
     public GameObject cursor;
+    public GameObject selectedAbilityWorldIndicator;
+    public Image selectedAbilityWorldImage;
 
     private Canvas gameUI_Canvas;
 
@@ -181,6 +184,8 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        allUnits = new List<UnitAIBase> ();
+
         // Create a player commander and an enemy commander [LATER CHANGE FOR MAP SPECIFIC IMPLAMENTATION]
         Commander playerCommander = new Commander();
         playerCommander.allianceColor = commanderColor_0;
@@ -286,7 +291,7 @@ public class GameManager : MonoBehaviour
                 {
 
                     // If an empty tile is clicked and a player unit is selected
-                    if (hit.transform.GetComponent<TileInfo>() && selectedUnit_Player != null)
+                    if (hit.transform.GetComponent<TileInfo>())
                     {
                         // Deselects enemy, if one was selected
                         selectedUnit_Enemy = null;
@@ -313,12 +318,15 @@ public class GameManager : MonoBehaviour
                             else if (selectedUnit_Player != hitUnit)
                             {
                                 selectedUnit_Player = hitUnit;
-
+                                selectedPosition = Vector3Int.zero;
                             }
                             else
                             {
                                 selectedUnit_Player = null;
                             }
+
+                            selectedAbilityInt = 1;
+
                         }
                         // If clicked on non-allied unit that is visable
                         else if (hitUnit.alliance != playerAllianceInt && hitUnit.gfx.activeInHierarchy)
@@ -335,42 +343,17 @@ public class GameManager : MonoBehaviour
                             {
                                 selectedUnit_Enemy = null;
                             }
-                        }
-                        selectedPosition = new Vector3Int(-1, -1, -1);
 
-                    }
-                    else
-                    {
-                        selectedPosition = new Vector3Int(-1, -1, -1);
-                    }
-
-
-                    // If player and enemy units are selected, queue the attack action [CHANGE: TURN INTO ABILITY SYSTEM]
-                    if (selectedUnit_Player != null)
-                    {
-                        if (selectedUnit_Enemy != null && selectedUnit_Player.actionPips > 0)
-                        {
                             selectedAbilityInt = 0;
-                            selectedPosition = new Vector3Int(-1, -1, -1);
+                        }
 
-                        }
-                        else if (selectedPosition.x > -1 && selectedUnit_Player.movementPips > 0)
-                        {
-                            selectedAbilityInt = 1;
-                        }
-                        else
-                        {
-                            selectedAbilityInt = 2;
-                            selectedPosition = new Vector3Int(-1, -1, -1);
-
-                        }
                     }
                     else
                     {
-                        selectedAbilityInt = -1;
-                        selectedPosition = new Vector3Int(-1, -1, -1);
 
                     }
+
+
                 }
             }
             UpdatePlayerActionGFX();
@@ -379,33 +362,43 @@ public class GameManager : MonoBehaviour
 
         // If a unit is selected, can move, and the pointed to tile is within range, display the tile indicator [CHANGE: SCRAP THIS SHIT AND MAKE IT BETTER]
         RaycastHit conHit;
-        LayerMask conMask = LayerMask.GetMask("Tile", "Unit");
+        LayerMask conMask = LayerMask.GetMask("Tile");
+        bool show = false;
+
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out conHit, Mathf.Infinity, conMask) && turnState == TurnState.Action && !EventSystem.current.IsPointerOverGameObject() && selectedUnit_Player != null)
         {
-            if (conHit.transform.GetComponent<TileInfo>() && selectedUnit_Player.movementPips > 0)
+
+            if (conHit.transform.GetComponent<TileInfo>())
             {
                 Vector3Int pos = conHit.transform.GetComponent<TileInfo>().tilemapPosition;
                 Vector3Int uPos = selectedUnit_Player.currentPos;
-                if (MapBuilder.instance.Flowfields[uPos.x, uPos.y, uPos.z].tiles[pos.x, pos.y, pos.z].pathCost <= selectedUnit_Player.moveSpeed)
-                {
-                    selectedTileIndicator.SetActive(true);
 
-                    selectedTileIndicator.transform.position = conHit.transform.GetComponent<TileInfo>().tilemapPosition;
+                if (selectedAbilityInt == 1)
+                {
+                    if (MapBuilder.instance.Flowfields[uPos.x, uPos.y, uPos.z].tiles[pos.x, pos.y, pos.z].pathCost <= selectedUnit_Player.moveSpeed)
+                    {
+                        show = true;
+                    }
+                }
+                else if (selectedAbilityInt == 4)
+                {
+                    show = true;
                 }
                 else
                 {
-                    selectedTileIndicator.SetActive(false);
+                    show = false;
                 }
             }
             else
             {
-                selectedTileIndicator.SetActive(false);
+                show = false;
             }
+
+            selectedTileIndicator.transform.position = conHit.transform.GetComponent<TileInfo>().tilemapPosition;
         }
-        else
-        {
-            selectedTileIndicator.SetActive(false);
-        }
+        selectedTileIndicator.SetActive(show);
+
+
     }
 
     public void UpdatePlayerActionGFX()
@@ -416,16 +409,26 @@ public class GameManager : MonoBehaviour
         cancelActionButton.SetActive(false);
 
         // Toggles on and off selected and enemy displays (and selection indicator)
-        if (selectedUnit_Player != null)
+        if (selectedUnit_Player != null && selectedAbilityInt>=0)
         {
             // Shows ability display 
-            if (selectedAbilityInt >= 0)
+
+            if (selectedAbilityInt == 1 || selectedAbilityInt == 4)
             {
-                abilityDisplay.SetActive(true);
-                abilityName.text = Abilities.abilityDescs[selectedAbilityInt].abName;
-                abilityDesc.text = Abilities.abilityDescs[selectedAbilityInt].abDescription;
-                abilityIcon.sprite = abilityIconFiles[selectedAbilityInt];
+                selectedAbilityWorldIndicator.SetActive(true);
+                selectedAbilityWorldIndicator.transform.position = selectedPosition;
+                selectedAbilityWorldImage.sprite = abilityIconFiles[selectedAbilityInt];
             }
+            else
+            {
+                selectedAbilityWorldIndicator.SetActive(false);
+            }
+
+            abilityDisplay.SetActive(true);
+            abilityName.text = Abilities.abilityDescs[selectedAbilityInt].abName;
+            abilityDesc.text = Abilities.abilityDescs[selectedAbilityInt].abDescription;
+            abilityIcon.sprite = abilityIconFiles[selectedAbilityInt];
+
 
             // Shows unit display
             selectedUnitDisplay_Obj.SetActive(true);
@@ -646,7 +649,6 @@ public class GameManager : MonoBehaviour
         }
 
         selectedAbilityInt = -1;
-        selectedPosition = new Vector3Int(-1, -1, -1);
         selectedUnit_Player = null;
         selectedUnit_Enemy = null;
         UpdatePlayerActionGFX();
@@ -807,11 +809,7 @@ public class GameManager : MonoBehaviour
 
     }
 
-
-
-
     // Menu UI logic
-
     public void QuitApplication()
     {
         Application.Quit();
@@ -1007,7 +1005,7 @@ public class GameManager : MonoBehaviour
                 desieredValue = selectedUnit_Player.abilityInts.Count - 1;
             }
 
-            selectedAbilityInt = desieredValue;
+            selectedAbilityInt = selectedUnit_Player.abilityInts[desieredValue];
 
             //AttackAbilityIcon
             UpdatePlayerActionGFX();

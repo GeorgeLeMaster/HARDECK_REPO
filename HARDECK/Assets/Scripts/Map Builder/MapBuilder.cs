@@ -421,9 +421,13 @@ public class MapBuilder : MonoBehaviour
             if (Application.isPlaying)
                 ai.minimapPip.GetComponent<MeshRenderer>().material.color = GameManager.instance.commanders[aInt].allianceColor;
 
+
             // Give to owning commander
             if (Application.isPlaying)
+            {
                 GameManager.instance.commanders[aInt].activeUnits.Add(ai);
+                GameManager.instance.allUnits.Add(ai);
+            }
 
             // FailsSafe
             currentLineInt++;
@@ -941,8 +945,8 @@ public class MapBuilder : MonoBehaviour
     public void UpdateFOW(UnitAIBase input)
     {
         // GFXOBJs
-        float cYOff = 0.1f;
-        Vector3 unitPos = input.currentPos + new Vector3(0,0.5f,0);
+        float cYOff = 0.49f;
+        Vector3 unitPos = input.currentPos + new Vector3(0,0.75f,0);
         LayerMask mask = LayerMask.GetMask("OBJFinder");
         Collider[] GFXOBJs = Physics.OverlapCapsule(new Vector3(unitPos.x, -10, unitPos.z), new Vector3(unitPos.x, 10, unitPos.z), input.visionRadius, mask);
 
