@@ -64,7 +64,7 @@ public class GFXOBJContainter : MonoBehaviour
             for (int i = 0; i < gfxMeshes.Length; i++)
             {
                 gfxMeshes[i].material = gfxMaterials[i];
-                gfxMeshes[i].material.color = new Color(0.5f, 0.5f, 0.5f, 1f);
+                gfxMeshes[i].material.color = new Color(0.25f, 0.25f, 0.25f, 1f);
             }
 
         }

@@ -50,8 +50,7 @@ public class GroundUnitAI : UnitAIBase
         //Material mat = gfxobj.GetComponentInChildren<MeshRenderer>().material;
         //mat.SetColor("AllianceColor", new Color(0,0,0,1));
 
-        actionPips = 1;
-        movementPips = 1;
+        actionPips = 2;
 
         Rigidbody[] childRbs = gfx.GetComponentsInChildren<Rigidbody>();
         foreach (Rigidbody rb in childRbs)
@@ -60,9 +59,9 @@ public class GroundUnitAI : UnitAIBase
         }
     }
 
-    override public void Move(Vector3Int desiredPos) 
+    override public void Move(Vector3Int desiredPos)
     {
-  
+
 
         List<Vector3Int> pathPositions = new List<Vector3Int>();
 
@@ -72,22 +71,18 @@ public class GroundUnitAI : UnitAIBase
 
         //Debug.Log(checkPos.pathCost);
 
-
-        if (checkPos.pathCost <= moveSpeed)
+        while (checkPos.tilemapPosition != desiredPos)
         {
-
-            while (checkPos.tilemapPosition != desiredPos)
-            {
-                pathPositions.Add(checkPos.tilemapPosition);
-                checkPos = checkPos.nextTile;
-            }
             pathPositions.Add(checkPos.tilemapPosition);
-            //Debug.Log(checkPos.pathCost);
             checkPos = checkPos.nextTile;
-
-
-            StartCoroutine(Move_Coroutine(pathPositions));
         }
+        pathPositions.Add(checkPos.tilemapPosition);
+        //Debug.Log(checkPos.pathCost);
+        checkPos = checkPos.nextTile;
+
+
+        StartCoroutine(Move_Coroutine(pathPositions));
+
     }
 
     override public void Attack(UnitAIBase defender)
@@ -145,6 +140,8 @@ public class GroundUnitAI : UnitAIBase
 
     IEnumerator Attack_Coroutine(UnitAIBase defender)
     {
+        GameManager.instance.controllsLocked = true;
+
         UnitAIBase attackedUnit = defender;
 
         gfx.transform.LookAt(new Vector3(attackedUnit.currentPos.x, gfx.transform.position.y, attackedUnit.currentPos.z));
@@ -155,28 +152,18 @@ public class GroundUnitAI : UnitAIBase
 
         bool hits = false;
 
-        if (roll == 20)
-        {
-            hits = true;
-
-        }
-        else if (roll == 1)
+        int result = GameManager.instance.CalculateHitChance(this, defender);
+        if (roll >= result || roll == 20)
         {
             hits = false;
-
-        }
-        else if (roll >= CalculateHitChance(this, defender))
-        {
-            hits = true;
 
         }
         else
         {
-            hits = false;
-
+            hits = true;
         }
 
-
+        Debug.Log($"{roll}<{result} | Hit: {hits}");
 
         yield return new WaitForSeconds(1f);
         animator.SetTrigger("CommitAttack");
@@ -185,16 +172,6 @@ public class GroundUnitAI : UnitAIBase
         fireFX.transform.position = transform.position + new Vector3(0, 0.5f, 0);
         fireFX.transform.LookAt(defender.currentPos + new Vector3(0, 0.35f, 0));
         Destroy(fireFX, 2f);
-
-        //foreach (UnitAIBase unit in GameManager.instance.AllUnits)
-        //{
-        //    if (unit == defender)
-        //    {
-        //        attackedUnit = unit;
-        //        break;
-        //    }
-        //}
-
 
         if (attackedUnit != null)
         {
@@ -208,31 +185,8 @@ public class GroundUnitAI : UnitAIBase
             }
         }
 
+        GameManager.instance.controllsLocked = false;
+        GameManager.instance.UpdatePlayerActionGFX();
     }
 
-    static public int CalculateHitChance(UnitAIBase attacker, UnitAIBase defender)
-    {
-        int result = 5;
-
-        // DnD style roll, 20 always succseeding, 1 always missing
-
-
-
-        if (attacker.currentPos.y > defender.currentPos.y)
-        {
-            result -= 2;
-        }
-        else if (attacker.currentPos.y == defender.currentPos.y)
-        {
-            result += 2;
-
-        }
-        else
-        {
-            result += 6;
-        }
-
-        return result;
-    }
-    
 }

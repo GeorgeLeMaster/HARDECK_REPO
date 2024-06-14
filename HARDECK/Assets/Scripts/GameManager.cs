@@ -56,7 +56,7 @@ public class Commander
 
 public class UnitData
 {
-    public UnitData(int mv, int vr, int d, int dm, int r, int h, string n, List<int> abilityInts)
+    public UnitData(int mv, int vr, int d, int dm, int r, int h, string n, List<int> abilityInts, int aIn, int dIn, int mapIn)
     {
         moveSpeed = mv;
         visionRadius = vr;
@@ -66,6 +66,9 @@ public class UnitData
         hp = h;
         name = n;
         this.abilityInts = abilityInts;
+        aim = aIn;
+        dodge = dIn;
+        maxActionPips = mapIn;
     }
 
     public int moveSpeed;
@@ -79,6 +82,9 @@ public class UnitData
 
     public List<int> abilityInts;
 
+    public int aim;
+    public int dodge;
+    public int maxActionPips;
 }
 
 public class GameManager : MonoBehaviour
@@ -86,7 +92,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     public TurnState turnState;
 
-    public UnitData infintrymanUnitData = new UnitData(8, 8, 4, 2, 12, 6, "Infantryman", new List<int>{0,1});
+    public UnitData infintrymanUnitData = new UnitData(8, 8, 4, 2, 12, 6, "Infantryman", new List<int> { 0, 1 }, 12, 0, 2);
 
     public UnitData unitDataToSpawn;
 
@@ -124,6 +130,9 @@ public class GameManager : MonoBehaviour
 
     private Canvas gameUI_Canvas;
 
+    public TextMeshProUGUI debugText;
+
+
     [Header("Decks")]
     public GameObject phaseOne;
     public GameObject phaseTwo;
@@ -149,12 +158,10 @@ public class GameManager : MonoBehaviour
     public GameObject abilityDisplay;
     public GameObject selectedUnitDisplay_Obj;
     public GameObject selectedUnit_Indicator;
-    public GameObject selectedUnit_ActionPipIndicator;
-    public GameObject selectedUnit_MovementPipIndicator;
     public TextMeshProUGUI selectedUnitName_Text;
     public Image selectedUnit_PortraitColor;
     public Image selectedUnit_hpBarFillImage;
-    public int selectedAbilityInt;
+    public Image actionBar_Fill;
 
     [Header("Enemy Unit Display")]
     public GameObject enemyUnitDisplay_Obj;
@@ -173,8 +180,11 @@ public class GameManager : MonoBehaviour
 
     public UnitAIBase selectedUnit_Player = null;
     public UnitAIBase selectedUnit_Enemy = null;
+    public int selectedAbilityInt;
     public Vector3Int selectedPosition = new Vector3Int(-1,-1,-1);
 
+    private GameObject actionSpacerPrefab;
+    private GameObject actionSpacerParent;
 
     private void Awake()
     {
@@ -185,6 +195,9 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         allUnits = new List<UnitAIBase> ();
+
+        actionSpacerParent = GameObject.Find("ActionBarSpacerParent");
+        actionSpacerPrefab = Resources.Load("Spacer") as GameObject;
 
         // Create a player commander and an enemy commander [LATER CHANGE FOR MAP SPECIFIC IMPLAMENTATION]
         Commander playerCommander = new Commander();
@@ -258,6 +271,9 @@ public class GameManager : MonoBehaviour
                         newAi.currentHealth = unitDataToSpawn.hp;
                         newAi.unitName = unitDataToSpawn.name;
                         newAi.abilityInts = unitDataToSpawn.abilityInts;
+                        newAi.maxActionPips = unitDataToSpawn.maxActionPips;
+                        newAi.aim = unitDataToSpawn.aim;
+                        newAi.dodge = unitDataToSpawn.dodge;
 
                         Vector3Int pos = new Vector3Int( (int)hit.transform.GetComponent<TileOverlayLogic>().transform.position.x, (int)hit.transform.GetComponent<TileOverlayLogic>().transform.position.y, (int)hit.transform.GetComponent<TileOverlayLogic>().transform.position.z);
 
@@ -403,14 +419,32 @@ public class GameManager : MonoBehaviour
 
     public void UpdatePlayerActionGFX()
     {
+        UpdateDebugText();
+
         // Disable Everything
         actionInfoText.gameObject.SetActive(false);
         commitActionButton.SetActive(false);
         cancelActionButton.SetActive(false);
-
         // Toggles on and off selected and enemy displays (and selection indicator)
         if (selectedUnit_Player != null && selectedAbilityInt>=0)
         {
+
+            actionBar_Fill.fillAmount = (float)selectedUnit_Player.actionPips / selectedUnit_Player.maxActionPips;
+
+            //Create action bar spacers
+            foreach(Transform g in actionSpacerParent.GetComponentsInChildren<Transform>())
+            {
+                if (g.gameObject != actionSpacerParent)
+                Destroy(g.gameObject);
+            }
+
+            float space = 440 / selectedUnit_Player.maxActionPips;
+            for (int i = 1; i < selectedUnit_Player.maxActionPips; i++)
+            {
+                GameObject newSpacer = Instantiate(actionSpacerPrefab, actionSpacerParent.transform);
+                newSpacer.GetComponent<RectTransform>().anchoredPosition += new Vector2(space * i,0);
+            }
+
             // Shows ability display 
 
             if (selectedAbilityInt == 1 || selectedAbilityInt == 4)
@@ -441,24 +475,6 @@ public class GameManager : MonoBehaviour
             selectedUnit_Indicator.SetActive(true);
             selectedUnit_Indicator.transform.SetParent(selectedUnit_Player.gfx.gameObject.transform);
             selectedUnit_Indicator.transform.localPosition = Vector3.zero + new Vector3(0, 0.025f, 0);
-
-            // Show or hide pips
-            if (selectedUnit_Player.movementPips > 0)
-            {
-                selectedUnit_MovementPipIndicator.SetActive(true);
-            }
-            else
-            {
-                selectedUnit_MovementPipIndicator.SetActive(false);
-            }
-            if (selectedUnit_Player.actionPips > 0)
-            {
-                selectedUnit_ActionPipIndicator.SetActive(true);
-            }
-            else
-            {
-                selectedUnit_ActionPipIndicator.SetActive(false);
-            }
 
         }
         else
@@ -504,7 +520,7 @@ public class GameManager : MonoBehaviour
         {
             AbilityDescriptor ab = Abilities.abilityDescs[selectedAbilityInt];
 
-            if (Abilities.CheckAbilityCost(selectedUnit_Player, selectedAbilityInt) && Abilities.CheckAbilityParameters(selectedUnit_Player, selectedAbilityInt))
+            if (Abilities.CheckAbilityCost(selectedUnit_Player, selectedAbilityInt) && Abilities.CheckAbilityParameters(selectedUnit_Player, selectedAbilityInt) && !controllsLocked)
             {
                 commitActionButton.SetActive(true);
                 commitActionButton.GetComponent<Image>().color = ab.color;
@@ -515,13 +531,20 @@ public class GameManager : MonoBehaviour
             {
                 commitActionButton.SetActive(false);
                 actionInfoText.gameObject.SetActive(true);
-                if (!Abilities.CheckAbilityCost(selectedUnit_Player, selectedAbilityInt))
+                if (!controllsLocked)
                 {
-                    actionInfoText.text = ab.costMessage;
-                }
-                else
-                {
-                    actionInfoText.text = ab.parametersMessage;
+                    if (!Abilities.CheckAbilityCost(selectedUnit_Player, selectedAbilityInt))
+                    {
+                        actionInfoText.text = ab.costMessage;
+                    }
+                    else if (!Abilities.CheckAbilityParameters(selectedUnit_Player, selectedAbilityInt))
+                    {
+                        actionInfoText.text = ab.parametersMessage;
+                    }
+                    else
+                    {
+                        //actionInfoText.text = "CAN'T ACT";
+                    }
                 }
             }
 
@@ -546,7 +569,6 @@ public class GameManager : MonoBehaviour
 
         selectedUnit_Player.UseAbility(selectedAbilityInt, selectedUnit_Player, selectedUnit_Enemy, selectedPosition);
 
-        selectedAbilityInt = -1;
         UpdatePlayerActionGFX();
     }
 
@@ -557,6 +579,26 @@ public class GameManager : MonoBehaviour
         UpdatePlayerActionGFX();
     }
 
+    public int CalculateHitChance(UnitAIBase attacker, UnitAIBase defender)
+    {
+        int result = attacker.aim + attacker.aimMod;
+
+        result -= defender.dodge - defender.dodgeMod;
+
+        if (attacker.currentPos.y > defender.currentPos.y)
+        {
+            result += 2;
+        }
+        else if (attacker.currentPos.y < defender.currentPos.y)
+        {
+            result -= 2;
+        }
+
+
+        return result;
+    }
+
+
     public void StartNewTurn()
     {
 
@@ -566,8 +608,7 @@ public class GameManager : MonoBehaviour
 
         foreach (UnitAIBase unit in commanders[playerAllianceInt].activeUnits)
         {
-            unit.actionPips = 1;
-            unit.movementPips = 1;
+            unit.actionPips = unit.maxActionPips;
 
             if (unit.activeAbilities != null)
             {
@@ -654,32 +695,33 @@ public class GameManager : MonoBehaviour
         UpdatePlayerActionGFX();
 
         //[CHANGE: DO NOT HARD CODE FOR ALLIENCE INTS]
-        //if(playerAllianceInt == 0)
-        //{
-        //    enemyAI.BeginTurn(1);
+        if (playerAllianceInt == 0)
+        {
+            enemyAI.BeginTurn(1);
 
-        //}else
-        //{
-        //    enemyAI.BeginTurn(0);
+        }
+        else
+        {
+            enemyAI.BeginTurn(0);
 
+        }
+
+
+        //// Cycles through commanders
+        //if (playerAllianceInt < commanders.Count-1)
+        //{
+        //    playerAllianceInt++;
         //}
-
+        //else
+        //{
+        //    playerAllianceInt = 0;
+        //}
 
 
         controllsLocked = true;
         enemyTurnIndicator.SetActive(true);
         endTurnButton.SetActive(false);
 
-
-        // Cycles through commanders
-        if (playerAllianceInt < commanders.Count-1)
-        {
-            playerAllianceInt++;
-        }
-        else
-        {
-            playerAllianceInt = 0;
-        }
 
         StartNewTurn();
         
@@ -773,7 +815,6 @@ public class GameManager : MonoBehaviour
                 s.ShowGFX();
                 if (!commanders[playerAllianceInt].knownStructures.Contains(s))
                 {
-                    Debug.Log("Adding");
                     commanders[playerAllianceInt].knownStructures.Add(s);
                 }
             }
@@ -1031,6 +1072,21 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < to.Length; i++)
         {
             to[i].state = from[i].state;
+        }
+    }
+
+    private void UpdateDebugText()
+    {
+        if (selectedUnit_Player)
+        {
+            UnitAIBase u = selectedUnit_Player;
+
+            debugText.text = $"{u.unitName}\n{u.currentHealth}/{u.maxHealth} HP\n{u.actionPips}/{u.maxActionPips} ACTION PIPS\n{u.aimMod} :AIM MOD\n{u.dodgeMod} :DODGE MOD\n{u.f_dugIn} :F_DUGIN";
+        }
+        else
+        {
+            debugText.text = "DEBUG TEXT - SELECT A UNIT";
+
         }
     }
 }

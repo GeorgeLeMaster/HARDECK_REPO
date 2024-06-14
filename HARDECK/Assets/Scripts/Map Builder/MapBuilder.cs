@@ -381,6 +381,11 @@ public class MapBuilder : MonoBehaviour
             float.TryParse(dataMembers[5], out float d);
             float.TryParse(dataMembers[6], out float dm);
             float.TryParse(dataMembers[7], out float mh);
+            int.TryParse(dataMembers[10], out int aim);
+            int.TryParse(dataMembers[11], out int dod);
+            int.TryParse(dataMembers[12], out int map);
+
+
 
             // Instantiate Object and Parent
             GameObject newUnit = Instantiate(guPrefab);
@@ -410,6 +415,10 @@ public class MapBuilder : MonoBehaviour
                     ai.abilityInts.Add(int.Parse(s));
                 }
             }
+
+            ai.aim = aim;
+            ai.dodge = dod;
+            ai.maxActionPips = map;
 
             ai.unitSO = Resources.Load("Units/SOs/Infantryman") as UnitSO;
 
@@ -584,6 +593,7 @@ public class MapBuilder : MonoBehaviour
                     }
                 }
                 dataToSave = dataToSave.Substring(0,dataToSave.Length-1);
+                dataToSave += $"*{t.aim}*{t.dodge}*{t.maxActionPips}";
                 dataToSave += "\n";
 
             }
@@ -945,7 +955,7 @@ public class MapBuilder : MonoBehaviour
     public void UpdateFOW(UnitAIBase input)
     {
         // GFXOBJs
-        float cYOff = 0.49f;
+        float cYOff = 0.1f;
         Vector3 unitPos = input.currentPos + new Vector3(0,0.75f,0);
         LayerMask mask = LayerMask.GetMask("OBJFinder");
         Collider[] GFXOBJs = Physics.OverlapCapsule(new Vector3(unitPos.x, -10, unitPos.z), new Vector3(unitPos.x, 10, unitPos.z), input.visionRadius, mask);

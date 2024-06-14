@@ -1175,12 +1175,12 @@ sceneEnd
 (3, 1, 10)*(1, 2)*0*True*True*True*True
 (23, 1, 10)*(1, 2)*1*True*True*True*True
 structEnd
-Infantryman*0*ENGINEER*9*12*4*1*7*(4, 1, 10)*0,1,2,3
-Infantryman*1*ENGINEER*8*12*4*2*6*(22, 1, 10)*0,1,2,3
-Infantryman*0*INFANTRYMAN*8*12*4*2*6*(4, 1, 11)*0,1,2
-Infantryman*1*INFANTRYMAN*8*12*4*2*6*(22, 1, 11)*0,1,2
-Infantryman*0*INFANTRYMAN*8*12*4*2*6*(4, 1, 9)*0,1,2
-Infantryman*0*DEMO EXPERT*7*12*5*2*7*(4, 1, 7)*0,1,2,4
-Infantryman*1*INFANTRYMAN*8*12*4*2*6*(22, 1, 9)*0,1,2
+Infantryman*0*ENGINEER*9*12*4*1*7*(4, 1, 10)*0,1,2,3*12*0*10
+Infantryman*1*ENGINEER*8*12*4*2*6*(22, 1, 10)*0,1,2,3*12*0*2
+Infantryman*0*INFANTRYMAN*8*12*4*2*6*(4, 1, 11)*0,1,2*12*0*2
+Infantryman*1*INFANTRYMAN*8*12*4*2*6*(22, 1, 11)*0,1,2*12*0*2
+Infantryman*0*INFANTRYMAN*8*12*4*2*6*(4, 1, 9)*0,1,2*12*0*2
+Infantryman*0*DEMO EXPERT*7*12*5*2*7*(4, 1, 7)*0,1,2,4*12*0*2
+Infantryman*1*INFANTRYMAN*8*12*4*2*6*(22, 1, 9)*0,1,2*12*0*2
 unitEnd
 

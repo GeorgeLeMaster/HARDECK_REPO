@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
 
 
@@ -19,15 +20,19 @@ public class UnitAIBase : MonoBehaviour
     public float currentHealth;
     public float maxHealth;
 
-    public int actionPips;
-    public int movementPips;
-
     public int moveSpeed;
     public float range;
     public float damage;
     public float damageMod;
     public float visionRadius;
+    public int aim;
+    public int dodge;
 
+    public int aimMod;
+    public int dodgeMod;
+
+    public float currentXP;
+    public float maxXP;
 
     // ABILITY FLAGS
     [HideInInspector]
@@ -43,6 +48,9 @@ public class UnitAIBase : MonoBehaviour
     public Animator animator;
 
     public GameObject minimapPip;
+
+    public int actionPips;
+    public int maxActionPips;
 
     // Start is called before the first frame update
     void Start()
@@ -112,6 +120,11 @@ public class UnitAIBase : MonoBehaviour
         //Debug.Log(gameObject.name + $" took {input} damage");
         if (currentHealth <= 0)
         {
+            if (GameManager.instance.selectedUnit_Enemy == this)
+            {
+                GameManager.instance.selectedUnit_Enemy = null;
+            }
+
             // Disable Minimap Pip
             minimapPip.SetActive(false);
 

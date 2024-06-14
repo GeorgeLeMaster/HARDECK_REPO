@@ -80,18 +80,23 @@ public static class Abilities
                 break;
 
             case 1: // MOVE
-                castingUnit.movementPips--;
+                castingUnit.actionPips--;
+                if (castingUnit.f_dugIn)
+                {
+                    Abilities.EndAbility(2, castingUnit);
+                }
                 castingUnit.Move(targetedPosition);
                 break;
 
             case 2: //DIG IN
-                castingUnit.movementPips--;
+                castingUnit.actionPips--;
+                castingUnit.aimMod += 2;
+                castingUnit.dodgeMod += 2;
                 castingUnit.f_dugIn = true;
                 break;
 
             case 3: // BUILD STRUCTURE
-                castingUnit.actionPips--;
-                castingUnit.movementPips--;
+                castingUnit.actionPips = 0;
                 break;
 
             case 4: // FIRE MISSILE
@@ -148,7 +153,6 @@ public static class Abilities
 
             case 3: // BUILD STRUCTURE
                 affectedUnit.actionPips = 0;
-                affectedUnit.movementPips = 0;
                 break;
 
             case 4: // FIRE MISSILE
@@ -174,8 +178,9 @@ public static class Abilities
                 break;
 
             case 2: //DIG IN
+                castingUnit.aimMod -= 2;
+                castingUnit.dodgeMod -= 2;
                 castingUnit.f_dugIn = false;
-
                 break;
 
 
@@ -241,7 +246,7 @@ public static class Abilities
 
                 case 1: //MOVE
 
-                    if (uInput.movementPips > 0)
+                    if (uInput.actionPips > 0)
                     {
                         result = true;
                     }
@@ -249,7 +254,7 @@ public static class Abilities
 
                 case 2: //DIG IN
 
-                    if (uInput.movementPips > 0)
+                    if (uInput.actionPips > 0 && !uInput.f_dugIn)
                     {
                         result = true;
                     }
@@ -257,7 +262,7 @@ public static class Abilities
 
                 case 3: // BUILD STRUCTURE
 
-                    if (uInput.actionPips > 0 && uInput.movementPips > 0)
+                    if (uInput.actionPips > 0)
                     {
                         result = true;
                     }
