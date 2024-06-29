@@ -718,37 +718,37 @@ public class GameManager : MonoBehaviour
         selectedUnit_Enemy = null;
         UpdatePlayerActionGFX();
 
-        //[CHANGE: DO NOT HARD CODE FOR ALLIENCE INTS]
-        if (playerAllianceInt == 0)
-        {
-            enemyAI.BeginTurn(1);
-
-        }
-        else
-        {
-            enemyAI.BeginTurn(0);
-
-        }
-        controllsLocked = true;
-        enemyTurnIndicator.SetActive(true);
-        endTurnButton.SetActive(false);
-
-        //// Cycles through commanders
-        //if (playerAllianceInt < commanders.Count - 1)
+        ////[CHANGE: DO NOT HARD CODE FOR ALLIENCE INTS]
+        //if (playerAllianceInt == 0)
         //{
-        //    playerAllianceInt++;
+        //    enemyAI.BeginTurn(1);
+
         //}
         //else
         //{
-        //    playerAllianceInt = 0;
-        //}
+        //    enemyAI.BeginTurn(0);
 
-        //foreach (UnitAIBase u in commanders[playerAllianceInt].activeUnits)
-        //{
-        //    u.gfx.SetActive(false);
         //}
+        //controllsLocked = true;
+        //enemyTurnIndicator.SetActive(true);
+        //endTurnButton.SetActive(false);
 
-        //StartNewTurn();
+        // Cycles through commanders
+        if (playerAllianceInt < commanders.Count - 1)
+        {
+            playerAllianceInt++;
+        }
+        else
+        {
+            playerAllianceInt = 0;
+        }
+
+        foreach (UnitAIBase u in commanders[playerAllianceInt].activeUnits)
+        {
+            u.gfx.SetActive(false);
+        }
+
+        StartNewTurn();
     }
 
     public void UpdateVisableFOW()
