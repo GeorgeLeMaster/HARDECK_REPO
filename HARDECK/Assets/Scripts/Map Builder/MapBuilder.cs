@@ -1035,7 +1035,7 @@ public class MapBuilder : MonoBehaviour
                     add = true;
                 }
                 // if the raycast hits something within 0.5 units of the object
-                else if (Vector3.Distance(hit.transform.position, cPosition) < 0.5f)
+                else if (Vector3.Distance(hit.transform.position, cPosition) < 1f)
                 {
                     add = true;
                 }
@@ -1044,7 +1044,7 @@ public class MapBuilder : MonoBehaviour
                     // if a backwards cast hits something within 0.5f units of the unitPos
                     if (Physics.Raycast(cPosition, -dir.normalized, out hit, dist, mask))
                     {
-                        if (Vector3.Distance(hit.transform.position, unitPos) < 0.5f)
+                        if (Vector3.Distance(hit.transform.position, unitPos) < 1f)
                             add = true;
                     }
                 }

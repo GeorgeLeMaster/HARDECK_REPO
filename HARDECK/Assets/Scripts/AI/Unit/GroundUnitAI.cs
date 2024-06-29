@@ -163,7 +163,7 @@ public class GroundUnitAI : UnitAIBase
             hits = true;
         }
 
-        Debug.Log($"{roll}<{result} | Hit: {hits}");
+       // Debug.Log($"{roll}<{result} | Hit: {hits}");
 
         yield return new WaitForSeconds(1f);
         animator.SetTrigger("CommitAttack");

@@ -125,6 +125,14 @@ public class UnitAIBase : MonoBehaviour
                 GameManager.instance.selectedUnit_Enemy = null;
             }
 
+            foreach(UnitGFXContainer c in GetComponentsInChildren<UnitGFXContainer>())
+            {
+                c.gfx.GetComponent<Renderer>().material.SetColor("_ShadedColor", new Color(0.5f, 0.5f, 0.5f, 1));
+
+            }
+
+
+
             // Disable Minimap Pip
             minimapPip.SetActive(false);
 

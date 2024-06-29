@@ -13,14 +13,21 @@ public class FloatingWindow : MonoBehaviour
 
     private Vector2 offset;
 
-    public TextMeshProUGUI lockedText;
+    public Image lockedImage;
 
     public Image ColorBar;
+
+    private Sprite lockedSprite;
+    private Sprite unlockedSprite;
 
     // Start is called before the first frame update
     void Start()
     {
         ColorBar.color = GameManager.instance.commanderColor_0;
+
+        lockedSprite = Resources.Load("Sprites/Lock_Locked") as Sprite;
+        unlockedSprite = Resources.Load("Sprites/Lock_Unlocked.png") as Sprite;
+
     }
 
     // Update is called once per frame
@@ -57,11 +64,13 @@ public class FloatingWindow : MonoBehaviour
 
         if (locked)
         {
-            lockedText.text = "UNLOCK";
+          //  lockedSprite = "UNLOCK";
+          lockedImage.sprite = Resources.Load("Sprites/Lock_Locked") as Sprite;
         }
         else
         {
-            lockedText.text = "LOCK";
+            //  lockedSprite.text = "LOCK";
+            lockedImage.sprite = Resources.Load("Sprites/Lock_Unlocked") as Sprite;
 
         }
     }

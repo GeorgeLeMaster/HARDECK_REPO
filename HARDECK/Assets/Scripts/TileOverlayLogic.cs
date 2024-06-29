@@ -13,6 +13,13 @@ public class TileOverlayLogic : MonoBehaviour
     public Sprite FOW;
     public Sprite deployable;
 
+    private Color stateColor = new Color(0,0,0,1);
+
+    private void Update()
+    {
+
+    }
+
     public void SetOverlay(string state, bool snap = true)
     {
         if (currentState == state)

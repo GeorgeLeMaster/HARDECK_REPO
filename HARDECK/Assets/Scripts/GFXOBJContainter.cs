@@ -15,6 +15,9 @@ public class GFXOBJContainter : MonoBehaviour
 
     public int state = 0;
 
+    private Color desiredColor = new Color(0,0,0,1);
+    private Color currentColor = new Color(0, 0, 0, 1);
+
     public GFXOBJContainter()
     {
     }
@@ -35,7 +38,14 @@ public class GFXOBJContainter : MonoBehaviour
 
     private void Update()
     {
-
+        if (currentColor != desiredColor)
+        {
+            currentColor = Color.Lerp(currentColor, desiredColor, Time.deltaTime * 5f);
+            for (int i = 0; i < gfxMeshes.Length; i++)
+            {
+                gfxMeshes[i].material.color = currentColor;
+            }
+        }
     }
 
     public void SetState(int input)
@@ -54,7 +64,7 @@ public class GFXOBJContainter : MonoBehaviour
             for (int i = 0; i < gfxMeshes.Length; i++)
             {
                 gfxMeshes[i].material = gfxMaterials[i];
-                gfxMeshes[i].material.color = new Color(1, 1, 1, 1f);
+                desiredColor = new Color(1, 1, 1, 1f);
 
             }
         }
@@ -64,7 +74,7 @@ public class GFXOBJContainter : MonoBehaviour
             for (int i = 0; i < gfxMeshes.Length; i++)
             {
                 gfxMeshes[i].material = gfxMaterials[i];
-                gfxMeshes[i].material.color = new Color(0.25f, 0.25f, 0.25f, 1f);
+                desiredColor = new Color(0.25f, 0.25f, 0.25f, 1f);
             }
 
         }

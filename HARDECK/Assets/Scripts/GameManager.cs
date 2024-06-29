@@ -186,6 +186,9 @@ public class GameManager : MonoBehaviour
     private GameObject actionSpacerPrefab;
     private GameObject actionSpacerParent;
 
+    private GameObject hpSpacerPrefab;
+    private GameObject hpSpacerParent;
+
     private void Awake()
     {
         instance = this;
@@ -198,6 +201,9 @@ public class GameManager : MonoBehaviour
 
         actionSpacerParent = GameObject.Find("ActionBarSpacerParent");
         actionSpacerPrefab = Resources.Load("Spacer") as GameObject;
+
+        hpSpacerParent = GameObject.Find("HPBARSpacerParent");
+        hpSpacerPrefab = Resources.Load("Spacer_HP") as GameObject;
 
         // Create a player commander and an enemy commander [LATER CHANGE FOR MAP SPECIFIC IMPLAMENTATION]
         Commander playerCommander = new Commander();
@@ -445,6 +451,35 @@ public class GameManager : MonoBehaviour
                 newSpacer.GetComponent<RectTransform>().anchoredPosition += new Vector2(space * i,0);
             }
 
+            foreach (Transform g in hpSpacerParent.GetComponentsInChildren<Transform>())
+            {
+                if (g.gameObject != hpSpacerParent)
+                    Destroy(g.gameObject);
+            }
+
+            space = 440 / selectedUnit_Player.maxHealth;
+            for (int i = 1; i < selectedUnit_Player.maxHealth; i++)
+            {
+                GameObject newSpacer = Instantiate(hpSpacerPrefab, hpSpacerParent.transform);
+                newSpacer.GetComponent<RectTransform>().anchoredPosition += new Vector2(space * i, 0);
+            }
+
+            //if (selectedAbilityInt == 1)
+            //{
+            //    // overlay moveable tiles
+            //    Flowfield ff = MapBuilder.instance.Flowfields[selectedUnit_Player.currentPos.x, selectedUnit_Player.currentPos.y, selectedUnit_Player.currentPos.z];
+            //    foreach(TileInfo_Class t in ff.tiles)
+            //    {
+            //        if (t != null)
+            //        {
+            //            if (t.pathCost <= selectedUnit_Player.moveSpeed)
+            //            {
+            //                MapBuilder.instance.FOWtiles[t.tilemapPosition.x, t.tilemapPosition.y, t.tilemapPosition.z].GetComponent<TileOverlayLogic>().SetOverlay("Deployable");
+            //            }
+            //        }
+            //    }
+            //}
+
             // Shows ability display 
 
             if (selectedAbilityInt == 1 || selectedAbilityInt == 4)
@@ -646,7 +681,6 @@ public class GameManager : MonoBehaviour
         }
 
         lastGFXOBJs.Clear();
-        //currentGFXOBJs.Clear();
         RefreshFOW();
         GameManager.instance.UpdateVisableFOW();
 
@@ -679,16 +713,6 @@ public class GameManager : MonoBehaviour
 
         CopyStates(commanders[playerAllianceInt].GFXOBJs, MapBuilder.instance.GFXOBJs);
 
-        foreach(Structure s in commanders[playerAllianceInt].ownedStructures)
-        {
-            s.HideGFX();
-        }
-
-        foreach (UnitAIBase u in commanders[playerAllianceInt].activeUnits)
-        {
-            u.gfx.SetActive(false);
-        }
-
         selectedAbilityInt = -1;
         selectedUnit_Player = null;
         selectedUnit_Enemy = null;
@@ -705,10 +729,12 @@ public class GameManager : MonoBehaviour
             enemyAI.BeginTurn(0);
 
         }
-
+        controllsLocked = true;
+        enemyTurnIndicator.SetActive(true);
+        endTurnButton.SetActive(false);
 
         //// Cycles through commanders
-        //if (playerAllianceInt < commanders.Count-1)
+        //if (playerAllianceInt < commanders.Count - 1)
         //{
         //    playerAllianceInt++;
         //}
@@ -717,14 +743,12 @@ public class GameManager : MonoBehaviour
         //    playerAllianceInt = 0;
         //}
 
+        //foreach (UnitAIBase u in commanders[playerAllianceInt].activeUnits)
+        //{
+        //    u.gfx.SetActive(false);
+        //}
 
-        controllsLocked = true;
-        enemyTurnIndicator.SetActive(true);
-        endTurnButton.SetActive(false);
-
-
-        StartNewTurn();
-        
+        //StartNewTurn();
     }
 
     public void UpdateVisableFOW()
