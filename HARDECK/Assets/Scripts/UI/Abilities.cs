@@ -58,7 +58,7 @@ public static class Abilities
     {
         new AbilityDescriptor("Attack", "Fire the unit's primary weapon", 1, new Color(1,0,0), "Requires an Action Pip", "Select an enemy Unit"),
         new AbilityDescriptor("Move", "Attempt to manuver to the selected position", 1, new Color(1,0.75f,0), "Requires a Movement Pip", "Select a location to move to, within the units range"),
-        new AbilityDescriptor("Dig In", "Unit braces at it's current position, confering a defense and accuracy boost for this turn", 1, new Color(0.25f, 0.25f, 0.25f), "Requires a Movement Pip", "Huh?"),
+        new AbilityDescriptor("Dig In", "Unit braces at it's current position, confering a defense and accuracy boost for this turn", 1, new Color(0.75f, 0.75f, 0.75f), "Requires a Movement Pip", "Huh?"),
         new AbilityDescriptor("Build Structure", "Unit Is Stunned for two full turns, if Unit is alive at the end of the second turn, a structure is created at this location", 3, new Color(0, 0.25f, 1), "Requires an Action Pip and a Movement Pip", "Location Invalid"),
         new AbilityDescriptor("Fire Missile", "Fire 3x3 Splash damage Missile, dealing 5 damage to effected units", 1, new Color(1, 0.25f, 0.25f), "Requires an Action Pip", "Select a location or enemy within range"),
 

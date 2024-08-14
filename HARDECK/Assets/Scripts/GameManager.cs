@@ -116,6 +116,8 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI actionInfoText;
     public GameObject worldTextPopupPrefab;
 
+    public GameObject compass;
+
     public Image abilityIcon;
     public TextMeshProUGUI abilityName;
     public TextMeshProUGUI abilityDesc;
@@ -129,6 +131,7 @@ public class GameManager : MonoBehaviour
     public Image selectedAbilityWorldImage;
 
     private Canvas gameUI_Canvas;
+    private GameObject cameraAnchor;
 
     public TextMeshProUGUI debugText;
 
@@ -198,6 +201,8 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         allUnits = new List<UnitAIBase> ();
+
+        cameraAnchor = GameObject.Find("CameraAnchor");
 
         actionSpacerParent = GameObject.Find("ActionBarSpacerParent");
         actionSpacerPrefab = Resources.Load("Spacer") as GameObject;
@@ -718,37 +723,37 @@ public class GameManager : MonoBehaviour
         selectedUnit_Enemy = null;
         UpdatePlayerActionGFX();
 
-        ////[CHANGE: DO NOT HARD CODE FOR ALLIENCE INTS]
-        //if (playerAllianceInt == 0)
-        //{
-        //    enemyAI.BeginTurn(1);
-
-        //}
-        //else
-        //{
-        //    enemyAI.BeginTurn(0);
-
-        //}
-        //controllsLocked = true;
-        //enemyTurnIndicator.SetActive(true);
-        //endTurnButton.SetActive(false);
-
-        // Cycles through commanders
-        if (playerAllianceInt < commanders.Count - 1)
+        //[CHANGE: DO NOT HARD CODE FOR ALLIENCE INTS]
+        if (playerAllianceInt == 0)
         {
-            playerAllianceInt++;
+            enemyAI.BeginTurn(1);
+
         }
         else
         {
-            playerAllianceInt = 0;
-        }
+            enemyAI.BeginTurn(0);
 
-        foreach (UnitAIBase u in commanders[playerAllianceInt].activeUnits)
-        {
-            u.gfx.SetActive(false);
         }
+        controllsLocked = true;
+        enemyTurnIndicator.SetActive(true);
+        endTurnButton.SetActive(false);
 
-        StartNewTurn();
+        //// Cycles through commanders
+        //if (playerAllianceInt < commanders.Count - 1)
+        //{
+        //    playerAllianceInt++;
+        //}
+        //else
+        //{
+        //    playerAllianceInt = 0;
+        //}
+
+        //foreach (UnitAIBase u in commanders[playerAllianceInt].activeUnits)
+        //{
+        //    u.gfx.SetActive(false);
+        //}
+
+        //StartNewTurn();
     }
 
     public void UpdateVisableFOW()
@@ -1080,6 +1085,8 @@ public class GameManager : MonoBehaviour
     private void LateUpdate()
     {
         ManageCursor();
+
+       // compass.GetComponent<RectTransform>().rotation = new Quaternion(0,0,cameraAnchor.transform.rotation.y, 1);
     }
 
     private void ManageCursor()

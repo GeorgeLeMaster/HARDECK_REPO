@@ -12,6 +12,8 @@ public class CameraController : MonoBehaviour
 
     private float xMax, zMax;
 
+    Vector3 lockedPos;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -33,6 +35,8 @@ public class CameraController : MonoBehaviour
                 break;
             }
         }
+
+        lockedPos = transform.position;
     }
 
     // Update is called once per frame
@@ -45,9 +49,15 @@ public class CameraController : MonoBehaviour
 
         if (Input.GetMouseButton(2))
         {
-            
+
+
+
             transform.position += new Vector3(transform.forward.x * 15, 0, transform.forward.z * 15) * -Input.GetAxis("Mouse Y") * Time.deltaTime * 1.4f;
             transform.position += new Vector3(transform.right.x * 15, 0, transform.right.z * 15) * -Input.GetAxis("Mouse X") * Time.deltaTime;
+
+            lockedPos = new Vector3(Mathf.Clamp(transform.position.x, 0, MapBuilder.instance.mapX), 0, Mathf.Clamp(transform.position.z, 0, MapBuilder.instance.mapZ));
+
+            transform.position = lockedPos;
 
         }
         else if (Input.GetMouseButton(1))
